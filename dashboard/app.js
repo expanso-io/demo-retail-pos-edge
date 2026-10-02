@@ -89,7 +89,6 @@ function readColors() {
   const pick = (name) => css.getPropertyValue(name).trim();
   colors = {
     raw: pick("--raw"), ok: pick("--ok"), err: pick("--err"), warn: pick("--warn"),
-
   };
 }
 
@@ -136,6 +135,7 @@ $("shoppers-motion").addEventListener("click", () => {
 function buildStores(stores) {
   const root = $("stores");
   root.textContent = "";
+  root.setAttribute("aria-busy", "false");
   refs.stores.clear();
   refs.tills.clear();
 
@@ -190,9 +190,8 @@ function buildStores(stores) {
         });
       });
       tills.append(btn);
-      refs.tills.set(r.id, { btn, svg: btn.querySelector(".register-art") });
+      refs.tills.set(r.id, { btn });
     }
-
 
     const edge = h("div", "edge");
     edge.dataset.state = "off";
@@ -362,7 +361,6 @@ function renderStore(s, now) {
     if (!t) continue;
     t.btn.setAttribute("aria-pressed", String(r.state === "open"));
     t.btn.setAttribute("aria-label", `${s.name} ${tillName(r.id)}: ${r.state}. Switch ${r.state === "open" ? "off" : "on"}`);
-
 
   }
 }
@@ -749,7 +747,6 @@ function flows(cur, old, now) {
     const shown = (s.display.updates || 0) - (o.display.updates || 0);
     spawn(shown, L.toWindow, colors.ok, { dur: 1000, r: 3 });
 
-
   }
 }
 
@@ -791,7 +788,6 @@ function drawGuides() {
 
     if (s.link.cut) guide(L.toWarehouse, colors.warn, 0.7, [3, 6]);
     else guide(L.toWarehouse, colors.ok, on ? 0.45 : 0.2);
-
 
   }
 }

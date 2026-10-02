@@ -67,7 +67,11 @@
       <span class="cloud-jobs data" id="cloud-jobs">pos-guard · pos-uplink</span>
     </div>
     <div class="premises-label">inside the card business</div>
-    <div class="stores" id="stores"></div>
+    <div class="stores" id="stores" aria-busy="true">
+      <div class="store-loading" role="status" aria-label="Loading stores">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
     <div class="dmz" id="dmz" aria-hidden="true"><span>DMZ · core network</span></div>
     <aside class="warehouse" id="warehouse">
       <h2>Warehouse</h2>

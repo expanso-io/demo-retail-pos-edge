@@ -169,6 +169,9 @@ main { padding: 12px 20px 24px; display: grid; gap: 12px; max-width: 1360px; mar
 
 .stores { grid-area: stores; display: grid; gap: 26px; min-width: 0; }
 
+.store-loading { display: grid; gap: 12px; padding: 14px; border: 1px solid var(--line); }
+.store-loading span { display: block; height: 24px; background: var(--line); }
+.store-loading span:nth-child(2) { height: 80px; }
 .store { min-width: 0; }
 .front {
   position: relative; min-width: 0;
@@ -420,6 +423,7 @@ kbd { font-size: 13px; border: 1px solid var(--line); border-radius: 2px; paddin
   .till .t-not { width: 36px; height: 36px; left: 1px; }
 }
 @media (prefers-reduced-motion: reduce) {
+  #shoppers-motion { display: none; }
   .walker { animation: none; left: var(--rest-position); }
   .till[data-face="ring"] .t-picture { transform: none; }
 }
