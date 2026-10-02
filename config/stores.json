@@ -31,7 +31,7 @@
       "tz": "Europe/Amsterdam",
       "lat": 52.37,
       "lon": 4.9,
-      "base_temp_c": 20.0,
+      "base_temp_c": 17.0,
       "registers": 4
     },
     {
@@ -42,7 +42,7 @@
       "tz": "Europe/Amsterdam",
       "lat": 51.92,
       "lon": 4.47,
-      "base_temp_c": 23.0,
+      "base_temp_c": 23.5,
       "registers": 3
     }
   ]

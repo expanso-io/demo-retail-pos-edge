@@ -58,13 +58,13 @@ SENSOR_S = 3.0
 
 # (sku, name, category, unit_cents, heat sensitivity per degree above 22 C)
 CATALOG = [
-    ("HD-01", "Flat white", "hot drinks", 340, -0.06),
-    ("HD-02", "Black tea", "hot drinks", 260, -0.06),
-    ("HD-03", "Hot chocolate", "hot drinks", 380, -0.08),
-    ("CD-01", "Iced latte", "cold drinks", 420, 0.12),
-    ("CD-02", "Sparkling water", "cold drinks", 190, 0.10),
-    ("CD-03", "Lemonade", "cold drinks", 280, 0.12),
-    ("IC-01", "Ice cream tub", "ice cream", 450, 0.18),
+    ("HD-01", "Flat white", "hot drinks", 340, -0.12),
+    ("HD-02", "Black tea", "hot drinks", 260, -0.12),
+    ("HD-03", "Hot chocolate", "hot drinks", 380, -0.14),
+    ("CD-01", "Iced latte", "cold drinks", 420, 0.16),
+    ("CD-02", "Sparkling water", "cold drinks", 190, 0.14),
+    ("CD-03", "Lemonade", "cold drinks", 280, 0.16),
+    ("IC-01", "Ice cream tub", "ice cream", 450, 0.30),
     ("BK-01", "Croissant", "bakery", 210, 0.0),
     ("BK-02", "Sourdough loaf", "bakery", 480, 0.0),
     ("SW-01", "Chicken wrap", "sandwiches", 590, 0.0),

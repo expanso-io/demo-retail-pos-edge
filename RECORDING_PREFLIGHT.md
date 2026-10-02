@@ -45,7 +45,7 @@ only when the demo truthfully advances on its own clock.>
 
 ## Truth boundary
 
-<What is local, simulated, Cloud-accepted, downstream-received, or planned.
+<What runs locally, what Expanso Cloud accepted, what landed downstream, and what is planned.
 Do not present one lane as evidence of another.>
 
 ## Proof evidence

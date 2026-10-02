@@ -4,42 +4,123 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Point of sale at the edge</title>
+<link rel="stylesheet" href="fonts/fonts.css">
 <link rel="stylesheet" href="styles.css">
+<script>
+  // Theme before first paint, so a remembered dark board never flashes light.
+  try {
+    const t = localStorage.getItem("pos-theme");
+    if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+  } catch { /* storage blocked: stay light */ }
+</script>
 </head>
 <body>
-<header>
-  <h1>Point of sale at the edge</h1>
-  <span class="sub">Card data never leaves the store as a card number: each swipe becomes a one-way join ID with its context, checked before it touches the core network</span>
+<a class="skip-link" href="#stage">Skip to the board</a>
+<svg width="0" height="0" class="defs" aria-hidden="true">
+  <symbol id="mark" viewBox="0 0 180 114">
+    <path fill="currentColor" d="M29 82.63A38 38 0 0 1 54.19 18.82V.06a56.69 56.69 0 0 0 0 113.27V94.56A38 38 0 0 1 29 82.63Z"/>
+    <path fill="currentColor" d="M79.4 60.85c1.28-1.42 2.5-2.850 3.6-4.22a61.7 61.7 0 0 0-3.84-4.44 58.07 58.07 0 0 0-12.74-10.8c-3.620-2.15-6.91-3.23-9.79-3.23a18.49 18.49 0 0 0-18.46 18.5 18.51 18.51 0 0 0 18.48 18.5c2.9 0 6.24-1.11 9.900-3.31A59 59 0 0 0 79.4 60.85Z"/>
+    <path fill="currentColor" d="M159.26 24.7c6.67-4 13.31-6 19.73-6V0c-9.9 0-19.83 2.93-29.52 8.73a96.89 96.89 0 0 0-21.45 18 140.47 140.47 0 0 0-10.2 12.61 137.32 137.32 0 0 0-10.2-12.63 96.44 96.44 0 0 0-21.45-18A58.09 58.09 0 0 0 59.6.09v18.8a40.24 40.24 0 0 1 16.8 5.81 77.1 77.1 0 0 1 17.13 14.36A124.85 124.85 0 0 1 107 56.69 123.63 123.63 0 0 1 93.79 74a78.42 78.42 0 0 1-17.23 14.59 40.76 40.76 0 0 1-17 5.91v18.79a58.35 58.35 0 0 0 26.57-8.64 96.17 96.17 0 0 0 21.45-18 142.6 142.6 0 0 0 10.17-12.580l.25-.4 3.26 5c2 2.58 4.29 5.31 6.76 8a97.9 97.9 0 0 0 21.45 18c9.690 5.79 19.62 8.72 29.52 8.72V94.65c-6.42 0-13.06-2-19.73-6a78.34 78.34 0 0 1-17.13-14.36A121.55 121.55 0 0 1 132 61.62l-3.21-5.06A126.12 126.12 0 0 1 142.09 39a77.18 77.18 0 0 1 17.17-14.3Z"/>
+  </symbol>
+  <!-- A register with a face. app.js swaps the face by state. -->
+  <symbol id="till" viewBox="0 0 48 60">
+    <rect class="t-receipt" x="15" y="2" width="18" height="14" rx="2"/>
+    <path class="t-receipt-lines" d="M19 7h10M19 11h7"/>
+    <rect class="t-body" x="3" y="12" width="42" height="36" rx="8"/>
+    <rect class="t-screen" x="9" y="17" width="30" height="18" rx="4"/>
+    <g class="f f-idle"><circle cx="19" cy="25" r="2.4"/><circle cx="29" cy="25" r="2.4"/><path d="M20 30.5h8"/></g>
+    <g class="f f-ring"><path d="M16 26q3-4 6 0M26 26q3-4 6 0M19 29.5q5 4 10 0"/></g>
+    <g class="f f-off"><path d="M16 26h6M26 26h6"/></g>
+    <g class="f f-crash"><path d="M16 22l5 5M21 22l-5 5M27 22l5 5M32 22l-5 5"/></g>
+    <g class="f f-alarm"><circle cx="19" cy="25" r="3.4"/><circle cx="29" cy="25" r="3.4"/><circle cx="24" cy="31.5" r="1.8"/></g>
+    <rect class="t-slot" x="12" y="40" width="24" height="3" rx="2"/>
+    <rect class="t-card" x="30" y="34" width="13" height="9" rx="2"/>
+    <rect class="t-foot" x="9" y="48" width="8" height="8" rx="2"/>
+    <rect class="t-foot" x="31" y="48" width="8" height="8" rx="2"/>
+  </symbol>
+  <symbol id="bin" viewBox="0 0 24 24">
+    <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="disk" viewBox="0 0 24 24">
+    <ellipse cx="12" cy="6" rx="7" ry="2.5" fill="none" stroke="currentColor" stroke-width="1.75"/>
+    <path d="M5 6v12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5" fill="none" stroke="currentColor" stroke-width="1.75"/>
+  </symbol>
+</svg>
+
+<header class="mast">
+  <div class="brand">
+    <svg class="mark" aria-hidden="true"><use href="#mark"/></svg>
+    <h1>Card data stays in the store</h1>
+  </div>
+  <span class="sub">every swipe leaves as a join ID with its context</span>
   <span class="pills">
-    <span class="pill" data-state="on" id="pill-src">SOURCE</span>
-    <span class="pill" data-state="on" id="pill-edge">EDGE</span>
-    <span class="pill" data-state="on" id="pill-pipe">PIPELINE</span>
-    <span class="pill" data-state="warn" id="pill-sink">SINK</span>
+    <span class="pill" id="pill-mode" data-state="off">EXPANSO OFF</span>
+    <button type="button" class="pill toggle" id="theme" aria-pressed="false">DARK</button>
   </span>
 </header>
 
 <main>
-  <section class="stage" id="stage">
-    <canvas id="flow"></canvas>
-    <div class="node n-src"><h3>source</h3><div class="big" id="src-rate">0</div><div class="l">msgs/s raw</div></div>
-    <div class="node node-orch n-edge"><h3>edge · governed</h3><div class="big" id="edge-rate">0</div><div class="l">msgs/s forwarded</div></div>
-    <div class="node n-sink"><h3>sink</h3><div class="big" id="sink-rows">0</div><div class="l">rows landed</div></div>
+  <section class="stage" id="stage" aria-label="Stores, their edge nodes and the warehouse">
+    <canvas id="flow" aria-hidden="true"></canvas>
+    <div class="cloud" id="cloud">
+      <svg class="mark" aria-hidden="true"><use href="#mark"/></svg>
+      <span class="cloud-name">Expanso Cloud</span>
+      <span class="cloud-jobs data" id="cloud-jobs">pos-guard · pos-uplink</span>
+    </div>
+    <div class="premises-label">inside the card business</div>
+    <div class="stores" id="stores"></div>
+    <div class="dmz" id="dmz" aria-hidden="true"><span>DMZ · core network</span></div>
+    <aside class="warehouse" id="warehouse">
+      <h2>Warehouse</h2>
+      <div class="wh-big"><span class="num" id="wh-rows">0</span><span class="l">records landed</span></div>
+      <div class="wh-zero" id="wh-zero">
+        <span class="num" id="wh-cards">0</span>
+        <span class="l">card numbers found</span>
+        <span class="l small data" id="wh-scanned">every row scanned</span>
+      </div>
+      <div class="wh-row"><span class="num" id="wh-multi">0</span><span class="l">shoppers seen in 2+ stores</span></div>
+      <div class="wh-row"><span class="num" id="wh-online">0</span><span class="l">joined to online profiles</span></div>
+    </aside>
   </section>
 
-  <section class="tiles">
-    <div class="tile"><div class="k" id="k1">0</div><div class="l">events / sec</div></div>
-    <div class="tile"><div class="k ok" id="k2">0%</div><div class="l">kept at the edge</div></div>
-    <div class="tile"><div class="k warn" id="k3">0</div><div class="l">pending</div></div>
-    <div class="tile"><div class="k" id="k4">0</div><div class="l">nodes reporting</div></div>
-  </section>
-
-  <section class="panel">
-    <h2>live events</h2>
-    <ul class="feed" id="feed"><li class="empty">awaiting motion</li></ul>
+  <section class="shelf">
+    <article class="panel inspector" id="inspector" aria-live="polite">
+      <h2>One swipe <span class="data" id="ins-txn"></span></h2>
+      <div class="cols">
+        <div class="col raw">
+          <h3>at the register</h3>
+          <dl id="ins-raw"><dt>waiting</dt><dd>for the first swipe to leave a store</dd></dl>
+        </div>
+        <div class="col shared">
+          <h3>what left the store</h3>
+          <dl id="ins-shared"></dl>
+        </div>
+      </div>
+    </article>
+    <article class="panel quarantine">
+      <h2>Kept in the store <span class="data" id="q-total"></span></h2>
+      <ol class="qlist" id="qlist"><li class="empty">nothing quarantined yet</li></ol>
+    </article>
   </section>
 </main>
 
-<footer>demo-retail-pos-edge · representative data until wired to the real pipeline</footer>
+<div class="console" id="console" hidden>
+  <span class="console-title">Presenter</span>
+  <span class="console-store" id="console-store">s1</span>
+  <button type="button" data-act="tamper">t tamper</button>
+  <button type="button" data-act="leak">l card in note</button>
+  <button type="button" data-act="malformed">m malformed</button>
+  <button type="button" data-act="inject">i injection</button>
+  <button type="button" data-act="crash">x crash a till</button>
+  <button type="button" data-act="sensor">s sensor</button>
+  <button type="button" data-act="link">n network</button>
+  <button type="button" data-act="auto" id="auto-btn">a auto</button>
+  <button type="button" data-act="reset">r reset</button>
+</div>
+
+<footer>
+  <span>localhost only · <kbd>p</kbd> presenter · <kbd>1</kbd>-<kbd>4</kbd> pick a store · click a till to switch it</span>
+</footer>
 <script src="app.js"></script>
 </body>
 </html>
