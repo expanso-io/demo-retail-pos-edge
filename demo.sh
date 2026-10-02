@@ -290,7 +290,7 @@ jobs_stop() {
 jobs_start() {
   local job
   for job in "${JOBS[@]}"; do
-    cloud_cli job run "$job" >/dev/null 2>&1 || cloud_cli job rerun "$job" >/dev/null
+    cloud_cli job rerun "$job" >/dev/null
     say "  $job started in Expanso Cloud"
   done
 }

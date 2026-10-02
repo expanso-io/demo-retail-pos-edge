@@ -126,7 +126,11 @@ class CloudWatch:
             ["expanso-cli", "--endpoint", env["EXPANSO_CLI_ENDPOINT"],
              "--api-key", env["EXPANSO_CLI_API_KEY"], *args, "-f", "json"],
             capture_output=True, text=True, timeout=12, check=True)
-        return json.loads(out.stdout or "[]")
+        try:
+            data = json.loads(out.stdout or "[]")
+        except ValueError:
+            return []  # e.g. a stopped job with no executions prints a sentence
+        return data if isinstance(data, list) else []
 
     def poll(self) -> dict:
         env = env_file()
