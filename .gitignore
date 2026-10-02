@@ -9,3 +9,7 @@ __pycache__/
 .venv/
 *.pyc
 *.log
+
+# local secrets and edge node state
+.secrets/
+.expanso-edge/
