@@ -1,0 +1,109 @@
+/* House LIGHT variant of the demo tokens — same NAMES as tokens.css, which is
+   the contract with lint-demo-ui's contrast check (--text/--text-dim vs
+   --bg/--surface). new-demo.py inlines this block when stamped with
+   --palette light: demos that live inside a light host (a MotherDuck Dive, a
+   customer's light UI) or whose subject reads as paper/print (agriculture).
+   Re-hue the accents and ground per demo; keep the names. Neither variant is
+   the default — see ../AGENTS.md "Theme". */
+:root {
+  color-scheme: light;
+
+  /* ground — three elevations and a line */
+  --bg:        #f4f1ea;
+  --surface:   #faf8f3;
+  --surface-2: #ffffff;
+  --line:      #d9d2c5;
+
+  /* ink — two levels are enough (both AA on every ground above) */
+  --text:      #1f2430;
+  --text-dim:  #5b6270;
+
+  /* accents — rationed, load-bearing only, tuned for a light ground */
+  --accent:    #2b63c7;
+  --ok:        #0d8577;
+  --warn:      #a86b12;
+  --err:       #c2362d;
+
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; }
+
+body {
+  font: 14px/1.4 var(--mono);
+  color: var(--text);
+  /* Literal ground on background-color so lint's scheme-vs-ground check can
+     read it; the tints ride on background-image where the regex ignores them. */
+  background-color: #f4f1ea;
+  background-image:
+    radial-gradient(1100px 600px at 10% 6%, rgba(43, 99, 199, 0.12), transparent 60%),
+    radial-gradient(900px 560px at 88% 18%, rgba(13, 133, 119, 0.09), transparent 60%);
+  min-height: 100vh;
+}
+
+header {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  padding: 13px 3vw;
+  background: rgba(244, 241, 234, 0.92);
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, var(--accent), var(--ok)) 1;
+}
+header h1 { font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; }
+header .sub { font-size: 13px; color: var(--text-dim); }
+header .pills { margin-left: auto; display: flex; gap: 4px; flex-wrap: wrap; }
+
+.pill {
+  font-size: 13px; padding: 2px 10px;
+  border-radius: 9999px; border: 1px solid var(--line);
+  color: var(--text-dim); background: transparent;
+}
+.pill[data-state="on"]   { border-color: rgba(13, 133, 119, 0.65);   color: var(--ok); }
+.pill[data-state="warn"] { border-color: rgba(168, 107, 18, 0.6); color: var(--warn); }
+.pill[data-state="off"]  { border-color: rgba(194, 54, 45, 0.5);  color: var(--err); }
+
+main { padding: 16px 3vw 6px; display: grid; gap: 12px; }
+
+.stage { position: relative; height: 430px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.node {
+  position: absolute; width: 170px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+  padding: 12px 14px;
+}
+.node h3 { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
+.node .big { font-size: 24px; font-weight: 700; }
+.node .l { font-size: 13px; color: var(--text-dim); }
+.node-orch { border-color: var(--accent); }
+.node.disabled { opacity: 0.45; filter: grayscale(0.8); }
+.n-src  { left: 4%;  top: 38%; }
+.n-edge { left: 50%; top: 12%; transform: translateX(-50%); }
+.n-sink { right: 4%; top: 38%; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 12px 14px; }
+.tile .k { font-size: 24px; font-weight: 700; }
+.tile .k.ok { color: var(--ok); }
+.tile .k.warn { color: var(--warn); }
+.tile .l { font-size: 13px; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.panel h2 { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 12px; }
+
+.feed { list-style: none; padding: 0; max-height: 180px; overflow-y: auto; }
+.feed li {
+  display: flex; gap: 12px; padding: 4px 8px; font-size: 13px;
+  border-bottom: 1px solid var(--line); color: var(--text-dim);
+}
+.feed li .age { margin-left: auto; }
+.feed li.fresh { color: var(--text); background: rgba(43, 99, 199, 0.08); }
+.feed li.empty { color: var(--text-dim); border: 0; }
+
+footer { padding: 12px 3vw; font-size: 13px; color: var(--text-dim); }
+:focus-visible { outline: 3px solid var(--warn); outline-offset: 3px; }
+
+@media (max-width: 900px) {
+  .stage { height: 720px; }
+  .node { width: 88%; left: 6%; right: auto; transform: none; }
+  .n-src { top: 4%; } .n-edge { top: 36%; } .n-sink { top: 68%; }
+}

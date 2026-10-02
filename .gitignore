@@ -1,0 +1,11 @@
+.env
+.env.*
+*.env
+.envrc
+.runtime/
+.cloud-state/
+.expanso-edge/
+__pycache__/
+.venv/
+*.pyc
+*.log

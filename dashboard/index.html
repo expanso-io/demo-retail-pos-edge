@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Point of sale at the edge</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>Point of sale at the edge</h1>
+  <span class="sub">Card data never leaves the store as a card number: each swipe becomes a one-way join ID with its context, checked before it touches the core network</span>
+  <span class="pills">
+    <span class="pill" data-state="on" id="pill-src">SOURCE</span>
+    <span class="pill" data-state="on" id="pill-edge">EDGE</span>
+    <span class="pill" data-state="on" id="pill-pipe">PIPELINE</span>
+    <span class="pill" data-state="warn" id="pill-sink">SINK</span>
+  </span>
+</header>
+
+<main>
+  <section class="stage" id="stage">
+    <canvas id="flow"></canvas>
+    <div class="node n-src"><h3>source</h3><div class="big" id="src-rate">0</div><div class="l">msgs/s raw</div></div>
+    <div class="node node-orch n-edge"><h3>edge · governed</h3><div class="big" id="edge-rate">0</div><div class="l">msgs/s forwarded</div></div>
+    <div class="node n-sink"><h3>sink</h3><div class="big" id="sink-rows">0</div><div class="l">rows landed</div></div>
+  </section>
+
+  <section class="tiles">
+    <div class="tile"><div class="k" id="k1">0</div><div class="l">events / sec</div></div>
+    <div class="tile"><div class="k ok" id="k2">0%</div><div class="l">kept at the edge</div></div>
+    <div class="tile"><div class="k warn" id="k3">0</div><div class="l">pending</div></div>
+    <div class="tile"><div class="k" id="k4">0</div><div class="l">nodes reporting</div></div>
+  </section>
+
+  <section class="panel">
+    <h2>live events</h2>
+    <ul class="feed" id="feed"><li class="empty">awaiting motion</li></ul>
+  </section>
+</main>
+
+<footer>demo-retail-pos-edge · representative data until wired to the real pipeline</footer>
+<script src="app.js"></script>
+</body>
+</html>
