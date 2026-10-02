@@ -10,7 +10,8 @@ indicates that at least one till is open, not a measured customer count.
 Reduced-motion settings stop the walking animation. The header also has
 a pause control.
 
-The intake cylinder shows cumulative events accepted by the Expanso input
-(sum of register `sent` counters). It does not claim database persistence.
+The intake cylinder shows records durably retained in the store database
+and the count awaiting Expanso collection. Clicking it opens the latest
+retained till record. Telemetry has a separate path into Expanso.
 The store button opens or closes its existing tills through the register
 control API; it does not control Expanso jobs.

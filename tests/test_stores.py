@@ -5,12 +5,12 @@
 # ///
 """Offline checks for the producer and the warehouse. No processes started.
 
-The end-to-end proof is the running demo (just up-local, then the presenter
-keys); this covers the pieces that must agree with pos-guard's Bloblang.
+The end-to-end proof is the running Cloud-managed demo; this covers the pieces that must agree with pos-guard's Bloblang.
 """
 
 from __future__ import annotations
 
+import json
 import hashlib
 import hmac
 import random
@@ -98,6 +98,23 @@ def test_telemetry_poll_preserves_source_freshness() -> None:
     assert world.read_telemetry("s1") == [body]
     assert world.read_telemetry("s1")[0]["at"] == 100
     assert world.sensor_sent["s1"] == 2
+
+
+def test_warehouse_receipts_are_ordered_and_deduplicated() -> None:
+    with tempfile.TemporaryDirectory(dir=ROOT / ".runtime") as folder:
+        sink = warehouse.Warehouse(Path(folder) / "warehouse.db", Path(folder) / "profiles.json")
+        records = [{"txn_id": f"receipt-{i}", "join_id": "jid1_test",
+                    "total_cents": i, "context": {"store_id": "s1"}} for i in range(65)]
+        sink.ingest(json.dumps(records).encode())
+        sink.ingest(json.dumps(records).encode())
+        state = sink.stats()
+        receipts = state["recent_receipts"]
+        assert state["rows"] == 65
+        assert len(receipts) == 60
+        assert receipts[0]["record"]["txn_id"] == "receipt-64"
+        assert receipts[-1]["record"]["txn_id"] == "receipt-5"
+        assert receipts[0]["received_at"] > 0
+        sink.conn.close()
 
 
 def main() -> int:

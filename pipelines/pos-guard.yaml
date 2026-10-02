@@ -6,7 +6,7 @@
 #   4 context  store, register, location, local time, store temperature
 #   5 block    a final card-number scan of the outgoing record
 #   6 route    quarantine stays in the store; clean records go to the uplink
-#              queue and to the store's window display
+#              queue
 name: pos-guard
 type: pipeline
 description: Scan, anonymize and add context to every swipe at the store
@@ -90,21 +90,21 @@ config:
                 output:
                   http_client:
                     url: "${OUTBOX_URL}"
+                    batch_as_multipart: false
                     retries: 10
                     retry_period: 1s
                     max_retry_backoff: 5s
-        - switch:
-            cases:
-              - check: >-
-                  @kind == "swipe" &&
-                  (@route == "clean" || @route == "quarantine")
-                output:
-                  http_client:
-                    url: "${STORE_SOURCE_URL:http://127.0.0.1:8027}/ack/${STORE_ID}"
-                    verb: POST
-                    retries: 10
-                  processors:
-                    - mapping: root.txn_id = this.txn_id
+        - http_client:
+            url: "${STORE_SOURCE_URL:http://127.0.0.1:8027}/ack/${STORE_ID}"
+            verb: POST
+            batch_as_multipart: false
+            retries: 10
+          processors:
+            - mapping: |
+                root = if @kind == "swipe" &&
+                  (@route == "clean" || @route == "quarantine") {
+                  {"txn_id": this.txn_id}
+                } else { deleted() }
   rate_limit_resources:
     - label: database_poll
       local:
@@ -324,17 +324,3 @@ config:
                       ${! this.txn_id } clean: ${! this.join_id }
                       ${! this.context.register_id }
                       ${! this.context.temp_c.or("no temp") }C
-    # The store display gets a 10 s sales window, computed here at the edge.
-    - label: sales_window
-      processors:
-        - mapping: |
-            let items = this.filter(r -> r.basket != null).map_each(r -> r.basket).flatten()
-            root.store_id = this.index(0).context.store_id
-            root.window_s = 10
-            root.sales = this.length()
-            root.temp_c = this.index(-1).context.temp_c
-            let categories = $items.map_each(i -> i.category).unique()
-            root.by_category = $categories.map_each(c -> {
-              "category": c,
-              "units": $items.filter(i -> i.category == c).map_each(i -> i.qty).sum()
-            }).sort_by(x -> 0 - x.units)

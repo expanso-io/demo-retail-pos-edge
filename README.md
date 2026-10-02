@@ -17,10 +17,12 @@ Edge node in each store, and a warehouse behind the DMZ, and shows:
    schema, totals and text fields are verified at the store; a final scan
    blocks any card number in any field. What fails stays in the store with
    its reason.
-3. **Results go both ways.** Clean records go to the warehouse; each store's
-   window display gets a 10-second sales window from its own node.
-4. **Nothing is lost.** Drop a store's network: its records wait on the
-   store's disk and drain once each when it returns.
+3. **Collection survives stopped jobs.** Tills commit to a store database
+   while Expanso is stopped. Starting the jobs collects the backlog; the
+   warehouse feed shows received records and opens their JSON on click.
+4. **Network outages queue locally.** Drop a store's network: clean records
+   wait on the store's disk and drain when it returns. Delivery is at least
+   once; the warehouse deduplicates transaction IDs.
 
 ![Four stores on Expanso Cloud with every failure injected](docs/screenshots/board-faults-1440-light.png)
 
@@ -48,7 +50,7 @@ Everything between a till and the warehouse is pipeline config:
   quarantine file and the uplink.
 - [`pipelines/pos-uplink.yaml`](pipelines/pos-uplink.yaml): a `sqlite`
   buffer on the store's disk, and a `retry` output that holds a failed batch
-  instead of handing it back, so each record crosses the WAN once.
+  instead of handing it back. Warehouse transaction IDs deduplicate retries.
 
 Custom code is only the stores (tills, sensors, window displays and WAN
 links, [`scripts/stores.py`](scripts/stores.py)), the warehouse sink
@@ -64,7 +66,7 @@ Prerequisites: `just`, `uv`, `jq`, `curl`, `openssl`, `expanso-edge` and
 
 ```bash
 cp env.example .env && chmod 600 .env   # add the three EXPANSO_ values
-just up          # Expanso Cloud: jobs deployed and stopped, nodes connected
+just up          # Cloud jobs stopped; nodes connected
 open http://localhost:8023
 # start pos-guard and pos-uplink in the Expanso Cloud console
 just down        # stop everything and stop the jobs in Cloud
