@@ -197,7 +197,9 @@ function buildStores(stores) {
     edge.dataset.state = "off";
     const head = h("div", "e-head");
     head.append(h("span", "light"), svgUse("mark", "mark"), h("span", "", "Expanso"));
-    const jobs = h("div", "e-jobs", "standby");
+    const status = h("div", "e-status", "Stopped");
+    status.setAttribute("role", "status");
+    const jobs = h("div", "e-jobs", "0 of 2 pipelines running");
     const queue = h("div", "e-row queue");
     const qIcon = svgUse("", "disk");
     const qNum = h("span", "num", "0");
@@ -207,10 +209,13 @@ function buildStores(stores) {
     const bNum = h("span", "num", "0");
     bin.append(bIcon, bNum, h("span", "", "kept here"));
     const link = h("div", "e-link", "");
-    edge.append(head, jobs, queue, bin, link);
+    edge.append(head, status, jobs, queue, bin, link);
 
-    const intake = h("div", "intake");
-    intake.title = "Events accepted by this store's Expanso input";
+    const intake = h("button", "intake");
+    intake.type = "button";
+    intake.title = "View latest till record. Count: events accepted by Expanso.";
+    intake.setAttribute("aria-label", `View latest till record from ${s.name}`);
+    intake.addEventListener("click", () => showStoreRecord(s.store_id));
     const intakeIcon = svgUse("intake-icon", "database");
     const eventCount = h("span", "num", "0");
     intake.append(intakeIcon, eventCount, h("span", "", "events"));
@@ -237,7 +242,7 @@ function buildStores(stores) {
     row.append(front);
     root.append(row);
     refs.stores.set(s.store_id, {
-      row, front, therm, win, wk, wv, wn, wa, edge, jobs, qNum, qIcon, queue, bNum, bIcon, link, closed, shopToggle, intake, intakeIcon, eventCount,
+      row, front, therm, win, wk, wv, wn, wa, edge, status, jobs, qNum, qIcon, queue, bNum, bIcon, link, closed, shopToggle, intake, intakeIcon, eventCount,
     });
   }
 
@@ -274,26 +279,19 @@ function renderHeader(state) {
   const pill = $("pill-mode");
   const cloud = $("cloud");
   const n = state.stores.length;
-  const guard = state.stores.filter((s) => s.edge.jobs["pos-guard"]).length;
-  const uplink = state.stores.filter((s) => s.edge.jobs["pos-uplink"]).length;
   const connected = state.stores.filter((s) => s.edge.connected).length;
 
   if (state.mode === "cloud") {
     pill.dataset.state = "cloud";
     pill.textContent = `EXPANSO CLOUD · ${connected}/${n} NODES`;
     cloud.querySelector(".cloud-name").textContent = "Expanso Cloud";
-    $("cloud-jobs").textContent = guard || uplink
-      ? `pos-guard ${guard}/${n} · pos-uplink ${uplink}/${n} running`
-      : "pos-guard · pos-uplink deployed, stopped";
   } else if (state.mode === "local") {
     pill.dataset.state = "on";
     pill.textContent = "LOCAL CONTROL PLANE";
     cloud.querySelector(".cloud-name").textContent = "Local control plane";
-    $("cloud-jobs").textContent = `pos-guard ${guard}/${n} · pos-uplink ${uplink}/${n}`;
   } else {
     pill.dataset.state = "off";
     pill.textContent = "EXPANSO OFF";
-    $("cloud-jobs").textContent = "no store node connected";
   }
 
   cloud.dataset.state = connected ? "on" : "off";
@@ -325,7 +323,11 @@ function renderStore(s, now) {
   const w = display.window;
   const fresh = w && now / 1000 - w.received_at < 25;
 
-  if (fresh && w.by_category && w.by_category.length) {
+  if (!s.edge.jobs["pos-guard"]) {
+    ref.wk.textContent = "window display";
+    ref.wv.textContent = "Pipeline stopped";
+    ref.wn.textContent = "";
+  } else if (fresh && w.by_category && w.by_category.length) {
     const top = w.by_category[0];
 
     const before = (display.previous && display.previous.by_category || [])
@@ -347,9 +349,10 @@ function renderStore(s, now) {
 
   const es = edgeState(s);
   ref.edge.dataset.state = es;
-  ref.jobs.textContent = es === "off"
-    ? "standby"
-    : `${s.edge.jobs["pos-guard"] ? "pos-guard" : "—"} · ${s.edge.jobs["pos-uplink"] ? "pos-uplink" : "—"}`;
+  ref.status.textContent = es === "off" ? "Stopped" : es === "half" ? "Partial" : "Running";
+  ref.jobs.textContent = es === "half"
+    ? `${s.edge.jobs["pos-guard"] ? "pos-uplink" : "pos-guard"} stopped`
+    : `${es === "on" ? 2 : 0} of 2 pipelines running`;
   ref.qNum.textContent = s.queue === null ? "—" : fmt(s.queue);
   ref.queue.dataset.state = s.queue > 0 && s.link.cut ? "warn" : "ok";
   ref.bNum.textContent = fmt(s.quarantined);
@@ -462,6 +465,86 @@ function render(state) {
   laneCache = new Map();
 
   if (previous) flows(state, previous, now);
+}
+
+/* ------------------------------------------------------ record dialog */
+
+const recordDialog = $("record-dialog");
+
+let recordRequest = null;
+
+$("record-close").addEventListener("click", () => recordDialog.close());
+
+recordDialog.addEventListener("close", () => {
+  if (recordRequest) recordRequest.abort();
+});
+
+function highlightJson(value) {
+  const target = $("record-json");
+  target.textContent = "";
+  const json = JSON.stringify(value, null, 2);
+  const tokens = /"(?:\\.|[^"\\])*"\s*:|"(?:\\.|[^"\\])*"|\b(?:true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g;
+  let end = 0;
+
+  for (const match of json.matchAll(tokens)) {
+    target.append(document.createTextNode(json.slice(end, match.index)));
+    const token = match[0];
+
+    const kind = token.endsWith(":") ? "key"
+      : token.startsWith('"') ? "string"
+        : /^(true|false|null)$/.test(token) ? "literal" : "number";
+
+    target.append(h("span", `json-${kind}`, token));
+    end = match.index + token.length;
+  }
+
+  target.append(document.createTextNode(json.slice(end)));
+}
+
+async function showStoreRecord(sid) {
+  const shop = current && current.stores.find((s) => s.store_id === sid);
+
+  if (!shop) return;
+
+  if (recordRequest) recordRequest.abort();
+  const request = new AbortController();
+  recordRequest = request;
+  $("record-title").textContent = `${shop.name} · latest till record`;
+  $("record-message").textContent = "Loading the record retained in this store…";
+  $("record-code").hidden = true;
+  $("record-json").textContent = "";
+  recordDialog.showModal();
+
+  const latest = shop.registers.reduce((found, r) => {
+    return r.last_txn && (!found || r.last_activity > found.last_activity) ? r : found;
+  }, null);
+
+  if (!latest) {
+    $("record-message").textContent = "No till record has been collected in this store yet.";
+
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/inspect?txn=${encodeURIComponent(latest.last_txn)}`, { signal: request.signal });
+
+    if (!response.ok) throw new Error(String(response.status));
+    const data = await response.json();
+
+    if (request.signal.aborted) return;
+
+    if (!data.raw) {
+      $("record-message").textContent = "This record is no longer retained. Close and reopen to fetch the latest.";
+
+      return;
+    }
+
+    highlightJson(data.raw);
+    $("record-message").textContent = "At the register · retained locally";
+    $("record-code").hidden = false;
+  } catch {
+    if (!request.signal.aborted) $("record-message").textContent = "Could not load the record. Close and reopen to try again.";
+  }
 }
 
 /* --------------------------------------------------------- inspector */
@@ -894,6 +977,8 @@ function act(name) {
 const KEYS = { t: "tamper", l: "leak", m: "malformed", i: "inject", x: "crash", s: "sensor", n: "link", a: "auto", r: "reset" };
 
 document.addEventListener("keydown", (e) => {
+  if (recordDialog.open) return;
+
   if (e.metaKey || e.ctrlKey || e.altKey) return;
 
   if (e.target instanceof HTMLInputElement) return;

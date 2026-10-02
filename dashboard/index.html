@@ -64,7 +64,6 @@
     <div class="cloud" id="cloud">
       <svg class="mark" aria-hidden="true"><use href="#mark"/></svg>
       <span class="cloud-name">Expanso Cloud</span>
-      <span class="cloud-jobs data" id="cloud-jobs">pos-guard · pos-uplink</span>
     </div>
     <div class="premises-label">inside the card business</div>
     <div class="stores" id="stores" aria-busy="true">
@@ -106,6 +105,16 @@
     </article>
   </section>
 </main>
+
+<dialog class="record-dialog" id="record-dialog"
+  aria-labelledby="record-title" aria-describedby="record-message">
+  <div class="record-header">
+    <h2 id="record-title">Latest till record</h2>
+    <button type="button" id="record-close" autofocus>Close · Esc</button>
+  </div>
+  <p id="record-message" role="status"></p>
+  <pre id="record-code" tabindex="0" aria-label="Record JSON" hidden><code id="record-json"></code></pre>
+</dialog>
 
 <div class="console" id="console" hidden>
   <span class="console-title">Presenter</span>
