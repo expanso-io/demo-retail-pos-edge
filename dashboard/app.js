@@ -199,7 +199,7 @@ function buildStores(stores) {
     head.append(h("span", "light"), svgUse("mark", "mark"), h("span", "", "Expanso"));
     const status = h("div", "e-status", "Stopped");
     status.setAttribute("role", "status");
-    const jobs = h("div", "e-jobs", "0 of 2 pipelines running");
+    const jobs = h("div", "e-jobs", "0 / 2 running");
     const queue = h("div", "e-row queue");
     const qIcon = svgUse("", "disk");
     const qNum = h("span", "num", "0");
@@ -349,10 +349,12 @@ function renderStore(s, now) {
 
   const es = edgeState(s);
   ref.edge.dataset.state = es;
-  ref.status.textContent = es === "off" ? "Stopped" : es === "half" ? "Partial" : "Running";
+  const status = es === "off" ? "Stopped" : es === "half" ? "Partial" : "Running";
+
+  if (ref.status.textContent !== status) ref.status.textContent = status;
   ref.jobs.textContent = es === "half"
     ? `${s.edge.jobs["pos-guard"] ? "pos-uplink" : "pos-guard"} stopped`
-    : `${es === "on" ? 2 : 0} of 2 pipelines running`;
+    : `${es === "on" ? 2 : 0} / 2 running`;
   ref.qNum.textContent = s.queue === null ? "—" : fmt(s.queue);
   ref.queue.dataset.state = s.queue > 0 && s.link.cut ? "warn" : "ok";
   ref.bNum.textContent = fmt(s.quarantined);
