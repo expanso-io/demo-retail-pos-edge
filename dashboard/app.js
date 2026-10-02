@@ -380,18 +380,93 @@ function renderFaces() {
   }
 }
 
+/* Restart a CSS animation on an element that may already be mid-animation. */
+function replay(node, cls) {
+  node.classList.remove(cls);
+  void node.offsetWidth;
+  node.classList.add(cls);
+}
+
+function setNum(id, text) {
+  const node = $(id);
+
+  if (node.textContent === text) return;
+  node.textContent = text;
+
+  if (feedLoaded) replay(node, "tick");
+}
+
 function renderWarehouse(wh) {
-  $("wh-rows").textContent = fmt(wh.rows);
+  setNum("wh-rows", fmt(wh.rows));
   const scan = wh.card_scan || { card_numbers: 0, rows_scanned: 0 };
-  $("wh-cards").textContent = fmt(scan.card_numbers);
+  setNum("wh-cards", fmt(scan.card_numbers));
   $("wh-zero").dataset.state = scan.card_numbers ? "bad" : "ok";
   $("wh-scanned").textContent = scan.rows_scanned ? "every row scanned" : "nothing landed yet";
-  $("wh-multi").textContent = fmt(wh.shoppers_multi_store);
-  $("wh-online").textContent = fmt(wh.online_matched);
+  setNum("wh-multi", fmt(wh.shoppers_multi_store));
+  setNum("wh-online", fmt(wh.online_matched));
   renderFeed(wh);
 }
 
 let feedRows = 0;
+
+let feedLoaded = false;
+
+/* Arrivals per poll, kept for two minutes: the endpoint's rate and sparkline
+ * come from what this board saw land, not from the capped receipt list. */
+const arrivals = [];
+
+const SPARK_BUCKET_MS = 4000;
+
+const SPARK_BUCKETS = 30;
+
+function recordArrivals(count) {
+  const now = Date.now();
+
+  if (count > 0) arrivals.push({ at: now, n: count });
+
+  while (arrivals.length && arrivals[0].at < now - SPARK_BUCKET_MS * SPARK_BUCKETS) arrivals.shift();
+  const perMin = arrivals.filter((a) => a.at > now - 60000).reduce((t, a) => t + a.n, 0);
+  const rate = $("ep-rate");
+  rate.textContent = `${fmt(perMin)} / min`;
+  rate.dataset.state = perMin ? "live" : "idle";
+  drawSpark(now);
+}
+
+function drawSpark(now) {
+  const spark = $("spark");
+  const dpr = window.devicePixelRatio || 1;
+  const w = 140;
+  const hgt = 22;
+
+  if (spark.width !== Math.round(w * dpr)) {
+    spark.width = Math.round(w * dpr);
+    spark.height = Math.round(hgt * dpr);
+  }
+
+  const g = spark.getContext("2d");
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, w, hgt);
+  const buckets = new Array(SPARK_BUCKETS).fill(0);
+
+  for (const a of arrivals) {
+    const i = SPARK_BUCKETS - 1 - Math.floor((now - a.at) / SPARK_BUCKET_MS);
+
+    if (i >= 0) buckets[i] += a.n;
+  }
+
+  const peak = Math.max(1, ...buckets);
+  const bw = w / SPARK_BUCKETS;
+  g.fillStyle = colors.ok;
+
+  buckets.forEach((n, i) => {
+    if (!n) return;
+    const bh = Math.max(2, (n / peak) * (hgt - 2));
+    g.globalAlpha = 0.35 + 0.65 * (i / SPARK_BUCKETS);
+    g.fillRect(i * bw + 0.5, hgt - bh, bw - 1, bh);
+  });
+
+  g.globalAlpha = 1;
+}
 
 function showReceivedRecord(record) {
   if (recordRequest) recordRequest.abort();
@@ -409,7 +484,11 @@ function renderFeed(wh) {
   const changed = rows !== feedRows;
 
   if (rows < feedRows) list.replaceChildren();
+
+  if (feedLoaded && rows > feedRows) replay($("ep-port"), "pulse");
+  recordArrivals(feedLoaded ? rows - feedRows : 0);
   feedRows = rows;
+  feedLoaded = true;
   $("feed-count").textContent = `${fmt(rows)} received`;
   const latest = receipts[0];
 
@@ -727,35 +806,69 @@ function lanes(sid) {
   return cached(`L${sid}`, () => measureLanes(sid));
 }
 
+/* The receiving side, measured once per frame: the endpoint's port, the bus
+ * that climbs the DMZ to it, and the drop from the endpoint into the
+ * warehouse. Stacked (narrow) layouts put the receiver under the stores, so
+ * the bus becomes a rail down the right-hand side instead. */
+function receiver() {
+  return cached("R", () => {
+    const port = rel($("ep-port"));
+    const ep = rel($("endpoint"));
+    const wh = rel($("warehouse"));
+    const box = rel($("stores"));
+    const stacked = ep.y >= box.y + box.h - 4;
+    const portIn = { x: port.x + port.w / 2, y: port.y + port.h / 2 };
+    const dmz = rel($("dmz"));
+    const busX = stacked ? stage.clientWidth - 8 : dmz.x + 16;
+
+    const landing = [
+      { x: ep.x + ep.w * 0.5, y: ep.y + ep.h },
+      { x: wh.x + wh.w * 0.5, y: wh.y },
+    ];
+
+    landing.elbow = true;
+
+    return { portIn, busX, stacked, box, landing };
+  });
+}
+
 function measureLanes(sid) {
   const ref = refs.stores.get(sid);
 
   if (!ref) return null;
   const e = rel(ref.edge);
-  const wh = rel($("warehouse").parentElement);
+  const R = receiver();
   const telemetry = rel(ref.telemetryIcon);
-  const order = [...refs.stores.keys()].indexOf(sid);
-  const n = refs.stores.size;
-  const whY = wh.y + wh.h * ((order + 0.5) / n);
   const input = rel(ref.intakeIcon);
   const q = rel(ref.qIcon);
   const b = rel(ref.bIcon);
-  const narrow = wh.x < e.x + e.w;
+  const card = rel(ref.row);
   const edgeOut = { x: e.x + e.w, y: e.y + e.h / 2 };
-  const whIn = { x: narrow ? wh.x + wh.w : wh.x, y: whY };
-  const rail = stage.clientWidth - 6 - order * 4;
+  const leftColumn = !R.stacked && card.x + card.w < R.box.x + R.box.w - 8;
+  let feeder;
 
-  const warehousePath = narrow
-    ? [edgeOut, { x: rail, y: edgeOut.y }, { x: rail, y: whIn.y }, whIn]
-    : cubic(edgeOut, whIn, 0);
+  if (leftColumn) {
+    // Out through the column gap, along the row gap, into the bus.
+    const topRow = card.y + card.h / 2 < R.box.y + R.box.h / 2;
+    const channelY = topRow ? card.y + card.h + 11 : card.y - 11;
+    const gapX = card.x + card.w + 13;
+    feeder = [edgeOut, { x: gapX, y: edgeOut.y }, { x: gapX, y: channelY }, { x: R.busX, y: channelY }];
+  } else {
+    feeder = [edgeOut, { x: R.busX, y: edgeOut.y }];
+  }
 
-  warehousePath.elbow = narrow;
+  const join = feeder[feeder.length - 1];
+  const warehousePath = [...feeder, { x: R.busX, y: R.portIn.y }, R.portIn];
+  warehousePath.elbow = true;
+  feeder.elbow = true;
 
   return {
     edgeIn: { x: input.x, y: input.y + input.h / 2 },
     input: input,
     inputToEdge: cubic({ x: input.x + input.w, y: input.y + input.h / 2 }, { x: e.x, y: e.y + e.h / 2 }, 0),
     toWarehouse: warehousePath,
+    feeder,
+    join,
     toBin: cubic({ x: e.x, y: e.y + e.h * 0.4 }, { x: b.x + b.w / 2, y: b.y + b.h / 2 }, -18),
     toDisk: cubic({ x: e.x + e.w, y: e.y + e.h * 0.4 }, { x: q.x + q.w / 2, y: q.y + q.h / 2 }, -14),
     telemetryToEdge: cubic({ x: telemetry.x + telemetry.w, y: telemetry.y + telemetry.h / 2 }, { x: e.x, y: e.y + e.h * 0.7 }, 0),
@@ -852,6 +965,7 @@ function spawn(count, lane, color, opts) {
 
 function flows(cur, old, now) {
   const before = new Map(old.stores.map((s) => [s.store_id, s]));
+  let totalLanded = 0;
 
   for (const s of cur.stores) {
     const o = before.get(s.store_id);
@@ -879,13 +993,30 @@ function flows(cur, old, now) {
 
     spawn(accepted, L.inputToEdge, colors.raw, { dur: 650, r: 4 });
     const landed = s.warehouse_rows - o.warehouse_rows;
-    spawn(landed, L.toWarehouse, colors.ok, { dur: landed > 12 ? 900 : 1500, r: 4.5 });
+    spawn(landed, L.toWarehouse, colors.ok, { dur: landed > 12 ? 1100 : 1700, r: 4.5 });
+    totalLanded += landed;
     spawn(s.quarantined - o.quarantined, L.toBin, colors.err, { dur: 700, r: 4.5 });
 
     if (s.link.cut) spawn((s.queue || 0) - (o.queue || 0), L.toDisk, colors.warn, { dur: 700, r: 4.5 });
     const polled = (s.sensor.sent || 0) - (o.sensor.sent || 0);
     spawn(polled, L.telemetryToEdge, colors.raw, { dur: 800, r: 3 });
 
+  }
+
+  const R = receiver();
+
+  if (R && totalLanded > 0) {
+    // Held back by the trunk's travel time, so a record lands after it arrives.
+    const landing = R.landing;
+    const n = Math.min(totalLanded, 20);
+
+    for (let i = 0; i < n; i++) {
+      particles.push({
+        pts: landing, color: colors.ok, t: 0,
+        delay: performance.now() + 1500 / SPEED + Math.random() * POLL_MS,
+        dur: 450 / SPEED, r: 3.5, stopAt: 1, soft: 0,
+      });
+    }
   }
 }
 
@@ -910,6 +1041,8 @@ function guide(pts, color, alpha, dash) {
 
 function drawGuides() {
   if (!current) return;
+  let trunkFrom = -Infinity;
+  let live = 0;
 
   for (const s of current.stores) {
     const L = lanes(s.store_id);
@@ -926,9 +1059,21 @@ function drawGuides() {
     guide(L.inputToEdge, on ? colors.raw : colors.muted, 0.4);
     guide(L.telemetryToEdge, on ? colors.raw : colors.muted, 0.4);
 
-    if (s.link.cut) guide(L.toWarehouse, colors.warn, 0.7, [3, 6]);
-    else guide(L.toWarehouse, on ? colors.ok : colors.muted, on ? 0.45 : 0.2);
+    if (s.link.cut) guide(L.feeder, colors.warn, 0.7, [3, 6]);
+    else guide(L.feeder, on ? colors.ok : colors.muted, on ? 0.45 : 0.2);
 
+    if (L.join.y > trunkFrom) trunkFrom = L.join.y;
+
+    if (on && !s.link.cut) live++;
+  }
+
+  const R = receiver();
+
+  if (R && trunkFrom > -Infinity) {
+    const trunk = [{ x: R.busX, y: trunkFrom }, { x: R.busX, y: R.portIn.y }, R.portIn];
+    trunk.elbow = true;
+    guide(trunk, live ? colors.ok : colors.muted, live ? 0.5 : 0.2);
+    guide(R.landing, live ? colors.ok : colors.muted, 0.3, [2, 5]);
   }
 }
 

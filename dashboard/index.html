@@ -71,48 +71,58 @@
         <span></span><span></span><span></span>
       </div>
     </div>
-    <div class="dmz" id="dmz" aria-hidden="true"><span>DMZ · core network</span></div>
-    <aside class="warehouse" aria-label="Warehouse and received events">
-    <div class="warehouse-summary" id="warehouse">
-      <h2>Warehouse</h2>
-      <div class="wh-big"><span class="num" id="wh-rows">0</span><span class="l">records landed</span></div>
-      <div class="wh-zero" id="wh-zero">
-        <span class="num" id="wh-cards">0</span>
-        <span class="l">card numbers found</span>
-        <span class="l small data" id="wh-scanned">every row scanned</span>
-      </div>
-      <div class="wh-row"><span class="num" id="wh-multi">0</span><span class="l">shoppers seen in 2+ stores</span></div>
-      <div class="wh-row"><span class="num" id="wh-online">0</span><span class="l">joined to online profiles</span></div>
-    </div>
-    <section class="event-feed" aria-labelledby="feed-title">
-      <div class="feed-heading"><h2 id="feed-title">Arriving events</h2><span id="feed-count">0 received</span></div>
-      <p class="feed-status" id="feed-status" role="status">No records received yet</p>
-      <ol id="event-list" tabindex="0" aria-label="Received events, newest first">
-        <li class="feed-empty">Records appear here when Expanso sends them to the warehouse.</li>
-      </ol>
+    <section class="shelf" aria-label="One swipe, and what the stores kept">
+      <article class="panel inspector" id="inspector" aria-live="polite">
+        <h2>One swipe <span class="data" id="ins-txn"></span></h2>
+        <div class="cols">
+          <div class="col raw">
+            <h3>at the register</h3>
+            <dl id="ins-raw"><dt>waiting</dt><dd>for the first swipe to leave a store</dd></dl>
+          </div>
+          <div class="col shared">
+            <h3>what left the store</h3>
+            <dl id="ins-shared"><dt>waiting</dt><dd>for the record that leaves</dd></dl>
+          </div>
+        </div>
+      </article>
+      <article class="panel quarantine">
+        <h2>Kept in the store <span class="data" id="q-total"></span></h2>
+        <ol class="qlist" id="qlist"><li class="empty">nothing quarantined yet</li></ol>
+      </article>
     </section>
+    <div class="dmz" id="dmz" aria-hidden="true"><span>DMZ · core network</span></div>
+    <aside class="receiver" aria-label="Warehouse endpoint and warehouse">
+      <section class="endpoint" id="endpoint" aria-labelledby="feed-title">
+        <div class="ep-head">
+          <span class="ep-port" id="ep-port" aria-hidden="true"></span>
+          <h2 id="feed-title">Warehouse endpoint</h2>
+          <span class="ep-rate data" id="ep-rate">0 / min</span>
+        </div>
+        <div class="ep-line">
+          <span class="data" id="feed-count">0 received</span>
+          <canvas class="spark" id="spark" width="120" height="22" aria-hidden="true"></canvas>
+        </div>
+        <p class="feed-status" id="feed-status" role="status">No records received yet</p>
+        <ol id="event-list" tabindex="0" aria-label="Received events, newest first">
+          <li class="feed-empty">Records appear here when Expanso sends them to the warehouse.</li>
+        </ol>
+      </section>
+      <div class="warehouse" id="warehouse">
+        <h2>Warehouse</h2>
+        <div class="wh-grid">
+          <div class="wh-big"><span class="num" id="wh-rows">0</span><span class="l">records landed</span></div>
+          <div class="wh-zero" id="wh-zero">
+            <span class="num" id="wh-cards">0</span>
+            <span class="l">card numbers found</span>
+            <span class="l small data" id="wh-scanned">every row scanned</span>
+          </div>
+          <div class="wh-row"><span class="num" id="wh-multi">0</span><span class="l">shoppers seen in 2+ stores</span></div>
+          <div class="wh-row"><span class="num" id="wh-online">0</span><span class="l">joined to online profiles</span></div>
+        </div>
+      </div>
     </aside>
   </section>
 
-  <section class="shelf">
-    <article class="panel inspector" id="inspector" aria-live="polite">
-      <h2>One swipe <span class="data" id="ins-txn"></span></h2>
-      <div class="cols">
-        <div class="col raw">
-          <h3>at the register</h3>
-          <dl id="ins-raw"><dt>waiting</dt><dd>for the first swipe to leave a store</dd></dl>
-        </div>
-        <div class="col shared">
-          <h3>what left the store</h3>
-          <dl id="ins-shared"><dt>waiting</dt><dd>for the record that leaves</dd></dl>
-        </div>
-      </div>
-    </article>
-    <article class="panel quarantine">
-      <h2>Kept in the store <span class="data" id="q-total"></span></h2>
-      <ol class="qlist" id="qlist"><li class="empty">nothing quarantined yet</li></ol>
-    </article>
-  </section>
 </main>
 
 <dialog class="record-dialog" id="record-dialog"
