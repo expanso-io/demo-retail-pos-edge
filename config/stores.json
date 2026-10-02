@@ -1,0 +1,49 @@
+{
+  "currency": "EUR",
+  "stores": [
+    {
+      "store_id": "s1",
+      "name": "Northgate",
+      "district": "Northgate",
+      "country": "DE",
+      "tz": "Europe/Berlin",
+      "lat": 52.55,
+      "lon": 13.41,
+      "base_temp_c": 21.0,
+      "registers": 3
+    },
+    {
+      "store_id": "s2",
+      "name": "Riverside",
+      "district": "Riverside",
+      "country": "DE",
+      "tz": "Europe/Berlin",
+      "lat": 52.49,
+      "lon": 13.45,
+      "base_temp_c": 28.5,
+      "registers": 2
+    },
+    {
+      "store_id": "s3",
+      "name": "Old Market",
+      "district": "Old Market",
+      "country": "NL",
+      "tz": "Europe/Amsterdam",
+      "lat": 52.37,
+      "lon": 4.9,
+      "base_temp_c": 20.0,
+      "registers": 4
+    },
+    {
+      "store_id": "s4",
+      "name": "Station Square",
+      "district": "Station Square",
+      "country": "NL",
+      "tz": "Europe/Amsterdam",
+      "lat": 51.92,
+      "lon": 4.47,
+      "base_temp_c": 23.0,
+      "registers": 3
+    }
+  ]
+}

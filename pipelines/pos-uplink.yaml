@@ -1,0 +1,60 @@
+# pos-uplink: the store's only path out, through its WAN link to the core
+# network. Clean records queue on the store's disk (sqlite buffer) and leave
+# only once the warehouse accepts them, so a dropped link loses nothing and
+# the registers never wait for it.
+name: pos-uplink
+type: pipeline
+description: Queue clean records on the store's disk and drain them to the warehouse
+labels:
+  demo: retail-pos-edge
+selector:
+  match_labels:
+    role: pos-store
+config:
+  input:
+    label: from_pos_guard
+    http_server:
+      address: "${OUTBOX_ADDR}"
+      path: /outbox
+      allowed_verbs: [POST]
+  buffer:
+    sqlite:
+      path: "${UPLINK_QUEUE_DB}"
+  pipeline:
+    processors:
+      - mapping: |
+          root = this
+          root.uplink.store_id = env("STORE_ID")
+          root.uplink.queued_at = now()
+  # A failed send is held and retried here, never handed back to the queue,
+  # so a record crosses the WAN once however long the link is down.
+  output:
+    label: warehouse
+    retry:
+      max_retries: 0
+      backoff:
+        initial_interval: 1s
+        max_interval: 5s
+      output:
+        http_client:
+          url: "${WAREHOUSE_URL}"
+          verb: POST
+          headers:
+            Content-Type: application/json
+          timeout: 5s
+          retries: 3
+          retry_period: 2s
+          max_retry_backoff: 5s
+          max_in_flight: 1
+          batching:
+            count: 50
+            period: 1s
+            processors:
+              - archive:
+                  format: json_array
+              - log:
+                  level: INFO
+                  message: >-
+                    uplink ${! env("STORE_ID") }: sending ${! this.length() }
+                    records, ${! content().length() } bytes, first
+                    ${! this.index(0).txn_id }

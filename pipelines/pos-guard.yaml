@@ -1,0 +1,333 @@
+# pos-guard: runs at every store, inside the card business.
+# A swipe comes in with its card number and leaves as a shareable record:
+#   1 scan     signature, schema, value ranges, injection patterns
+#   2 join id  one-way keyed hash of the card number (centrally defined, jid1)
+#   3 strip    every field that could identify a person
+#   4 context  store, register, location, local time, store temperature
+#   5 block    a final card-number scan of the outgoing record
+#   6 route    quarantine stays in the store; clean records go to the uplink
+#              queue and to the store's window display
+name: pos-guard
+type: pipeline
+description: Scan, anonymize and add context to every swipe at the store
+labels:
+  demo: retail-pos-edge
+selector:
+  match_labels:
+    role: pos-store
+config:
+  input:
+    broker:
+      inputs:
+        - label: registers
+          http_server:
+            address: "${SWIPE_ADDR}"
+            path: /swipe
+            allowed_verbs: [POST]
+          processors:
+            - mapping: meta kind = "swipe"
+        - label: store_telemetry
+          http_server:
+            address: "${TELEMETRY_ADDR}"
+            path: /telemetry
+            allowed_verbs: [POST]
+          processors:
+            - mapping: meta kind = "telemetry"
+        - label: roster_tick
+          generate:
+            interval: 5s
+            mapping: 'root = {"tick": "roster"}'
+          processors:
+            - mapping: meta kind = "tick"
+  # Registers get their OK as soon as the swipe is in the node's memory.
+  buffer:
+    memory: {}
+  pipeline:
+    processors:
+      - switch:
+          - check: '@kind == "telemetry"'
+            processors:
+              - resource: remember_telemetry
+          - check: '@kind == "tick"'
+            processors:
+              - resource: check_roster
+          - processors:
+              - resource: mark_register_seen
+              - resource: scan_swipe
+              - switch:
+                  - check: this.scan.reasons.length() > 0
+                    processors:
+                      - resource: to_quarantine
+                  - processors:
+                      - resource: join_id_and_strip
+                      - resource: add_store_temperature
+                      - resource: block_card_numbers
+  output:
+    switch:
+      cases:
+        # Stays in the store: nothing that failed a scan reaches the DMZ.
+        - check: '@route == "quarantine"'
+          output:
+            file:
+              path: "${QUARANTINE_FILE}"
+              codec: lines
+        - check: '@route == "roster"'
+          output:
+            http_client:
+              url: "${DISPLAY_URL}/roster"
+              retries: 10
+              retry_period: 1s
+              max_retry_backoff: 5s
+        - check: '@route == "clean"'
+          output:
+            broker:
+              pattern: fan_out
+              outputs:
+                - label: uplink_queue
+                  http_client:
+                    url: "${OUTBOX_URL}"
+                    retries: 10
+                    retry_period: 1s
+                    max_retry_backoff: 5s
+                - label: store_display
+                  http_client:
+                    url: "${DISPLAY_URL}/sales"
+                    retries: 10
+                    retry_period: 1s
+                    max_retry_backoff: 5s
+                    batching:
+                      period: 10s
+                      processors:
+                        - archive:
+                            format: json_array
+                        - resource: sales_window
+  cache_resources:
+    - label: store_state
+      memory:
+        default_ttl: 1h
+  processor_resources:
+    # Climate readings and register heartbeats are remembered, not forwarded.
+    - label: remember_telemetry
+      processors:
+        - mapping: |
+            root = this
+            root.at = now().ts_unix()
+            meta key = if this.type == "climate" { "climate" } else {
+              "seen:" + this.register_id
+            }
+        - cache:
+            resource: store_state
+            operator: set
+            key: ${! @key }
+            value: ${! content() }
+        - mapping: root = deleted()
+    - label: mark_register_seen
+      processors:
+        - cache:
+            resource: store_state
+            operator: set
+            key: seen:${! this.register_id.or("unknown") }
+            value: '${! {"state": "open", "at": now().ts_unix()}.string() }'
+    # Every 5 s: is any open register silent? One status per register.
+    - label: check_roster
+      processors:
+        - mapping: |
+            let registers = env("REGISTER_KEYS").parse_json().keys().sort()
+            root = $registers.map_each(r -> {"register_id": r})
+        - unarchive:
+            format: json_array
+        - branch:
+            processors:
+              - cache:
+                  resource: store_state
+                  operator: get
+                  key: seen:${! this.register_id }
+            result_map: root.seen = this
+        - catch:
+            - mapping: |
+                root = this
+                root.seen = {"state": "never", "at": 0}
+        - mapping: |
+            let silent = now().ts_unix() - this.seen.at
+            root.store_id = env("STORE_ID")
+            root.register_id = this.register_id
+            root.status = match {
+              this.seen.state == "closed" => "closed",
+              this.seen.state == "never" => "closed",
+              $silent > 15 => "silent",
+              _ => "ok"
+            }
+            root.silent_s = $silent
+            meta route = "roster"
+        - switch:
+            - check: this.status == "silent"
+              processors:
+                - log:
+                    level: WARN
+                    message: >-
+                      register ${! this.register_id } silent for
+                      ${! this.silent_s }s: flagged to the store display
+    - label: scan_swipe
+      processors:
+        - mapping: |
+            let doc = this
+            let keys = env("REGISTER_KEYS").parse_json()
+            let key = $keys.get(this.register_id.or("?")).or("")
+            let items = this.items.or([])
+            let lines = $items.map_each(i -> "%v:%v:%v".format(i.sku, i.qty, i.unit_cents))
+            let canon = [
+              this.txn_id.or(""),
+              this.register_id.or(""),
+              this.ts.or(""),
+              this.total_cents.or(0).int64().string(),
+              this.pan.or(""),
+              $lines.join(",")
+            ].join("|").catch("")
+            let signed = $canon.hash("hmac_sha256", $key + "").encode("hex")
+            let required = ["txn_id", "register_id", "ts", "pan", "items", "total_cents", "sig"]
+            let missing = $required.filter(f -> $doc.get(f) == null)
+            let ts = this.ts.or("1970-01-01T00:00:00Z")
+            let age = (now().ts_unix() - $ts.ts_unix()).abs().catch(999999)
+            let total = this.total_cents.or(-2)
+            let sum = $items.map_each(i -> i.qty * i.unit_cents).sum().catch(-1)
+            let texts = this.collapse().values().filter(v -> v.type() == "string")
+            let attack = "(?i)<script|drop\\s+table|\\.\\./|\\$\\{"
+            let injected = $texts.filter(v -> v.re_match($attack)).length() > 0
+            let totals = "totals: items add to %v, receipt says %v".format($sum, $total)
+            root = this
+            root.scan.reasons = [
+              if $missing.length() > 0 {
+                "malformed: missing " + $missing.join(", ")
+              } else { null },
+              if $key == "" { "unknown register: not enrolled here" } else { null },
+              if $key != "" && $signed != this.sig.or("") {
+                "signature mismatch: altered after the register signed it"
+              } else { null },
+              if $age > 120 { "stale: %vs old, possible replay".format($age) } else { null },
+              if $sum != $total { $totals } else { null },
+              if $total > 500000 { "range: total over limit" } else { null },
+              if $injected { "injection pattern in a text field" } else { null }
+            ].filter(r -> r != null)
+    # The quarantined record keeps its evidence but never its card number.
+    - label: to_quarantine
+      processors:
+        - mapping: |
+            root.quarantined_at = now()
+            root.store_id = env("STORE_ID")
+            root.register_id = this.register_id.or("unknown")
+            root.txn_id = this.txn_id.or("unknown")
+            root.reason = this.scan.reasons.index(0)
+            root.reasons = this.scan.reasons
+            root.total_cents = this.total_cents.or(null)
+            root.note = this.note.or("").re_replace_all("[0-9]", "•")
+            meta route = "quarantine"
+        - log:
+            level: WARN
+            message: >-
+              quarantined ${! this.txn_id } from ${! this.register_id }:
+              ${! this.reason }
+    # jid1 = HMAC-SHA256 of the card number under the group's join key.
+    # The same card gives the same join ID at every store and centrally.
+    - label: join_id_and_strip
+      processors:
+        - mapping: |
+            let store = env("STORE_PROFILE").parse_json()
+            let join_key = env("JOIN_ID_KEY")
+            let jid = "jid1_" + this.pan.hash("hmac_sha256", $join_key).encode("hex").slice(0, 24)
+            let local = now().ts_format("2006-01-02T15:04:05Z07:00", $store.tz)
+            root.txn_id = this.txn_id
+            root.join_id = $jid
+            root.basket = this.items.map_each(i -> {
+              "sku": i.sku, "name": i.name, "category": i.category,
+              "qty": i.qty, "unit_cents": i.unit_cents
+            })
+            root.total_cents = this.total_cents
+            root.currency = this.currency
+            root.card_brand = this.card_brand
+            root.entry_mode = this.entry_mode
+            root.note = this.note.or("")
+            root.context.store_id = $store.store_id
+            root.context.store_name = $store.name
+            root.context.district = $store.district
+            root.context.country = $store.country
+            root.context.lat = $store.lat
+            root.context.lon = $store.lon
+            root.context.register_id = this.register_id
+            root.context.local_time = $local
+            root.context.hour = now().ts_format("15", $store.tz).number()
+            root.context.weekday = now().ts_format("Monday", $store.tz)
+            root.edge_at = now()
+            let personal = ["pan", "cardholder", "expiry", "cashier", "loyalty_email"]
+            root.stripped = $personal.filter(f -> this.get(f) != null)
+    - label: add_store_temperature
+      processors:
+        - branch:
+            processors:
+              - cache:
+                  resource: store_state
+                  operator: get
+                  key: climate
+            result_map: root.context.climate = this
+        - catch:
+            - mapping: |
+                root = this
+                root.context.climate = {"at": 0}
+        - mapping: |
+            let fresh = now().ts_unix() - this.context.climate.at <= 15
+            root = this
+            root.context.temp_c = if $fresh { this.context.climate.temp_c } else { null }
+            root.context.sensor = if $fresh { "ok" } else { "sensor missing" }
+            root.context.climate = deleted()
+        - switch:
+            - check: this.context.sensor != "ok"
+              processors:
+                - log:
+                    level: WARN
+                    message: >-
+                      ${! this.txn_id }: store temperature sensor silent,
+                      record sent without it
+    # Last gate before the DMZ: no card number may leave, in any field.
+    - label: block_card_numbers
+      processors:
+        - mapping: |
+            let card_number = "\\b(?:[0-9][ -]?){12,18}[0-9]\\b"
+            let texts = this.collapse().filter(kv -> kv.value.type() == "string")
+            let hits = $texts.filter(kv -> kv.value.re_match($card_number)).keys()
+            root = this
+            meta route = if $hits.length() > 0 { "quarantine" } else { "clean" }
+            root.scan.reasons = if $hits.length() > 0 {
+              ["card number blocked: raw card number in " + $hits.join(", ")]
+            } else { deleted() }
+        - switch:
+            - check: '@route == "quarantine"'
+              processors:
+                - mapping: |
+                    root = this
+                    root.register_id = this.context.register_id
+                - resource: to_quarantine
+                - log:
+                    level: ERROR
+                    message: >-
+                      blocked ${! this.txn_id }: card number found in the
+                      outgoing record, kept in the store
+            - processors:
+                - log:
+                    level: INFO
+                    message: >-
+                      ${! this.txn_id } clean: ${! this.join_id }
+                      ${! this.context.register_id }
+                      ${! this.context.temp_c.or("no temp") }C
+    # The store display gets a 10 s sales window, computed here at the edge.
+    - label: sales_window
+      processors:
+        - mapping: |
+            let items = this.filter(r -> r.basket != null).map_each(r -> r.basket).flatten()
+            root.store_id = this.index(0).context.store_id
+            root.window_s = 10
+            root.sales = this.length()
+            root.temp_c = this.index(-1).context.temp_c
+            let categories = $items.map_each(i -> i.category).unique()
+            root.by_category = $categories.map_each(c -> {
+              "category": c,
+              "units": $items.filter(i -> i.category == c).map_each(i -> i.qty).sum()
+            }).sort_by(x -> 0 - x.units)
