@@ -72,7 +72,8 @@
       </div>
     </div>
     <div class="dmz" id="dmz" aria-hidden="true"><span>DMZ · core network</span></div>
-    <aside class="warehouse" id="warehouse">
+    <aside class="warehouse" aria-label="Warehouse and received events">
+    <div class="warehouse-summary" id="warehouse">
       <h2>Warehouse</h2>
       <div class="wh-big"><span class="num" id="wh-rows">0</span><span class="l">records landed</span></div>
       <div class="wh-zero" id="wh-zero">
@@ -82,6 +83,14 @@
       </div>
       <div class="wh-row"><span class="num" id="wh-multi">0</span><span class="l">shoppers seen in 2+ stores</span></div>
       <div class="wh-row"><span class="num" id="wh-online">0</span><span class="l">joined to online profiles</span></div>
+    </div>
+    <section class="event-feed" aria-labelledby="feed-title">
+      <div class="feed-heading"><h2 id="feed-title">Arriving events</h2><span id="feed-count">0 received</span></div>
+      <p class="feed-status" id="feed-status" role="status">No records received yet</p>
+      <ol id="event-list" tabindex="0" aria-label="Received events, newest first">
+        <li class="feed-empty">Records appear here when Expanso sends them to the warehouse.</li>
+      </ol>
+    </section>
     </aside>
   </section>
 

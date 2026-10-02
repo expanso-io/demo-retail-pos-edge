@@ -168,6 +168,9 @@ class Warehouse:
             recent = [json.loads(b) for (b,) in
                       q("SELECT body FROM records ORDER BY received_at DESC, rowid DESC "
                         "LIMIT 12")]
+            receipts = [{"record": json.loads(b), "received_at": at}
+                        for b, at in q("SELECT body, received_at FROM records "
+                                       "ORDER BY received_at DESC, rowid DESC LIMIT 60")]
             return {
                 "at": time.time(),
                 "rows": total,
@@ -184,6 +187,7 @@ class Warehouse:
                 "rows_without_temperature": no_temp,
                 "card_scan": {"rows_scanned": self.rows_scanned, "card_numbers": self.card_hits},
                 "recent": recent,
+                "recent_receipts": receipts,
             }
 
     def record(self, txn_id: str) -> dict | None:

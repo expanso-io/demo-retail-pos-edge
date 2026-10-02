@@ -88,7 +88,7 @@ function readColors() {
   const css = getComputedStyle(document.documentElement);
   const pick = (name) => css.getPropertyValue(name).trim();
   colors = {
-    raw: pick("--raw"), ok: pick("--ok"), err: pick("--err"), warn: pick("--warn"),
+    muted: pick("--text-dim"), raw: pick("--raw"), ok: pick("--ok"), err: pick("--err"), warn: pick("--warn"),
   };
 }
 
@@ -164,12 +164,6 @@ function buildStores(stores) {
     const shopActions = h("div", "shop-actions");
     shopActions.append(closed, shopToggle);
     frontage.append(sign, shopActions);
-    const win = h("div", "window");
-    const wk = h("span", "w-k", "window display");
-    const wv = h("span", "w-v", "waiting for sales");
-    const wn = h("span", "w-n", "");
-    const wa = h("span", "w-alert", "");
-    win.append(wk, wv, wn, wa);
     const tills = h("div", "tills");
 
     for (const r of s.registers) {
@@ -199,7 +193,11 @@ function buildStores(stores) {
     head.append(h("span", "light"), svgUse("mark", "mark"), h("span", "", "Expanso"));
     const status = h("div", "e-status", "Stopped");
     status.setAttribute("role", "status");
-    const jobs = h("div", "e-jobs", "0 / 2 running");
+    const jobs = h("div", "e-jobs");
+    const collectJob = h("div", "e-job");
+    collectJob.append(h("span", "", "Collect database"), h("span", "", "Clean telemetry"));
+    const uplinkJob = h("div", "e-job", "Send to warehouse");
+    jobs.append(collectJob, uplinkJob);
     const queue = h("div", "e-row queue");
     const qIcon = svgUse("", "disk");
     const qNum = h("span", "num", "0");
@@ -213,12 +211,17 @@ function buildStores(stores) {
 
     const intake = h("button", "intake");
     intake.type = "button";
-    intake.title = "View latest till record. Count: events accepted by Expanso.";
+    intake.title = "View latest till record. Count: records retained in the store database.";
     intake.setAttribute("aria-label", `View latest till record from ${s.name}`);
     intake.addEventListener("click", () => showStoreRecord(s.store_id));
     const intakeIcon = svgUse("intake-icon", "database");
     const eventCount = h("span", "num", "0");
-    intake.append(intakeIcon, eventCount, h("span", "", "events"));
+    const pendingCount = h("span", "pending-count", "");
+    intake.append(intakeIcon, h("b", "", "Store events"), eventCount, pendingCount);
+    const telemetry = h("div", "telemetry");
+    const telemetryIcon = h("span", "telemetry-icon", "°C");
+    const telemetryValue = h("span", "telemetry-value", "—");
+    telemetry.append(telemetryIcon, h("b", "", "Telemetry endpoint"), telemetryValue);
     const street = h("div", "street");
     street.setAttribute("aria-hidden", "true");
 
@@ -237,12 +240,12 @@ function buildStores(stores) {
       street.append(walker);
     }
 
-    body.append(win, tills, intake, edge);
+    body.append(tills, intake, telemetry, edge);
     front.append(frontage, h("div", "awning"), body, street);
     row.append(front);
     root.append(row);
     refs.stores.set(s.store_id, {
-      row, front, therm, win, wk, wv, wn, wa, edge, status, jobs, qNum, qIcon, queue, bNum, bIcon, link, closed, shopToggle, intake, intakeIcon, eventCount,
+      row, front, therm, edge, status, jobs, collectJob, uplinkJob, telemetry, telemetryIcon, telemetryValue, pendingCount, qNum, qIcon, queue, bNum, bIcon, link, closed, shopToggle, intake, intakeIcon, eventCount,
     });
   }
 
@@ -308,7 +311,8 @@ function renderStore(s, now) {
   ref.closed.textContent = closed ? "closed" : "tills offline";
   ref.shopToggle.textContent = open ? "Close store" : "Open store";
   ref.shopToggle.setAttribute("aria-label", `${open ? "Close" : "Open"} ${s.name}`);
-  ref.eventCount.textContent = fmt(s.registers.reduce((count, r) => count + r.sent, 0));
+  ref.eventCount.textContent = s.database ? fmt(s.database.total) : "—";
+  ref.pendingCount.textContent = s.database ? `${fmt(s.database.pending)} pending` : "Connecting";
   const sensor = s.sensor || {};
 
   if (sensor.on && sensor.temp_c !== null) {
@@ -319,42 +323,23 @@ function renderStore(s, now) {
     ref.therm.dataset.state = "off";
   }
 
-  const display = s.display || {};
-  const w = display.window;
-  const fresh = w && now / 1000 - w.received_at < 25;
+  ref.telemetry.dataset.state = sensor.on ? "on" : "off";
+  ref.telemetryValue.textContent = sensor.on && sensor.temp_c !== null
+    ? `${sensor.temp_c.toFixed(1)}°C · till heartbeats` : "Climate sensor off";
 
-  if (!s.edge.jobs["pos-guard"]) {
-    ref.wk.textContent = "window display";
-    ref.wv.textContent = "Pipeline stopped";
-    ref.wn.textContent = "";
-  } else if (fresh && w.by_category && w.by_category.length) {
-    const top = w.by_category[0];
+  const silent = Object.values(s.display?.roster || {}).filter((r) => r.status === "silent");
 
-    const before = (display.previous && display.previous.by_category || [])
-      .find((c) => c.category === top.category);
-
-    ref.wv.textContent = top.category;
-    ref.wk.textContent = "top seller now";
-    ref.wn.textContent = !before || top.units > before.units ? "↑ rising" : "steady";
-  } else {
-    ref.wk.textContent = "window display";
-    ref.wv.textContent = "waiting for sales";
-    ref.wn.textContent = "";
-  }
-
-  const silent = Object.values(display.roster || {})
-    .filter((r) => r.status === "silent").map((r) => tillName(r.register_id));
-
-  ref.wa.textContent = silent.length ? `${silent.join(", ")} silent` : "";
+  if (s.edge.jobs["pos-guard"] && silent.length) ref.telemetryValue.textContent += ` · ${silent.length} silent till${silent.length === 1 ? "" : "s"}`;
 
   const es = edgeState(s);
   ref.edge.dataset.state = es;
   const status = es === "off" ? "Stopped" : es === "half" ? "Partial" : "Running";
 
   if (ref.status.textContent !== status) ref.status.textContent = status;
-  ref.jobs.textContent = es === "half"
-    ? `${s.edge.jobs["pos-guard"] ? "pos-uplink" : "pos-guard"} stopped`
-    : `${es === "on" ? 2 : 0} / 2 running`;
+  ref.collectJob.dataset.running = String(Boolean(s.edge.jobs["pos-guard"]));
+  ref.uplinkJob.dataset.running = String(Boolean(s.edge.jobs["pos-uplink"]));
+  ref.collectJob.title = `Collect from database and clean telemetry: ${s.edge.jobs["pos-guard"] ? "running" : "stopped"}`;
+  ref.uplinkJob.title = `Send to warehouse: ${s.edge.jobs["pos-uplink"] ? "running" : "stopped"}`;
   ref.qNum.textContent = s.queue === null ? "—" : fmt(s.queue);
   ref.queue.dataset.state = s.queue > 0 && s.link.cut ? "warn" : "ok";
   ref.bNum.textContent = fmt(s.quarantined);
@@ -403,6 +388,74 @@ function renderWarehouse(wh) {
   $("wh-scanned").textContent = scan.rows_scanned ? "every row scanned" : "nothing landed yet";
   $("wh-multi").textContent = fmt(wh.shoppers_multi_store);
   $("wh-online").textContent = fmt(wh.online_matched);
+  renderFeed(wh);
+}
+
+let feedRows = 0;
+
+function showReceivedRecord(record) {
+  if (recordRequest) recordRequest.abort();
+  $("record-title").textContent = "Warehouse record";
+  $("record-message").textContent = `${record.context?.store_name || record.context?.store_id} · ${record.txn_id}`;
+  highlightJson(record);
+  $("record-code").hidden = false;
+  recordDialog.showModal();
+}
+
+function renderFeed(wh) {
+  const list = $("event-list");
+  const receipts = wh.recent_receipts || [];
+  const rows = Number(wh.rows || 0);
+  const changed = rows !== feedRows;
+
+  if (rows < feedRows) list.replaceChildren();
+  feedRows = rows;
+  $("feed-count").textContent = `${fmt(rows)} received`;
+  const latest = receipts[0];
+
+  const status = latest
+    ? `Last arrival ${new Date(latest.received_at * 1000).toLocaleTimeString()} · newest first`
+    : "No records received yet";
+
+  if ($("feed-status").textContent !== status) $("feed-status").textContent = status;
+
+  if (!receipts.length) {
+    if (!list.querySelector(".feed-empty")) {
+      list.replaceChildren(h("li", "feed-empty", "Records appear here when Expanso sends them to the warehouse."));
+    }
+
+    return;
+  }
+
+  const empty = list.querySelector(".feed-empty");
+
+  if (empty) empty.remove();
+  const known = new Set([...list.children].map((node) => node.dataset.txn));
+  const oldHeight = list.scrollHeight;
+  const oldTop = list.scrollTop;
+
+  for (const arrival of receipts.toReversed()) {
+    const record = arrival.record;
+
+    if (known.has(record.txn_id)) continue;
+    const item = h("li", "feed-event");
+    item.dataset.txn = record.txn_id;
+    const button = h("button", "feed-record");
+    button.type = "button";
+    const context = record.context || {};
+    const heading = h("span", "feed-event-head");
+    heading.append(h("b", "", context.store_name || context.store_id), h("span", "data", money(record.total_cents, record.currency)));
+    button.append(heading, h("span", "feed-basket", basketText(record.basket)), h("span", "feed-join data", record.join_id), h("span", "feed-time", `${new Date(arrival.received_at * 1000).toLocaleTimeString()} · ${tillName(context.register_id)} · view JSON`));
+    button.addEventListener("click", () => showReceivedRecord(record));
+    item.append(button);
+    list.prepend(item);
+  }
+
+  const insertedHeight = list.scrollHeight - oldHeight;
+
+  while (list.children.length > 60) list.lastElementChild.remove();
+
+  if (oldTop > 8 && changed) list.scrollTop = oldTop + insertedHeight;
 }
 
 const REASONS = [
@@ -521,14 +574,16 @@ async function showStoreRecord(sid) {
     return r.last_txn && (!found || r.last_activity > found.last_activity) ? r : found;
   }, null);
 
-  if (!latest) {
+  const txn = shop.database?.last_txn || latest?.last_txn;
+
+  if (!txn) {
     $("record-message").textContent = "No till record has been collected in this store yet.";
 
     return;
   }
 
   try {
-    const response = await fetch(`/api/inspect?txn=${encodeURIComponent(latest.last_txn)}`, { signal: request.signal });
+    const response = await fetch(`/api/inspect?txn=${encodeURIComponent(txn)}`, { signal: request.signal });
 
     if (!response.ok) throw new Error(String(response.status));
     const data = await response.json();
@@ -677,8 +732,8 @@ function measureLanes(sid) {
 
   if (!ref) return null;
   const e = rel(ref.edge);
-  const wh = rel($("warehouse"));
-  const win = rel(ref.win);
+  const wh = rel($("warehouse").parentElement);
+  const telemetry = rel(ref.telemetryIcon);
   const order = [...refs.stores.keys()].indexOf(sid);
   const n = refs.stores.size;
   const whY = wh.y + wh.h * ((order + 0.5) / n);
@@ -703,7 +758,7 @@ function measureLanes(sid) {
     toWarehouse: warehousePath,
     toBin: cubic({ x: e.x, y: e.y + e.h * 0.4 }, { x: b.x + b.w / 2, y: b.y + b.h / 2 }, -18),
     toDisk: cubic({ x: e.x + e.w, y: e.y + e.h * 0.4 }, { x: q.x + q.w / 2, y: q.y + q.h / 2 }, -14),
-    toWindow: cubic({ x: e.x, y: e.y + 10 }, { x: win.x + win.w, y: win.y + 8 }, -26),
+    telemetryToEdge: cubic({ x: telemetry.x + telemetry.w, y: telemetry.y + telemetry.h / 2 }, { x: e.x, y: e.y + e.h * 0.7 }, 0),
     edge: e,
   };
 }
@@ -815,13 +870,12 @@ function flows(cur, old, now) {
       if (sent + refused > 0) ringUntil.set(r.id, now + RING_MS);
       const lane = tillLane(r.id, s.store_id);
       spawn(sent, lane, colors.raw, { dur: 900, soft: 0.15 });
-      spawn(refused, lane, colors.raw, { dur: 900, stopAt: 0.9, soft: 0.15 });
+
     }
 
     if (!L) continue;
 
-    const accepted = s.registers.reduce((count, r) => count + r.sent, 0)
-      - o.registers.reduce((count, r) => count + r.sent, 0);
+    const accepted = (s.database?.collected || 0) - (o.database?.collected || 0);
 
     spawn(accepted, L.inputToEdge, colors.raw, { dur: 650, r: 4 });
     const landed = s.warehouse_rows - o.warehouse_rows;
@@ -829,8 +883,8 @@ function flows(cur, old, now) {
     spawn(s.quarantined - o.quarantined, L.toBin, colors.err, { dur: 700, r: 4.5 });
 
     if (s.link.cut) spawn((s.queue || 0) - (o.queue || 0), L.toDisk, colors.warn, { dur: 700, r: 4.5 });
-    const shown = (s.display.updates || 0) - (o.display.updates || 0);
-    spawn(shown, L.toWindow, colors.ok, { dur: 1000, r: 3 });
+    const polled = (s.sensor.sent || 0) - (o.sensor.sent || 0);
+    spawn(polled, L.telemetryToEdge, colors.raw, { dur: 800, r: 3 });
 
   }
 }
@@ -869,10 +923,11 @@ function drawGuides() {
       if (lane) guide(lane, colors.raw, r.state === "open" ? 0.22 : 0.08);
     }
 
-    guide(L.inputToEdge, colors.raw, on ? 0.4 : 0.2);
+    guide(L.inputToEdge, on ? colors.raw : colors.muted, 0.4);
+    guide(L.telemetryToEdge, on ? colors.raw : colors.muted, 0.4);
 
     if (s.link.cut) guide(L.toWarehouse, colors.warn, 0.7, [3, 6]);
-    else guide(L.toWarehouse, colors.ok, on ? 0.45 : 0.2);
+    else guide(L.toWarehouse, on ? colors.ok : colors.muted, on ? 0.45 : 0.2);
 
   }
 }
