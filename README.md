@@ -30,23 +30,22 @@ Edge node in each store, and a warehouse behind the DMZ, and shows:
 
 ```
  store N (x4)                                         core network (DMZ)
- tills -- signed swipe --> pos-guard --> pos-uplink -- WAN --> warehouse
+ tills --> store SQLite --> pos-guard --> pos-uplink -- WAN --> warehouse
  sensor, heartbeats -->       |  scan, join ID, strip,     (SQLite + API)
                               |  context, card-number block
                               +--> quarantine file (stays in the store)
-                              +--> window display (10 s sales window)
        both jobs deployed from Expanso Cloud, selector role=pos-store
 ```
 
 Everything between a till and the warehouse is pipeline config:
 
-- [`pipelines/pos-guard.yaml`](pipelines/pos-guard.yaml): `http_server`
-  inputs for swipes and store telemetry, signature check with
+- [`pipelines/pos-guard.yaml`](pipelines/pos-guard.yaml): `http_client`
+  inputs that pull the store database and separate telemetry endpoint, signature check with
   `hash("hmac_sha256")`, schema, range and injection checks, the join ID,
   field stripping, store context, the store temperature from a `memory`
   cache fed by the sensor, a `collapse`-based card-number block, a
   silent-till roster on a 5-second timer, and a `switch` output to the
-  quarantine file, the uplink and the window display.
+  quarantine file and the uplink.
 - [`pipelines/pos-uplink.yaml`](pipelines/pos-uplink.yaml): a `sqlite`
   buffer on the store's disk, and a `retry` output that holds a failed batch
   instead of handing it back, so each record crosses the WAN once.
@@ -105,3 +104,20 @@ throughout.
   the lines; check the Logs view in the Cloud console.
 - **The board stays grey after starting the jobs.** It shows what Cloud
   reports, every 3 s; `/api/state` carries any Cloud error under `cloud`.
+
+Store events are committed to `.runtime/store-events.db` even with both
+Cloud jobs stopped. `pos-guard` polls the store API, processes each leased
+record, and acknowledges it only after its output succeeds. Clean output
+is accepted by the durable uplink queue; quarantine remains in the store.
+An interrupted lease becomes available after 60 seconds. Delivery is at
+least once, and the warehouse deduplicates transaction IDs. Raw history
+remains available to the store database inspector after collection.
+
+The source records their capture time. The signature and 120-second age
+check compare the signed event time with that capture time, so an old
+backlog remains valid while records already stale on arrival are rejected.
+Telemetry follows its own polling endpoint and retains device timestamps;
+polling a silent device does not make its readings fresh.
+
+`just up` is an explicit clean start and clears source history. Restarting
+only the stores process preserves the database and its pending events.

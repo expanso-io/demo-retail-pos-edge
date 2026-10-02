@@ -8,8 +8,6 @@ cd "$ROOT"
 PORT="${PORT:-8023}"
 WAREHOUSE_PORT=8026
 STORES_PORT=8027
-SWIPE_BASE=7300      # store N's registers post swipes to 7300+N
-TELEMETRY_BASE=7320  # store N's sensor and register heartbeats
 OUTBOX_BASE=7340     # store N's pos-guard -> pos-uplink, on the node
 WAN_BASE=7360        # store N's WAN link to the warehouse
 DISPLAY_BASE=7380    # store N's window display
@@ -167,8 +165,7 @@ edge_up() {
   REGISTER_KEYS="$(REGISTER_KEY_SEED="$(env_get REGISTER_KEY_SEED)" \
     uv run --quiet -s scripts/stores.py keys "$store")" \
   JOIN_ID_KEY="$(env_get JOIN_ID_KEY)" \
-  SWIPE_ADDR="127.0.0.1:$((SWIPE_BASE + n))" \
-  TELEMETRY_ADDR="127.0.0.1:$((TELEMETRY_BASE + n))" \
+  STORE_SOURCE_URL="http://127.0.0.1:$STORES_PORT" \
   OUTBOX_ADDR="127.0.0.1:$((OUTBOX_BASE + n))" \
   OUTBOX_URL="http://127.0.0.1:$((OUTBOX_BASE + n))/outbox" \
   DISPLAY_URL="http://127.0.0.1:$((DISPLAY_BASE + n))" \
@@ -217,6 +214,8 @@ deploy_local() {
 
 wipe_store_state() {
   local store dir
+  rm -f "$RUNTIME/store-events.db" "$RUNTIME/store-events.db-wal" \
+    "$RUNTIME/store-events.db-shm"
   for store in "${STORES[@]}"; do
     dir="$(node_dir "$store")"
     rm -f "$dir/quarantine.jsonl" "$dir/uplink-queue.db"*
@@ -310,18 +309,30 @@ $states"
 
 # A node restarts the jobs it last ran from its own data dir and keeps them
 # running until its next reconcile with Cloud (every 30 s). Wait until every
-# store's ingest is closed, so nothing lands before the presenter starts them.
+# store's executions stop, including the guard's outbound source polling.
 wait_ingest_closed() {
-  local store n open=1
+  local store n node nodes running open=1
+  local -a filters=()
+  nodes="$(cloud_cli node list -f json -L role=pos-store)" \
+    || die "could not verify store nodes"
+  while IFS= read -r node; do
+    [[ -n "$node" ]] && filters+=(--node-id "$node")
+  done < <(jq -r '.[].id' <<<"$nodes")
+  [[ "${#filters[@]}" -gt 0 ]] || die "no store node IDs to verify"
   say "  waiting for any job a node cached from its last run to stop..."
   sleep 35
   for _ in $(seq 1 60); do
     open=0
     for store in "${STORES[@]}"; do
       n="$(store_n "$store")"
-      port_busy "$((SWIPE_BASE + n))" && open=1
       port_busy "$((OUTBOX_BASE + n))" && open=1
     done
+    if running="$(cloud_cli execution list --state running --limit 1000 \
+      "${filters[@]}" -f json)"; then
+      jq -e 'type == "array" and length == 0' <<<"$running" >/dev/null || open=1
+    else
+      open=1
+    fi
     [[ "$open" == 0 ]] && return 0
     sleep 2
   done
@@ -332,7 +343,7 @@ wait_ingest_closed() {
 
 # The start command. Starts from nothing: warehouse empty, both jobs deployed
 # to Expanso Cloud but stopped, a node per store connected, registers ringing
-# with nothing listening, the board up. The presenter starts pos-guard and
+# into their store databases, the board up. The presenter starts pos-guard and
 # pos-uplink in the Expanso Cloud console; the board shows it from Cloud.
 cmd_up() {
   local store foreign
@@ -357,7 +368,7 @@ workspace would land on the store nodes: $(tr '\n' ' ' <<<"$foreign")
   board_up
   say ""
   say "ready: pos-guard and pos-uplink are stopped, so the registers ring up"
-  say "with nothing at the edge. Start both in the Expanso Cloud console."
+  say "into store databases. Start both in the Expanso Cloud console."
 }
 
 # The same demo with a local control plane per node and no Cloud account.

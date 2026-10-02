@@ -39,7 +39,7 @@ RUNTIME = ROOT / ".runtime"
 CONFIG = ROOT / "config" / "stores.json"
 STORES_URL = "http://127.0.0.1:8027"
 WAREHOUSE_URL = "http://127.0.0.1:8026"
-SWIPE_BASE, OUTBOX_BASE = 7300, 7340
+OUTBOX_BASE = 7340
 JOBS = ("pos-guard", "pos-uplink")
 CONTROL_VERBS = {"register", "fault", "sensor", "link", "reset"}
 
@@ -232,7 +232,8 @@ def build_state(cloud: CloudWatch, scenario: Scenario) -> dict:
         sid = store["store_id"]
         count, recent = quarantine(sid)
         feed += recent
-        local = {"pos-guard": listening(SWIPE_BASE + n), "pos-uplink": listening(OUTBOX_BASE + n)}
+        local = {"pos-guard": time.time() - store.get("sensor", {}).get("last_poll", 0) < 10,
+                 "pos-uplink": listening(OUTBOX_BASE + n)}
         node = cl.get("nodes", {}).get(sid, {}) if current == "cloud" else {}
         store["edge"] = {
             "connected": node.get("connected", current == "local" and any(local.values())),
@@ -251,7 +252,8 @@ def build_state(cloud: CloudWatch, scenario: Scenario) -> dict:
         "stores": sim.get("stores", []),
         "warehouse": {k: wh.get(k) for k in (
             "rows", "shoppers", "shoppers_multi_store", "online_profiles", "online_matched",
-            "countries", "card_scan", "duplicates_ignored", "rows_without_temperature")},
+            "countries", "card_scan", "duplicates_ignored", "rows_without_temperature",
+            "recent_receipts")},
         "latest_txn": (wh.get("recent") or [{}])[0].get("txn_id"),
         "quarantine": feed[:10],
         "auto": scenario.on,

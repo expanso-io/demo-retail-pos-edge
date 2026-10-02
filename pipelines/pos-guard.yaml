@@ -19,19 +19,26 @@ config:
   input:
     broker:
       inputs:
-        - label: registers
-          http_server:
-            address: "${SWIPE_ADDR}"
-            path: /swipe
-            allowed_verbs: [POST]
+        - label: store_database
+          http_client:
+            url: "${STORE_SOURCE_URL:http://127.0.0.1:8027}/events/${STORE_ID}"
+            verb: GET
+            rate_limit: database_poll
           processors:
-            - mapping: meta kind = "swipe"
+            - unarchive:
+                format: json_array
+            - mapping: |
+                meta kind = "swipe"
+                meta captured_at = this.captured_at
+                root = this.record
         - label: store_telemetry
-          http_server:
-            address: "${TELEMETRY_ADDR}"
-            path: /telemetry
-            allowed_verbs: [POST]
+          http_client:
+            url: "${STORE_SOURCE_URL:http://127.0.0.1:8027}/telemetry/${STORE_ID}"
+            verb: GET
+            rate_limit: telemetry_poll
           processors:
+            - unarchive:
+                format: json_array
             - mapping: meta kind = "telemetry"
         - label: roster_tick
           generate:
@@ -39,9 +46,6 @@ config:
             mapping: 'root = {"tick": "roster"}'
           processors:
             - mapping: meta kind = "tick"
-  # Registers get their OK as soon as the swipe is in the node's memory.
-  buffer:
-    memory: {}
   pipeline:
     processors:
       - switch:
@@ -52,7 +56,6 @@ config:
             processors:
               - resource: check_roster
           - processors:
-              - resource: mark_register_seen
               - resource: scan_swipe
               - switch:
                   - check: this.scan.reasons.length() > 0
@@ -62,45 +65,55 @@ config:
                       - resource: join_id_and_strip
                       - resource: add_store_temperature
                       - resource: block_card_numbers
+  # A source acknowledgement follows successful durable output. Leases retry
+  # after interruption; the warehouse deduplicates transaction IDs.
   output:
-    switch:
-      cases:
-        # Stays in the store: nothing that failed a scan reaches the DMZ.
-        - check: '@route == "quarantine"'
-          output:
-            file:
-              path: "${QUARANTINE_FILE}"
-              codec: lines
-        - check: '@route == "roster"'
-          output:
-            http_client:
-              url: "${DISPLAY_URL}/roster"
-              retries: 10
-              retry_period: 1s
-              max_retry_backoff: 5s
-        - check: '@route == "clean"'
-          output:
-            broker:
-              pattern: fan_out
-              outputs:
-                - label: uplink_queue
+    broker:
+      pattern: fan_out_sequential
+      outputs:
+        - switch:
+            cases:
+              # Stays in the store: nothing that failed a scan reaches the DMZ.
+              - check: '@route == "quarantine"'
+                output:
+                  file:
+                    path: "${QUARANTINE_FILE}"
+                    codec: lines
+              - check: '@route == "roster"'
+                output:
+                  http_client:
+                    url: "${DISPLAY_URL}/roster"
+                    retries: 10
+                    retry_period: 1s
+                    max_retry_backoff: 5s
+              - check: '@route == "clean"'
+                output:
                   http_client:
                     url: "${OUTBOX_URL}"
                     retries: 10
                     retry_period: 1s
                     max_retry_backoff: 5s
-                - label: store_display
+        - switch:
+            cases:
+              - check: >-
+                  @kind == "swipe" &&
+                  (@route == "clean" || @route == "quarantine")
+                output:
                   http_client:
-                    url: "${DISPLAY_URL}/sales"
+                    url: "${STORE_SOURCE_URL:http://127.0.0.1:8027}/ack/${STORE_ID}"
+                    verb: POST
                     retries: 10
-                    retry_period: 1s
-                    max_retry_backoff: 5s
-                    batching:
-                      period: 10s
-                      processors:
-                        - archive:
-                            format: json_array
-                        - resource: sales_window
+                  processors:
+                    - mapping: root.txn_id = this.txn_id
+  rate_limit_resources:
+    - label: database_poll
+      local:
+        count: 1
+        interval: 500ms
+    - label: telemetry_poll
+      local:
+        count: 1
+        interval: 3s
   cache_resources:
     - label: store_state
       memory:
@@ -111,7 +124,7 @@ config:
       processors:
         - mapping: |
             root = this
-            root.at = now().ts_unix()
+            root.at = this.at
             meta key = if this.type == "climate" { "climate" } else {
               "seen:" + this.register_id
             }
@@ -121,13 +134,6 @@ config:
             key: ${! @key }
             value: ${! content() }
         - mapping: root = deleted()
-    - label: mark_register_seen
-      processors:
-        - cache:
-            resource: store_state
-            operator: set
-            key: seen:${! this.register_id.or("unknown") }
-            value: '${! {"state": "open", "at": now().ts_unix()}.string() }'
     # Every 5 s: is any open register silent? One status per register.
     - label: check_roster
       processors:
@@ -187,7 +193,8 @@ config:
             let required = ["txn_id", "register_id", "ts", "pan", "items", "total_cents", "sig"]
             let missing = $required.filter(f -> $doc.get(f) == null)
             let ts = this.ts.or("1970-01-01T00:00:00Z")
-            let age = (now().ts_unix() - $ts.ts_unix()).abs().catch(999999)
+            let captured = @captured_at.number().catch(0)
+            let age = ($captured - $ts.ts_unix()).abs().catch(999999)
             let total = this.total_cents.or(-2)
             let sum = $items.map_each(i -> i.qty * i.unit_cents).sum().catch(-1)
             let texts = this.collapse().values().filter(v -> v.type() == "string")

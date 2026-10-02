@@ -15,6 +15,8 @@ import hashlib
 import hmac
 import random
 import sys
+import tempfile
+import threading
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -57,6 +59,45 @@ def test_warehouse_scan_finds_card_numbers_anywhere() -> None:
     assert warehouse.card_numbers_in({"a": [{"b": "4539148803436467"}]})
     assert not warehouse.card_numbers_in({"join_id": "jid1_0c027fc5f20cc43fb27dba81",
                                           "local_time": "2026-10-02T05:23:35+02:00"})
+
+
+def test_database_retains_uncollected_records_across_restart() -> None:
+    with tempfile.TemporaryDirectory(dir=ROOT) as directory:
+        path = Path(directory) / "events.db"
+        database = stores.StoreDatabase(path)
+        rec = {"txn_id": "s1-r1-one", "register_id": "s1-r1", "ts": "old"}
+        database.append(rec, None, captured_at=100)
+        database.append(rec, None, captured_at=101)
+        assert database.snapshot("s1") == {
+            "total": 1, "pending": 1, "collected": 0, "last_txn": "s1-r1-one"}
+        assert not database.acknowledge("s1", rec["txn_id"])
+        leased = database.lease("s1", now=200)
+        assert leased == [{"record": rec, "captured_at": 100}]
+        assert database.lease("s1", now=201) == []
+        database.db.close()
+        database = stores.StoreDatabase(path)
+        assert database.snapshot("s1")["pending"] == 1
+        assert database.lease("s1", now=261) == leased
+        assert not database.acknowledge("s2", rec["txn_id"])
+        assert database.acknowledge("s1", rec["txn_id"])
+        assert database.acknowledge("s1", rec["txn_id"])
+        assert database.snapshot("s1")["collected"] == 1
+        assert database.lease("s1", now=400) == []
+        assert database.read(rec["txn_id"])["record"] == rec
+        database.db.close()
+
+
+def test_telemetry_poll_preserves_source_freshness() -> None:
+    world = stores.World.__new__(stores.World)
+    world.telemetry = {"s1": {}}
+    world.telemetry_lock = threading.Lock()
+    world.telemetry_polled = {}
+    world.sensor_sent = stores.collections.Counter()
+    body = {"type": "climate", "temp_c": 22, "at": 100}
+    world.remember_telemetry("s1", "climate", body)
+    assert world.read_telemetry("s1") == [body]
+    assert world.read_telemetry("s1")[0]["at"] == 100
+    assert world.sensor_sent["s1"] == 2
 
 
 def main() -> int:

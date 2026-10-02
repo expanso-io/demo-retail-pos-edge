@@ -10,7 +10,7 @@ register and the warehouse; this process only plays the devices in the
 store and each store's network link:
 
 * registers ring up baskets for a pool of shoppers, sign each swipe with
-  their enrolled key and POST it to their store's edge node; they also send
+  their enrolled key and commit it to their store database; they also record
   a heartbeat every few seconds
 * one climate sensor per store reports the temperature
 * one window display per store receives what the edge sends back
@@ -36,6 +36,8 @@ import math
 import os
 import random
 import socket
+import sqlite3
+import uuid
 import sys
 import threading
 import time
@@ -47,8 +49,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG = ROOT / "config" / "stores.json"
 
-SWIPE_BASE = 7300
-TELEMETRY_BASE = 7320
 WAN_BASE = 7360
 DISPLAY_BASE = 7380
 WAREHOUSE_PORT = 8026
@@ -141,6 +141,66 @@ def post_json(url: str, body: dict, timeout: float = 4.0) -> int:
         return resp.status
 
 
+class StoreDatabase:
+    """Durable source records. Only the pipeline acknowledges collection."""
+
+    def __init__(self, path: Path):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        self.lock = threading.Lock()
+        self.db = sqlite3.connect(path, check_same_thread=False)
+        os.chmod(path, 0o600)
+        self.db.execute("PRAGMA journal_mode=WAL")
+        self.db.execute("PRAGMA synchronous=FULL")
+        self.db.execute("""CREATE TABLE IF NOT EXISTS events (
+            txn_id TEXT PRIMARY KEY, store_id TEXT NOT NULL,
+            record TEXT NOT NULL, fault TEXT, captured_at REAL NOT NULL,
+            lease_until REAL NOT NULL DEFAULT 0, collected_at REAL)""")
+        self.db.commit()
+
+    def append(self, rec: dict, fault: str | None, captured_at: float | None = None) -> None:
+        at = time.time() if captured_at is None else captured_at
+        with self.lock, self.db:
+            self.db.execute(
+                "INSERT OR IGNORE INTO events "
+                "(txn_id,store_id,record,fault,captured_at) VALUES (?,?,?,?,?)",
+                (rec["txn_id"], rec["register_id"].split("-r")[0],
+                 json.dumps(rec), fault, at))
+
+    def read(self, txn: str) -> dict | None:
+        with self.lock:
+            row = self.db.execute(
+                "SELECT record,fault,captured_at FROM events WHERE txn_id=?", (txn,)).fetchone()
+        return {"record": json.loads(row[0]), "fault": row[1], "at": row[2]} if row else None
+
+    def lease(self, sid: str, now: float | None = None) -> list[dict]:
+        at = time.time() if now is None else now
+        with self.lock, self.db:
+            rows = self.db.execute(
+                "SELECT txn_id,record,captured_at FROM events "
+                "WHERE store_id=? AND collected_at IS NULL AND lease_until<=? "
+                "ORDER BY captured_at,txn_id LIMIT 20", (sid, at)).fetchall()
+            self.db.executemany("UPDATE events SET lease_until=? WHERE txn_id=?",
+                                [(at + 60, row[0]) for row in rows])
+        return [{"record": json.loads(row[1]), "captured_at": row[2]} for row in rows]
+
+    def acknowledge(self, sid: str, txn: str) -> bool:
+        with self.lock, self.db:
+            cursor = self.db.execute(
+                "UPDATE events SET collected_at=COALESCE(collected_at,?) "
+                "WHERE store_id=? AND txn_id=? AND lease_until>0", (time.time(), sid, txn))
+            return cursor.rowcount == 1
+
+    def snapshot(self, sid: str) -> dict:
+        with self.lock:
+            total, collected = self.db.execute(
+                "SELECT COUNT(*),COUNT(collected_at) FROM events WHERE store_id=?", (sid,)).fetchone()
+            last = self.db.execute(
+                "SELECT txn_id FROM events WHERE store_id=? "
+                "ORDER BY captured_at DESC,txn_id DESC LIMIT 1", (sid,)).fetchone()
+        return {"total": total, "pending": total - collected,
+                "collected": collected, "last_txn": last[0] if last else None}
+
+
 class Register:
     def __init__(self, world: World, store: dict, register_id: str, key: str):
         self.world = world
@@ -148,8 +208,8 @@ class Register:
         self.id = register_id
         self.key = key
         self.state = "open"          # open | closed | crashed
-        self.sent = 0                # accepted by the edge node
-        self.refused = 0             # nothing listening (job not running)
+        self.sent = 0                # durably stored at the store
+        self.refused = 0             # local database write failures
         self.faults = 0              # faulty swipes this register produced
         self.pending_fault: str | None = None
         self.last_txn: str | None = None
@@ -158,10 +218,6 @@ class Register:
         self.last_fault_at = 0.0
         self.seq = 0
         self.lock = threading.Lock()
-
-    @property
-    def swipe_url(self) -> str:
-        return f"http://127.0.0.1:{SWIPE_BASE + self.store['n']}/swipe"
 
     def pick_items(self, rng: random.Random, temp_c: float | None) -> list[dict]:
         t = 22.0 if temp_c is None else temp_c
@@ -233,21 +289,13 @@ class Register:
                 self.faults += 1
                 self.last_fault_kind = fault
                 self.last_fault_at = time.time()
-        try:
-            post_json(self.swipe_url, rec)
-            with self.lock:
-                self.sent += 1
-        except (urllib.error.URLError, OSError, TimeoutError):
-            with self.lock:
-                self.refused += 1
+        with self.lock:
+            self.sent += 1
 
     def heartbeat(self, state: str) -> None:
-        body = {"type": "heartbeat", "register_id": self.id, "state": state}
-        try:
-            post_json(f"http://127.0.0.1:{TELEMETRY_BASE + self.store['n']}/telemetry",
-                      body, timeout=2)
-        except (urllib.error.URLError, OSError, TimeoutError):
-            pass
+        self.world.remember_telemetry(self.store["store_id"], self.id,
+            {"type": "heartbeat", "register_id": self.id, "state": state,
+             "at": time.time()})
 
     def run(self) -> None:
         rng = random.Random(hash(self.id) ^ int(time.time()))
@@ -412,7 +460,7 @@ class World:
         for n, store in enumerate(self.stores, 1):
             store["n"] = n
         self.mean_gap_s = mean_gap_s
-        self.boot = format(int(time.time()) % 46656, "03x")
+        self.boot = uuid.uuid4().hex[:12]
         self.stopping = threading.Event()
         rng = random.Random(7)
         self.shoppers = make_shoppers(self.stores, 480, rng)
@@ -430,8 +478,10 @@ class World:
         self.displays = {s["store_id"]: Display(s["store_id"]) for s in self.stores}
         self.links = {s["store_id"]: WanLink(WAN_BASE + s["n"], WAREHOUSE_PORT)
                       for s in self.stores}
-        self.raw: collections.OrderedDict[str, dict] = collections.OrderedDict()
-        self.raw_lock = threading.Lock()
+        self.database = StoreDatabase(runtime / "store-events.db")
+        self.telemetry: dict[str, dict[str, dict]] = {s["store_id"]: {} for s in self.stores}
+        self.telemetry_lock = threading.Lock()
+        self.telemetry_polled: dict[str, float] = {}
         self.started = time.time()
         # The central side's online profiles: join IDs only, never a card.
         runtime.mkdir(parents=True, exist_ok=True)
@@ -456,22 +506,26 @@ class World:
         return round(store["base_temp_c"] + drift, 1)
 
     def remember_raw(self, rec: dict, fault: str | None) -> None:
-        with self.raw_lock:
-            self.raw[rec["txn_id"]] = {"record": rec, "fault": fault, "at": time.time()}
-            while len(self.raw) > 600:
-                self.raw.popitem(last=False)
+        self.database.append(rec, fault)
+
+    def remember_telemetry(self, sid: str, key: str, body: dict) -> None:
+        with self.telemetry_lock:
+            self.telemetry[sid][key] = body
+
+    def read_telemetry(self, sid: str) -> list[dict]:
+        with self.telemetry_lock:
+            self.sensor_sent[sid] += 1
+            self.telemetry_polled[sid] = time.time()
+            return list(self.telemetry[sid].values())
 
     def sensor_loop(self, store: dict) -> None:
-        url = f"http://127.0.0.1:{TELEMETRY_BASE + store['n']}/telemetry"
+        sid = store["store_id"]
         while not self.stopping.is_set():
-            temp = self.sensor_temp(store["store_id"])
+            temp = self.sensor_temp(sid)
             if temp is not None:
-                try:
-                    post_json(url, {"type": "climate", "sensor": f"{store['store_id']}-climate",
-                                    "temp_c": temp}, timeout=2)
-                    self.sensor_sent[store["store_id"]] += 1
-                except (urllib.error.URLError, OSError, TimeoutError):
-                    pass
+                self.remember_telemetry(sid, "climate",
+                    {"type": "climate", "sensor": f"{sid}-climate",
+                     "temp_c": temp, "at": time.time()})
             self.stopping.wait(SENSOR_S)
 
     def start(self) -> None:
@@ -523,7 +577,10 @@ class World:
                 "country": store["country"],
                 "registers": [self.registers[r].snapshot() for r in register_ids(store)],
                 "sensor": {"on": self.sensor_on[sid], "temp_c": self.sensor_temp(sid),
-                           "sent": self.sensor_sent[sid]},
+                           "sent": self.sensor_sent[sid],
+                           "endpoint": f"/telemetry/{sid}",
+                           "last_poll": self.telemetry_polled.get(sid, 0)},
+                "database": self.database.snapshot(sid),
                 "display": self.displays[sid].snapshot(),
                 "link": self.links[sid].snapshot(),
             })
@@ -586,9 +643,12 @@ def serve(args: argparse.Namespace) -> int:
             if self.path == "/state":
                 self.reply(200, world.state())
             elif self.path.startswith("/raw/"):
-                with world.raw_lock:
-                    item = world.raw.get(self.path[5:])
+                item = world.database.read(self.path[5:])
                 self.reply(200 if item else 404, item or {"error": "not found"})
+            elif self.path.startswith("/events/") and self.path[8:] in world.sensor_on:
+                self.reply(200, world.database.lease(self.path[8:]))
+            elif self.path.startswith("/telemetry/") and self.path[11:] in world.sensor_on:
+                self.reply(200, world.read_telemetry(self.path[11:]))
             else:
                 self.reply(404, {"error": "not found"})
 
@@ -596,7 +656,11 @@ def serve(args: argparse.Namespace) -> int:
             n = int(self.headers.get("Content-Length") or 0)
             try:
                 body = json.loads(self.rfile.read(n) or b"{}")
-                self.reply(200, world.control(self.path, body))
+                if self.path.startswith("/ack/"):
+                    ok = world.database.acknowledge(self.path[5:], body["txn_id"])
+                    self.reply(200 if ok else 404, {"collected": ok})
+                else:
+                    self.reply(200, world.control(self.path, body))
             except (KeyError, ValueError, json.JSONDecodeError) as exc:
                 self.reply(400, {"error": str(exc)})
 
