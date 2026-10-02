@@ -260,8 +260,7 @@ main { padding: 12px 3vw 70px; display: grid; gap: 12px; }
   padding: 8px 10px;
   min-width: 0;
 }
-.edge[data-state="off"] { border-color: var(--line-strong); }
-.edge[data-state="off"] .e-head, .edge[data-state="off"] .e-jobs { filter: grayscale(1); opacity: 0.6; }
+.edge[data-state="off"] { border-color: var(--line-strong); filter: grayscale(1); opacity: 0.55; }
 .e-head { display: flex; align-items: center; gap: 6px; color: var(--accent); font-weight: 800; }
 .e-head .mark { width: 22px; height: 14px; }
 .light { width: 10px; height: 10px; border-radius: 50%; background: var(--light-off); flex: none; }
@@ -379,6 +378,8 @@ kbd { font-size: 13px; border: 1px solid var(--line); border-radius: 2px; paddin
   .tills { grid-column: 1 / -1; justify-content: flex-start; }
   .cols { grid-template-columns: minmax(0, 1fr); }
   .mast .sub { display: none; }
+  .qlist li { grid-template-columns: auto minmax(0, 1fr); }
+  .qwhere { grid-column: 1 / -1; }
 }
 @media (max-width: 380px) {
   main { padding-left: 16px; padding-right: 16px; }

@@ -1,108 +1,131 @@
-# Recording script — <what this demo shows>
+# Recording script: card data stays in the store
 
-One take, about 2:00 end to end, with roughly 110 seconds of speech in it. Five
-beats. Every screen state below is produced by the demo on its own clock; the
-only thing the operator does is start it.
-
-Copy this to `RECORDING_SCRIPT.md` in the demo root and fill it in. `just
-video-check` fails without it.
+One take, about 2:00 end to end, with roughly 110 seconds of speech. Five
+beats. The registers, sensors and links run on their own clock; the
+operator starts the two jobs in Expanso Cloud and presses presenter keys on
+the board.
 
 ## Before you roll
 
 ```bash
-just up      # warm-up: prove it renders and the Edge is healthy
+just up-local   # warm-up: proves the nodes, jobs and board render
 just down
+just up         # the take: jobs deployed to Expanso Cloud and stopped
 ```
 
-Do the warm-up. The first `uv run` of a session resolves dependencies and the
-first Edge start builds its data directory. Neither belongs in a take.
+`just up` starts from nothing: warehouse empty, a node per store connected
+to Expanso Cloud, `pos-guard` and `pos-uplink` deployed but stopped, the
+tills already ringing with nothing listening. Open the board at
+`http://localhost:8023` in an app-mode window, and the Expanso Cloud
+console (set to light) on the Jobs page in a second window.
 
-Then run the environment preflight — Chrome in `--app` mode, display scaled
-down, Cloud console matched to the demo's declared theme, notifications off:
+Then run the environment preflight:
 
 ```bash
-~/.claude/skills/demo-video-verify/scripts/dvv preflight --url <DEMO_URL>
+~/.claude/skills/demo-video-verify/scripts/dvv preflight \
+  --url http://localhost:8023
 ```
 
-Recording surface: `<DEMO_URL>` full screen.
+Recording surface: the board full screen, cutting to the Cloud console for
+beat 2.
 
-**Timing.** Offsets are seconds after `<the anchor event>`. The driver waits for
-that anchor rather than guessing, so a slipped take runs longer but never
-desynchronises.
+**Presenter keys** (board focused): `1`-`4` pick a store, `t` tamper a
+till's swipe, `l` a till writes the card number into a receipt note, `x`
+crash a till, `s` toggle the store's temperature sensor, `n` drop or
+restore the store's network, `r` reset everything, `p` show the key bar.
 
-**Pace.** The spoken text below is ~280 words. Beat spacing assumes a brisk 155
-words a minute. Slow down and the beats arrive before you do.
-
----
-
-## Beat 1 — <NAME> · 0:00–0:15
-
-**Screen state before you speak.** <What must be true on screen.>
-
-**Driver** — <command, or "nothing to type">
-
-> <The contradiction. Not a preamble — state the problem as something that
-> cannot be true, or state the conclusion. Never "So one thing we get a lot of
-> questions about is…">
+**Timing.** Offsets are seconds after the jobs show running on the board.
 
 ---
 
-## Beat 2 — <NAME> · 0:15–0:40
+## Beat 1: THE TRAP · 0:00-0:15
 
-**Screen state before you speak.** <...>
+**Screen state before you speak.** Four stores, twelve tills ringing up.
+Blue swipes leave every till and fade at a grey Expanso node. Warehouse:
+0 records.
 
-> <One sentence per idea. Name the pain before the feature.>
+**Driver**: nothing to type.
 
----
-
-## Beat 3 — <NAME> · 0:40–1:05
-
-**Screen state before you speak.** <The failure mode firing — link drop,
-bad reading quarantined, threshold crossed. Something going wrong on purpose is
-the most persuasive thing in any demo.>
-
-> <...>
+> A retail and payments group wants its card data to make online search and
+> recommendations smarter. But card data cannot leave the card business.
+> Every one of these swipes carries a card number.
 
 ---
 
-## Beat 4 — <NAME> · 1:05–1:30
+## Beat 2: THE THING, LIVE · 0:15-0:45
 
-**Screen state before you speak.** <The payoff, with the headline number
-rendered.>
+**Screen state before you speak.** Cut to the Cloud console; start
+`pos-guard` and `pos-uplink`. Back on the board the four nodes turn green,
+the Cloud box reads `pos-guard 4/4 · pos-uplink 4/4 running`, and green
+records cross the DMZ.
 
-> <**Say the number out loud, slowly, then stop talking for a beat.** Every
-> figure rendered on screen must be spoken. If it isn't worth saying, don't
-> render it.>
+**Driver**: start both jobs in the Expanso Cloud console.
+
+> Expanso Cloud pushes two jobs to a node in every store. Look at one swipe.
+> On the left, what the till sent: card number, cardholder, cashier. On the
+> right, what left the store: a join ID, the basket, the store, the till,
+> local time and the store's temperature. The card number became a one-way
+> keyed hash, the same algorithm at every store, defined once centrally.
+> Riverside is at twenty-nine degrees, and its window display is already
+> selling cold drinks.
 
 ---
 
-## Beat 5 — CLOSE · 1:30–2:00
+## Beat 3: THE BREAK, ON PURPOSE · 0:45-1:20
 
-**Screen state before you speak.** <Final state, number still visible.>
+**Screen state before you speak.** Each key below, a few seconds apart.
 
-> <The closing line. Write it here and say it verbatim — it is the sentence
-> people repeat.>
+**Driver**: `1` `t`, then `2` `l`, then `2` `n`, then `3` `x`, then `4` `s`.
+
+> A till that was tampered with: the signature fails, and the record stays
+> in the store with its reason. A till that typed a card number into a
+> receipt note: blocked before the DMZ. Riverside loses its network: its
+> tills keep ringing, its display keeps updating, and the records wait on
+> the store's own disk. A till crashes, and its store's node flags it
+> silent. The temperature sensor dies, and records keep flowing, marked
+> sensor missing.
+
+Then `2` `n` to restore Riverside: the queue drains as a burst.
+
+---
+
+## Beat 4: THE PAYOFF · 1:20-1:45
+
+**Screen state before you speak.** Warehouse card, after Riverside drained.
+
+> The warehouse scanned every record that landed. Card numbers found:
+> **zero.** *(pause)* Yet it recognises the same shoppers across stores, and
+> joins them to online profiles, by join ID alone.
+
+Say the two shopper numbers as they read on screen.
+
+---
+
+## Beat 5: CLOSE · 1:45-2:00
+
+**Screen state before you speak.** Warehouse still showing 0 card numbers.
+
+> The card number never leaves the store. What leaves is safe to share, even
+> across borders, and it still knows who bought what.
 
 ---
 
 ## Required lines
 
-Anything listed here must appear in the take. `demo-video-verify` checks the
-transcript against them.
-
-- "<the headline number, spoken>"
-- "<the closing line>"
+- "Card numbers found: zero."
+- "The card number never leaves the store."
 
 ## Prohibited
 
-Never spoken or shown: [B]acalhau, program names, classification-adjacent claims,
-third-party vendor names. Every quantitative claim either cites a public source
-in `docs/RESEARCH.md` or is introduced as representative.
+Never spoken or shown: the prospect, its group companies or anyone from the
+meeting; program names; third-party vendor names; "illustrative",
+"simulated", "mock" or "sample". The group's efficiency goal is background
+for the presenter, not a line in the take.
 
 ## After the take
 
 ```bash
-~/.claude/skills/demo-video-verify/scripts/dvv verify <VIDEO> --script RECORDING_SCRIPT.md
+~/.claude/skills/demo-video-verify/scripts/dvv verify <VIDEO> \
+  --script RECORDING_SCRIPT.md
+just down
 ```
-
-Non-zero exit means it is not publishable yet.

@@ -83,5 +83,5 @@ recording-preflight:
 
 # prohibited names never reach a take
 clean-check:
-    @if rg -il '[b]acalhau|[i]llustrative|[s]imulated|[m]ock data' --glob '!justfile' --glob '!.runtime' --glob '!.cloud-state' . ; then echo "FAIL: prohibited word in tree"; exit 1; fi
+    @if rg -il '[b]acalhau|[i]llustrative|[s]imulated|[m]ock data' --glob '!justfile' --glob '!AGENTS.md' --glob '!RECORDING_SCRIPT.md' --glob '!.runtime' --glob '!.cloud-state' . ; then echo "FAIL: prohibited word in tree"; exit 1; fi
     @echo "clean"
