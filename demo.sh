@@ -329,7 +329,9 @@ wait_ingest_closed() {
     done
     if running="$(cloud_cli execution list --state running --limit 1000 \
       "${filters[@]}" -f json)"; then
-      jq -e 'type == "array" and length == 0' <<<"$running" >/dev/null || open=1
+      if [[ "$running" != "No executions found" ]]; then
+        jq -e 'type == "array" and length == 0' <<<"$running" >/dev/null || open=1
+      fi
     else
       open=1
     fi

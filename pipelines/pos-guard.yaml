@@ -241,7 +241,7 @@ config:
             let store = env("STORE_PROFILE").parse_json()
             let join_key = env("JOIN_ID_KEY")
             let jid = "jid1_" + this.pan.hash("hmac_sha256", $join_key).encode("hex").slice(0, 24)
-            let local = now().ts_format("2006-01-02T15:04:05Z07:00", $store.tz)
+            let local = this.ts.ts_format("2006-01-02T15:04:05Z07:00", $store.tz)
             root.txn_id = this.txn_id
             root.join_id = $jid
             root.basket = this.items.map_each(i -> {
@@ -261,8 +261,8 @@ config:
             root.context.lon = $store.lon
             root.context.register_id = this.register_id
             root.context.local_time = $local
-            root.context.hour = now().ts_format("15", $store.tz).number()
-            root.context.weekday = now().ts_format("Monday", $store.tz)
+            root.context.hour = this.ts.ts_format("15", $store.tz).number()
+            root.context.weekday = this.ts.ts_format("Monday", $store.tz)
             root.edge_at = now()
             let personal = ["pan", "cardholder", "expiry", "cashier", "loyalty_email"]
             root.stripped = $personal.filter(f -> this.get(f) != null)
@@ -283,6 +283,7 @@ config:
             let fresh = now().ts_unix() - this.context.climate.at <= 15
             root = this
             root.context.temp_c = if $fresh { this.context.climate.temp_c } else { null }
+            root.context.sensor_at = if $fresh { this.context.climate.at } else { null }
             root.context.sensor = if $fresh { "ok" } else { "sensor missing" }
             root.context.climate = deleted()
         - switch:

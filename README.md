@@ -118,7 +118,9 @@ remains available to the store database inspector after collection.
 The source records their capture time. The signature and 120-second age
 check compare the signed event time with that capture time, so an old
 backlog remains valid while records already stale on arrival are rejected.
-Telemetry follows its own polling endpoint and retains device timestamps;
+Sale date and time come from the signed transaction, even during a later
+drain. Temperature is the latest reading at collection; `sensor_at` records
+its source timestamp. Telemetry follows its own polling endpoint;
 polling a silent device does not make its readings fresh.
 
 `just up` is an explicit clean start and clears source history. Restarting
