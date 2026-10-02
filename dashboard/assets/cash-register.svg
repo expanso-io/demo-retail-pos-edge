@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="112" height="88" viewBox="0 0 112 88" style="display: inline-block; flex-shrink: 0">
+  <g>
+    <path d="M12 58L34 43L101 54L82 71Z" fill="#879DAB" stroke="#273342" stroke-width="2" stroke-linejoin="round" />
+    <path d="M12 58L82 71V83L12 70Z" fill="#D6DEDF" stroke="#273342" stroke-width="2" stroke-linejoin="round" />
+    <path d="M82 71L101 54V68L82 83Z" fill="#526875" stroke="#273342" stroke-width="2" stroke-linejoin="round" />
+    <path d="M19 67L73 77" fill="none" stroke="#273342" stroke-width="2" stroke-linejoin="round" />
+    <path d="M43 73L52 75" fill="#000000" stroke="#273342" stroke-width="3" stroke-linejoin="round" />
+    <path d="M45 46V33L56 35V48" fill="#526875" stroke="#273342" stroke-width="2" stroke-linejoin="round" />
+    <path d="M27 9L69 16L69 43L27 36Z" fill="#D6DEDF" stroke="#273342" stroke-width="2" stroke-linejoin="round" />
+    <path d="M69 16L79 11V37L69 43Z" fill="#526875" stroke="#273342" stroke-width="2" stroke-linejoin="round" />
+    <path d="M27 9L37 4L79 11L69 16Z" fill="#879DAB" stroke="#273342" stroke-width="2" stroke-linejoin="round" />
+    <path d="M32 15L64 20V35L32 30Z" fill="#DCEFE9" stroke="#273342" stroke-width="2" stroke-linejoin="round" />
+    <path d="M36 23L44 24M50 25L60 27" fill="#000000" stroke="#0B7466" stroke-width="2" stroke-linejoin="round" />
+    <path d="M25 53L45 49L72 54L60 62Z" fill="#273342" stroke="#273342" stroke-width="2" stroke-linejoin="round" />
+    <path d="M34 54L38 55M43 55L47 56M52 57L56 58" fill="#000000" stroke="#EDF0EB" stroke-width="2" stroke-linejoin="round" />
+    <path d="M48 51L52 52M57 52L61 53M39 51L43 52" fill="#000000" stroke="#EDF0EB" stroke-width="2" stroke-linejoin="round" />
+    <path d="M79 51L87 45L96 48L89 55Z" fill="#273342" stroke="#273342" stroke-width="2" stroke-linejoin="round" />
+    <path d="M79 48V31L92 33V48L87 46L83 49Z" fill="#FBF8F2" stroke="#273342" stroke-width="2" stroke-linejoin="round" />
+    <path d="M82 36L89 37M82 40L89 41" fill="#000000" stroke="#879DAB" stroke-width="2" stroke-linejoin="round" />
+    <path d="M14 71V75L22 77V73M73 82V86L81 87V83" fill="#273342" stroke="#273342" stroke-width="2" stroke-linejoin="round" />
+  </g>
+</svg>

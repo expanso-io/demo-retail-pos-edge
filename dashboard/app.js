@@ -89,7 +89,7 @@ function readColors() {
   const pick = (name) => css.getPropertyValue(name).trim();
   colors = {
     raw: pick("--raw"), ok: pick("--ok"), err: pick("--err"), warn: pick("--warn"),
-    accent: pick("--accent"), line: pick("--line-strong"),
+
   };
 }
 
@@ -124,6 +124,13 @@ function setTheme(theme) {
 $("theme").addEventListener("click", () =>
   setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
 
+$("shoppers-motion").addEventListener("click", () => {
+  const paused = document.documentElement.dataset.shoppers !== "paused";
+  document.documentElement.dataset.shoppers = paused ? "paused" : "moving";
+  $("shoppers-motion").textContent = paused ? "Resume shoppers" : "Pause shoppers";
+  $("shoppers-motion").setAttribute("aria-pressed", String(paused));
+});
+
 /* --------------------------------------------------------- build stores */
 
 function buildStores(stores) {
@@ -137,9 +144,26 @@ function buildStores(stores) {
     row.dataset.store = s.store_id;
     const front = h("div", "front");
     const body = h("div", "front-body");
+    const frontage = h("div", "frontage");
+    const closed = h("span", "closed-sign", "closed");
+    closed.hidden = true;
     const sign = h("div", "sign");
     const therm = h("span", "therm", "—");
     sign.append(h("b", "", s.name), h("span", "cc", `${s.store_id} · ${s.country}`), therm);
+    const shopToggle = h("button", "shop-toggle", "Close store");
+    shopToggle.type = "button";
+    shopToggle.addEventListener("click", async () => {
+      const shop = current.stores.find((item) => item.store_id === s.store_id);
+
+      if (!shop) return;
+      const state = shop.registers.some((r) => r.state === "open") ? "closed" : "open";
+      shopToggle.disabled = true;
+      await Promise.all(shop.registers.map((r) => control("register", { register_id: r.id, state })));
+      shopToggle.disabled = false;
+    });
+    const shopActions = h("div", "shop-actions");
+    shopActions.append(closed, shopToggle);
+    frontage.append(sign, shopActions);
     const win = h("div", "window");
     const wk = h("span", "w-k", "window display");
     const wv = h("span", "w-v", "waiting for sales");
@@ -153,7 +177,12 @@ function buildStores(stores) {
       btn.type = "button";
       btn.dataset.face = "idle";
       btn.setAttribute("aria-label", `${s.name} ${tillName(r.id)}: switch on or off`);
-      btn.append(svgUse("", "till"), h("span", "t-name", tillName(r.id)), h("span", "t-flag", ""));
+      const picture = h("span", "t-picture");
+      const register = h("img", "register-art");
+      register.src = "assets/cash-register.svg";
+      register.alt = "";
+      picture.append(register, svgUse("t-not", "not"));
+      btn.append(picture, h("span", "t-name", tillName(r.id)));
       btn.addEventListener("click", () => {
         const reg = findRegister(r.id);
         control("register", {
@@ -161,11 +190,9 @@ function buildStores(stores) {
         });
       });
       tills.append(btn);
-      refs.tills.set(r.id, { btn, flag: btn.querySelector(".t-flag"), svg: btn.querySelector("svg") });
+      refs.tills.set(r.id, { btn, svg: btn.querySelector(".register-art") });
     }
 
-    body.append(sign, win, tills);
-    front.append(h("div", "awning"), body);
 
     const edge = h("div", "edge");
     edge.dataset.state = "off";
@@ -183,10 +210,35 @@ function buildStores(stores) {
     const link = h("div", "e-link", "");
     edge.append(head, jobs, queue, bin, link);
 
-    row.append(front, edge);
+    const intake = h("div", "intake");
+    intake.title = "Events accepted by this store's Expanso input";
+    const intakeIcon = svgUse("intake-icon", "database");
+    const eventCount = h("span", "num", "0");
+    intake.append(intakeIcon, eventCount, h("span", "", "events"));
+    const street = h("div", "street");
+    street.setAttribute("aria-hidden", "true");
+
+    for (let i = 0; i < 12; i++) {
+      const walker = h("span", "walker");
+      const person = h("img", "shopper");
+      const storeIndex = refs.stores.size;
+      person.src = `assets/shopper-${(i + storeIndex * 3) % 8 + 1}.svg`;
+      person.alt = "";
+      const duration = 29 + ((i * 7 + storeIndex * 11) % 24);
+      walker.style.setProperty("--walk-time", `${duration}s`);
+      walker.style.setProperty("--walk-delay", `${-duration * ((i + 0.4) / 12)}s`);
+      walker.style.setProperty("--rest-position", `${i * 8}%`);
+      walker.dataset.direction = (i + storeIndex) % 3 === 0 ? "left" : "right";
+      walker.append(person);
+      street.append(walker);
+    }
+
+    body.append(win, tills, intake, edge);
+    front.append(frontage, h("div", "awning"), body, street);
+    row.append(front);
     root.append(row);
     refs.stores.set(s.store_id, {
-      row, front, therm, win, wk, wv, wn, wa, edge, jobs, qNum, qIcon, queue, bNum, bIcon, link,
+      row, front, therm, win, wk, wv, wn, wa, edge, jobs, qNum, qIcon, queue, bNum, bIcon, link, closed, shopToggle, intake, intakeIcon, eventCount,
     });
   }
 
@@ -252,6 +304,14 @@ function renderStore(s, now) {
   const ref = refs.stores.get(s.store_id);
 
   if (!ref) return;
+  const open = s.registers.some((r) => r.state === "open");
+  const closed = s.registers.length > 0 && s.registers.every((r) => r.state === "closed");
+  ref.row.dataset.open = String(open);
+  ref.closed.hidden = open;
+  ref.closed.textContent = closed ? "closed" : "tills offline";
+  ref.shopToggle.textContent = open ? "Close store" : "Open store";
+  ref.shopToggle.setAttribute("aria-label", `${open ? "Close" : "Open"} ${s.name}`);
+  ref.eventCount.textContent = fmt(s.registers.reduce((count, r) => count + r.sent, 0));
   const sensor = s.sensor || {};
 
   if (sensor.on && sensor.temp_c !== null) {
@@ -300,11 +360,10 @@ function renderStore(s, now) {
     const t = refs.tills.get(r.id);
 
     if (!t) continue;
-    const roster = (display.roster || {})[r.id];
+    t.btn.setAttribute("aria-pressed", String(r.state === "open"));
+    t.btn.setAttribute("aria-label", `${s.name} ${tillName(r.id)}: ${r.state}. Switch ${r.state === "open" ? "off" : "on"}`);
 
-    if (r.state === "closed") t.flag.textContent = "closed";
-    else if (roster && roster.status === "silent") t.flag.textContent = `silent ${roster.silent_s}s`;
-    else t.flag.textContent = "";
+
   }
 }
 
@@ -540,17 +599,25 @@ function measureLanes(sid) {
   const order = [...refs.stores.keys()].indexOf(sid);
   const n = refs.stores.size;
   const whY = wh.y + wh.h * ((order + 0.5) / n);
+  const input = rel(ref.intakeIcon);
   const q = rel(ref.qIcon);
   const b = rel(ref.bIcon);
-  const narrow = wh.y > e.y + e.h;
-  const edgeOut = narrow ? { x: e.x + e.w / 2, y: e.y + e.h } : { x: e.x + e.w, y: e.y + e.h / 2 };
-  const whIn = narrow ? { x: wh.x + wh.w * ((order + 0.5) / n), y: wh.y } : { x: wh.x, y: whY };
+  const narrow = wh.x < e.x + e.w;
+  const edgeOut = { x: e.x + e.w, y: e.y + e.h / 2 };
+  const whIn = { x: narrow ? wh.x + wh.w : wh.x, y: whY };
+  const rail = stage.clientWidth - 6 - order * 4;
+
+  const warehousePath = narrow
+    ? [edgeOut, { x: rail, y: edgeOut.y }, { x: rail, y: whIn.y }, whIn]
+    : cubic(edgeOut, whIn, 0);
+
+  warehousePath.elbow = narrow;
 
   return {
-    edgeIn: { x: e.x, y: e.y + e.h / 2 },
-    toWarehouse: narrow
-      ? [edgeOut, { x: edgeOut.x, y: edgeOut.y + 60 }, { x: whIn.x, y: whIn.y - 60 }, whIn]
-      : cubic(edgeOut, whIn, 0),
+    edgeIn: { x: input.x, y: input.y + input.h / 2 },
+    input: input,
+    inputToEdge: cubic({ x: input.x + input.w, y: input.y + input.h / 2 }, { x: e.x, y: e.y + e.h / 2 }, 0),
+    toWarehouse: warehousePath,
     toBin: cubic({ x: e.x, y: e.y + e.h * 0.4 }, { x: b.x + b.w / 2, y: b.y + b.h / 2 }, -18),
     toDisk: cubic({ x: e.x + e.w, y: e.y + e.h * 0.4 }, { x: q.x + q.w / 2, y: q.y + q.h / 2 }, -14),
     toWindow: cubic({ x: e.x, y: e.y + 10 }, { x: win.x + win.w, y: win.y + 8 }, -26),
@@ -567,30 +634,55 @@ function measureTillLane(id, sid) {
   const L = lanes(sid);
 
   if (!t || !L) return null;
-  const r = rel(t.svg);
-  const start = { x: r.x + r.w / 2, y: r.y + r.h * 0.35 };
+  const r = rel(t.btn);
 
-  return cubic(start, L.edgeIn, -22);
-}
+  const row = [...refs.tills.values()].filter((item) => {
+    const box = rel(item.btn);
 
-function cloudLane(sid, up) {
-  return cached(`C${sid}${up}`, () => measureCloudLane(sid, up));
-}
+    return item.btn.closest(".store").dataset.store === sid && Math.abs(box.y - r.y) < 3;
+  });
 
-function measureCloudLane(sid, up) {
-  const ref = refs.stores.get(sid);
+  const bottom = Math.max(...row.map((item) => {
+    const box = rel(item.btn);
 
-  if (!ref) return null;
-  const c = rel($("cloud"));
-  const e = rel(ref.edge);
-  const top = { x: e.x + e.w - 22, y: e.y };
-  const from = { x: Math.min(c.x + c.w - 22, top.x), y: c.y + c.h };
-  const pts = [from, { x: from.x, y: from.y + 10 }, { x: top.x, y: top.y - 10 }, top];
+    return box.y + box.h;
+  }));
 
-  return up ? pts.slice().reverse() : pts;
+  const busY = bottom + 9;
+  const target = L.edgeIn;
+  const rail = target.x - 12;
+
+  const path = [
+    { x: r.x + r.w / 2, y: r.y + r.h },
+    { x: r.x + r.w / 2, y: busY },
+    { x: rail, y: busY },
+    { x: rail, y: target.y },
+    target,
+  ];
+
+  path.elbow = true;
+
+  return path;
 }
 
 function bez(p, t) {
+  if (p.elbow) {
+    const lengths = p.slice(1).map((point, i) => Math.hypot(point.x - p[i].x, point.y - p[i].y));
+    let distance = t * lengths.reduce((total, length) => total + length, 0);
+
+    for (let i = 0; i < lengths.length; i++) {
+      if (distance <= lengths[i]) {
+        const part = lengths[i] ? distance / lengths[i] : 0;
+
+        return { x: p[i].x + (p[i + 1].x - p[i].x) * part, y: p[i].y + (p[i + 1].y - p[i].y) * part };
+      }
+
+      distance -= lengths[i];
+    }
+
+    return p[p.length - 1];
+  }
+
   const u = 1 - t;
 
   return {
@@ -613,7 +705,7 @@ function spawn(count, lane, color, opts) {
       pts: lane, color, t: 0,
       delay: performance.now() + Math.random() * window,
       dur: (o.dur || 1100) / SPEED,
-      r: o.r || 2.4,
+      r: o.r || 4,
       stopAt: o.stopAt || 1,
       soft: o.soft || 0,
     });
@@ -644,18 +736,20 @@ function flows(cur, old, now) {
     }
 
     if (!L) continue;
-    const landed = s.warehouse_rows - o.warehouse_rows;
-    spawn(landed, L.toWarehouse, colors.ok, { dur: landed > 12 ? 900 : 1500, r: 2.6 });
-    spawn(s.quarantined - o.quarantined, L.toBin, colors.err, { dur: 700, r: 3.2 });
 
-    if (s.link.cut) spawn((s.queue || 0) - (o.queue || 0), L.toDisk, colors.warn, { dur: 700, r: 2.6 });
+    const accepted = s.registers.reduce((count, r) => count + r.sent, 0)
+      - o.registers.reduce((count, r) => count + r.sent, 0);
+
+    spawn(accepted, L.inputToEdge, colors.raw, { dur: 650, r: 4 });
+    const landed = s.warehouse_rows - o.warehouse_rows;
+    spawn(landed, L.toWarehouse, colors.ok, { dur: landed > 12 ? 900 : 1500, r: 4.5 });
+    spawn(s.quarantined - o.quarantined, L.toBin, colors.err, { dur: 700, r: 4.5 });
+
+    if (s.link.cut) spawn((s.queue || 0) - (o.queue || 0), L.toDisk, colors.warn, { dur: 700, r: 4.5 });
     const shown = (s.display.updates || 0) - (o.display.updates || 0);
     spawn(shown, L.toWindow, colors.ok, { dur: 1000, r: 3 });
 
-    if (cur.cloud && old.cloud && cur.cloud.at !== old.cloud.at && s.edge.connected) {
-      spawn(1, cloudLane(s.store_id, false), colors.accent, { dur: 1300, r: 2 });
-      spawn(1, cloudLane(s.store_id, true), colors.accent, { dur: 1300, r: 2 });
-    }
+
   }
 }
 
@@ -667,7 +761,13 @@ function guide(pts, color, alpha, dash) {
   ctx.setLineDash(dash || []);
   ctx.beginPath();
   ctx.moveTo(pts[0].x, pts[0].y);
-  ctx.bezierCurveTo(pts[1].x, pts[1].y, pts[2].x, pts[2].y, pts[3].x, pts[3].y);
+
+  if (pts.elbow) {
+    for (const point of pts.slice(1)) ctx.lineTo(point.x, point.y);
+  } else {
+    ctx.bezierCurveTo(pts[1].x, pts[1].y, pts[2].x, pts[2].y, pts[3].x, pts[3].y);
+  }
+
   ctx.stroke();
   ctx.restore();
 }
@@ -687,12 +787,12 @@ function drawGuides() {
       if (lane) guide(lane, colors.raw, r.state === "open" ? 0.22 : 0.08);
     }
 
-    if (s.link.cut) guide(L.toWarehouse, colors.warn, 0.7, [3, 6]);
-    else guide(L.toWarehouse, colors.ok, on ? 0.3 : 0.1);
-    guide(L.toWindow, colors.ok, on ? 0.18 : 0.06, [2, 4]);
-    const cl = cloudLane(s.store_id, false);
+    guide(L.inputToEdge, colors.raw, on ? 0.4 : 0.2);
 
-    if (cl) guide(cl, colors.accent, s.edge.connected ? 0.45 : 0.12, [2, 3]);
+    if (s.link.cut) guide(L.toWarehouse, colors.warn, 0.7, [3, 6]);
+    else guide(L.toWarehouse, colors.ok, on ? 0.45 : 0.2);
+
+
   }
 }
 
