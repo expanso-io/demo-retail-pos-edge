@@ -26,7 +26,7 @@ records kept in the store, and the warehouse holding none.
 
 ## Capture surface
 
-`http://localhost:8023` full screen at 1440x900 in an app-mode window, with
+`http://localhost:8640` full screen at 1440x900 in an app-mode window, with
 a cut to the Expanso Cloud console Jobs page (light) to start the two jobs.
 No 9:16 crop planned.
 

@@ -37,9 +37,9 @@ ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD = ROOT / "dashboard"
 RUNTIME = ROOT / ".runtime"
 CONFIG = ROOT / "config" / "stores.json"
-STORES_URL = "http://127.0.0.1:8027"
-WAREHOUSE_URL = "http://127.0.0.1:8026"
-OUTBOX_BASE = 7340
+STORES_URL = "http://127.0.0.1:8642"
+WAREHOUSE_URL = "http://127.0.0.1:8641"
+OUTBOX_BASE = 8650
 JOBS = ("pos-guard", "pos-uplink")
 CONTROL_VERBS = {"register", "fault", "sensor", "link", "reset"}
 
@@ -322,7 +322,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--port", type=int, default=8023)
+    ap.add_argument("--port", type=int, default=8640)
     ap.add_argument("--check", action="store_true", help="validate the state contract and exit")
     args = ap.parse_args()
 

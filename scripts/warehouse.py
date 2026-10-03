@@ -13,7 +13,7 @@ The warehouse runs its own card-number check, independent of the edge: every
 string in every stored row is scanned for a Luhn-valid 13 to 19 digit run.
 The board shows that count; it should always read zero.
 
-    uv run -s scripts/warehouse.py --port 8026 --db .runtime/warehouse.db
+    uv run -s scripts/warehouse.py --port 8641 --db .runtime/warehouse.db
 """
 
 from __future__ import annotations
@@ -210,7 +210,7 @@ class Warehouse:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--port", type=int, default=8026)
+    ap.add_argument("--port", type=int, default=8641)
     ap.add_argument("--db", default=str(ROOT / ".runtime" / "warehouse.db"))
     ap.add_argument("--profiles", default=str(ROOT / ".runtime" / "online-profiles.json"))
     args = ap.parse_args()

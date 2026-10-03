@@ -20,7 +20,7 @@ Secrets come from the environment (REGISTER_KEY_SEED, JOIN_ID_KEY); nothing
 is read from outside this checkout. A control API on localhost lets the
 board switch registers, inject faults, kill a sensor or cut a link.
 
-    uv run -s scripts/stores.py serve --control-port 8027
+    uv run -s scripts/stores.py serve --control-port 8642
     uv run -s scripts/stores.py keys s1      # REGISTER_KEYS JSON for s1
 """
 
@@ -49,9 +49,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG = ROOT / "config" / "stores.json"
 
-WAN_BASE = 7360
-DISPLAY_BASE = 7380
-WAREHOUSE_PORT = 8026
+WAN_BASE = 8660
+DISPLAY_BASE = 8670
+WAREHOUSE_PORT = 8641
 
 HEARTBEAT_S = 3.0
 SENSOR_S = 3.0
@@ -703,7 +703,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("serve")
-    s.add_argument("--control-port", type=int, default=8027)
+    s.add_argument("--control-port", type=int, default=8642)
     s.add_argument("--runtime", default=str(ROOT / ".runtime"))
     s.add_argument("--mean-gap", type=float, default=4.0,
                    help="mean seconds between sales per register")

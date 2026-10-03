@@ -21,7 +21,7 @@ config:
       inputs:
         - label: store_database
           http_client:
-            url: "${STORE_SOURCE_URL:http://127.0.0.1:8027}/events/${STORE_ID}"
+            url: "${STORE_SOURCE_URL:http://127.0.0.1:8642}/events/${STORE_ID}"
             verb: GET
             rate_limit: database_poll
           processors:
@@ -33,7 +33,7 @@ config:
                 root = this.record
         - label: store_telemetry
           http_client:
-            url: "${STORE_SOURCE_URL:http://127.0.0.1:8027}/telemetry/${STORE_ID}"
+            url: "${STORE_SOURCE_URL:http://127.0.0.1:8642}/telemetry/${STORE_ID}"
             verb: GET
             rate_limit: telemetry_poll
           processors:
@@ -95,7 +95,7 @@ config:
                     retry_period: 1s
                     max_retry_backoff: 5s
         - http_client:
-            url: "${STORE_SOURCE_URL:http://127.0.0.1:8027}/ack/${STORE_ID}"
+            url: "${STORE_SOURCE_URL:http://127.0.0.1:8642}/ack/${STORE_ID}"
             verb: POST
             batch_as_multipart: false
             retries: 10

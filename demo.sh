@@ -5,13 +5,13 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 cd "$ROOT"
 
-PORT="${PORT:-8023}"
-WAREHOUSE_PORT=8026
-STORES_PORT=8027
-OUTBOX_BASE=7340     # store N's pos-guard -> pos-uplink, on the node
-WAN_BASE=7360        # store N's WAN link to the warehouse
-DISPLAY_BASE=7380    # store N's window display
-API_BASE=9130        # store N's local edge API (local mode)
+PORT="${PORT:-8640}"
+WAREHOUSE_PORT=8641
+STORES_PORT=8642
+OUTBOX_BASE=8650     # store N's pos-guard -> pos-uplink, on the node
+WAN_BASE=8660        # store N's WAN link to the warehouse
+DISPLAY_BASE=8670    # store N's window display
+API_BASE=8680        # store N's local edge API (local mode)
 RUNTIME="$ROOT/.runtime"
 CLOUD_STATE="$ROOT/.cloud-state"
 ENV_FILE="$ROOT/.env"

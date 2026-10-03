@@ -67,7 +67,7 @@ Prerequisites: `just`, `uv`, `jq`, `curl`, `openssl`, `expanso-edge` and
 ```bash
 cp env.example .env && chmod 600 .env   # add the three EXPANSO_ values
 just up          # Cloud jobs stopped; nodes connected
-open http://localhost:8023
+open http://localhost:8640
 # start pos-guard and pos-uplink in the Expanso Cloud console
 just down        # stop everything and stop the jobs in Cloud
 ```

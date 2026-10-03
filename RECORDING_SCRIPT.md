@@ -16,14 +16,14 @@ just up         # the take: jobs deployed to Expanso Cloud and stopped
 `just up` starts from nothing: warehouse empty, a node per store connected
 to Expanso Cloud, `pos-guard` and `pos-uplink` deployed but stopped, the
 tills already ringing with nothing listening. Open the board at
-`http://localhost:8023` in an app-mode window, and the Expanso Cloud
+`http://localhost:8640` in an app-mode window, and the Expanso Cloud
 console (set to light) on the Jobs page in a second window.
 
 Then run the environment preflight:
 
 ```bash
 ~/.claude/skills/demo-video-verify/scripts/dvv preflight \
-  --url http://localhost:8023
+  --url http://localhost:8640
 ```
 
 Recording surface: the board full screen, cutting to the Cloud console for

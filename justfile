@@ -1,6 +1,6 @@
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
-port := "8023"
+port := "8640"
 
 _default:
     @just --list
