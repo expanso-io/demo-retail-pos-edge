@@ -843,6 +843,7 @@ function measureLanes(sid) {
   const R = receiver();
   const telemetry = rel(ref.telemetryIcon);
   const input = rel(ref.intakeIcon);
+  const intake = rel(ref.intake);
   const q = rel(ref.qIcon);
   const b = rel(ref.bIcon);
   const card = rel(ref.row);
@@ -868,7 +869,7 @@ function measureLanes(sid) {
   return {
     edgeIn: { x: input.x, y: input.y + input.h / 2 },
     input: input,
-    inputToEdge: cubic({ x: input.x + input.w, y: input.y + input.h / 2 }, { x: e.x, y: e.y + e.h / 2 }, 0),
+    inputToEdge: cubic({ x: intake.x + intake.w, y: input.y + input.h / 2 }, { x: e.x, y: input.y + input.h / 2 }, 0),
     toWarehouse: warehousePath,
     feeder,
     join,
