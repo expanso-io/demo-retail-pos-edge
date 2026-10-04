@@ -568,7 +568,12 @@ function renderQuarantine(state) {
 
   quarantineLoaded = true;
 
-  if (!items.length) return;
+  if (!items.length) {
+    list.replaceChildren(h("li", "empty", "nothing quarantined yet"));
+
+    return;
+  }
+
   list.textContent = "";
   const names = Object.fromEntries(state.stores.map((s) => [s.store_id, s.name]));
 
@@ -724,11 +729,12 @@ function basketText(items) {
 function renderInspect(data) {
   const raw = data.raw;
   const shared = data.shared;
+  const quarantined = (current && current.quarantine || []).find((x) => x.txn_id === data.txn_id);
   $("ins-txn").textContent = data.txn_id || "";
 
   if (!raw && !shared) return;
-  const stripped = new Set(shared ? shared.stripped : ["pan", "track2", "cvv", "expiry", "cardholder", "auth_code", "cashier", "loyalty_email"]);
-  const gone = (field) => (stripped.has(field) || field === "pan" ? "gone" : "");
+  const stripped = new Set(shared ? shared.stripped : quarantined ? ["pan", "track2", "cvv", "expiry", "cardholder", "auth_code", "cashier", "loyalty_email"] : []);
+  const gone = (field) => (stripped.has(field) ? "gone" : "");
 
   if (raw) {
     dl($("ins-raw"), [
@@ -770,10 +776,9 @@ function renderInspect(data) {
     if (data.queued_s > 3) rows.push(["waited", `${Math.round(data.queued_s)}s on the store's disk`, "warn"]);
     dl($("ins-shared"), rows);
   } else {
-    const q = (current && current.quarantine || []).find((x) => x.txn_id === data.txn_id);
     dl($("ins-shared"), [
-      ["never left", q ? q.reason : "kept in the store", "gone"],
-      ["kept at", q ? `${q.store_id} · ${tillName(q.register_id)}` : ""],
+      [quarantined ? "quarantined" : "warehouse", quarantined ? quarantined.reason : "not received yet", quarantined ? "gone" : "warn"],
+      ["kept at", quarantined ? `${quarantined.store_id} · ${tillName(quarantined.register_id)}` : ""],
     ]);
   }
 }

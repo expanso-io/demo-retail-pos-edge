@@ -356,10 +356,11 @@ main {
   margin-left: 14px;
 }
 .dmz span {
-  position: absolute; bottom: 70px; left: -2px;
+  position: absolute; top: 50%; left: -2px;
   transform: translate(-50%, 50%) rotate(-90deg);
   white-space: nowrap; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--text-dim); background: var(--surface-2); padding: 0 8px;
+  color: var(--text); background: var(--surface); padding: 6px 10px;
+  border: 1px solid var(--line-strong);
 }
 
 .receiver {
@@ -434,6 +435,7 @@ main {
 .col.raw h3 { color: var(--raw); }
 .col.shared h3 { color: var(--ok); }
 .col { border-radius: 0; padding: 8px 10px; min-width: 0; }
+.cols .col { height: 320px; overflow: auto; }
 .col.raw { background: var(--raw-soft); }
 .col.shared { background: var(--ok-soft); }
 dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 10px; row-gap: 1px; font-size: 13px; }
