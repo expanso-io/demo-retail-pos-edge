@@ -53,28 +53,21 @@ config:
         switch:
           - check: '@kind == "telemetry"'
             processors:
-              - label: remember_telemetry
-                resource: remember_telemetry
+              - resource: remember_telemetry
           - check: '@kind == "tick"'
             processors:
-              - label: check_roster
-                resource: check_roster
+              - resource: check_roster
           - processors:
-              - label: scan_swipe
-                resource: scan_swipe
+              - resource: scan_swipe
               - label: by_scan_result
                 switch:
                   - check: this.scan.reasons.length() > 0
                     processors:
-                      - label: to_quarantine
-                        resource: to_quarantine
+                      - resource: to_quarantine
                   - processors:
-                      - label: join_id_and_strip
-                        resource: join_id_and_strip
-                      - label: add_store_temperature
-                        resource: add_store_temperature
-                      - label: block_card_numbers
-                        resource: block_card_numbers
+                      - resource: join_id_and_strip
+                      - resource: add_store_temperature
+                      - resource: block_card_numbers
   # A source acknowledgement follows successful durable output. Leases retry
   # after interruption; the warehouse deduplicates transaction IDs.
   output:
