@@ -420,9 +420,6 @@ main {
 .wh-row { grid-column: 1 / -1; grid-template-columns: 36px minmax(0, 1fr); align-items: baseline; gap: 8px; }
 .wh-row .num { font-size: 18px; }
 .l.small { font-size: 13px; }
-/* A changed count lifts and settles, so a landing is visible without a flash. */
-.num.tick { animation: tick 600ms ease-out; }
-@keyframes tick { from { transform: translateY(-3px); color: var(--ok); } }
 
 /* ------------------------------------------------------------------ shelf */
 .shelf { grid-area: shelf; display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 12px; align-items: stretch; min-width: 0; margin-top: 4px; }
@@ -527,7 +524,7 @@ kbd { font-size: 13px; border: 1px solid var(--line); border-radius: 2px; paddin
   #shoppers-motion { display: none; }
   .walker { animation: none; left: var(--rest-position); }
   .till[data-face="ring"] .t-picture { transform: none; }
-  .edge[data-state="on"] .light, .ep-port.pulse, .feed-event:first-child .feed-record, .num.tick { animation: none; }
+.edge[data-state="on"] .light, .ep-port.pulse, .feed-event:first-child .feed-record { animation: none; }
 }
 
 /* Record stays frozen while the presenter inspects it. */

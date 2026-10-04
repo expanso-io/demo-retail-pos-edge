@@ -391,7 +391,6 @@ function setNum(id, text) {
   if (node.textContent === text) return;
   node.textContent = text;
 
-  if (feedLoaded) replay(node, "tick");
 }
 
 function renderWarehouse(wh) {
