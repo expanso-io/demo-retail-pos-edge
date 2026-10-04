@@ -217,7 +217,11 @@ function buildStores(stores) {
     const intakeIcon = svgUse("intake-icon", "database");
     const eventCount = h("span", "num", "0");
     intake.append(intakeIcon, h("b", "", "Store events"), eventCount);
-    const telemetry = h("div", "telemetry");
+    const telemetry = h("button", "telemetry");
+    telemetry.type = "button";
+    telemetry.title = "View this store’s latest telemetry snapshot.";
+    telemetry.setAttribute("aria-label", `View telemetry from ${s.name}`);
+    telemetry.addEventListener("click", () => showStoreTelemetry(s.store_id));
     const telemetryIcon = h("span", "telemetry-icon", "°C");
     const telemetryValue = h("span", "telemetry-value", "—");
     telemetry.append(telemetryIcon, h("b", "", "Telemetry endpoint"), telemetryValue);
@@ -633,6 +637,23 @@ function highlightJson(value) {
   }
 
   target.append(document.createTextNode(json.slice(end)));
+}
+
+function showStoreTelemetry(sid) {
+  const shop = current && current.stores.find((s) => s.store_id === sid);
+
+  if (!shop) return;
+
+  if (recordRequest) recordRequest.abort();
+  $("record-title").textContent = `${shop.name} · store telemetry`;
+  $("record-message").textContent = "Latest board snapshot · frozen when opened. Till status is reported by the guard pipeline.";
+  highlightJson({
+    store_id: sid,
+    sensor: shop.sensor,
+    register_status: shop.display?.roster || {},
+  });
+  $("record-code").hidden = false;
+  recordDialog.showModal();
 }
 
 async function showStoreRecord(sid) {
