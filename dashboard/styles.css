@@ -37,6 +37,7 @@
 
   /* illustration */
   --wall:      #efe5d3;
+  --store-events: #e6d6b9;
   --awning-a:  #e3d3b6;
   --awning-b:  #f6eedf;
   --till:      #384050;
@@ -75,6 +76,7 @@
   --warn-soft:   #3a2c14;
   --err-soft:    #3d1d1b;
   --wall:      #262b37;
+  --store-events: #3a342b;
   --awning-a:  #3a4152;
   --awning-b:  #2c3240;
   --till:      #c9cfda;
@@ -254,10 +256,10 @@ main {
 .intake {
   position: relative; z-index: 4; display: grid; justify-items: center;
   color: var(--raw); font: 13px var(--sans);
-  border: 0; background: transparent; cursor: pointer;
+  border: 0; background: var(--store-events); cursor: pointer;
 }
 /* Fixed rows: the block never moves when a number changes or arrives. */
-.intake { grid-column: 2; grid-row: 1; text-align: center; grid-template-rows: 48px 18px 20px; align-self: start; justify-self: center; width: max-content; padding: 0; }
+.intake { grid-column: 2; grid-row: 1; text-align: center; grid-template-rows: 48px 18px 20px; align-self: start; justify-self: center; width: max-content; padding: 6px; margin-top: 16px; }
 .intake:focus-visible { outline: 0; }
 .intake:focus-visible b { text-decoration: underline; text-underline-offset: 3px; }
 .intake-icon { width: 44px; height: 48px; }
@@ -500,7 +502,7 @@ kbd { font-size: 13px; border: 1px solid var(--line); border-radius: 2px; paddin
 @media (max-width: 700px) {
   .front-body { grid-template-columns: minmax(0, 1fr) var(--edge-width); gap: 20px; grid-template-rows: auto auto auto; }
   .tills { grid-column: 1 / -1; grid-row: 1; margin-bottom: 18px; }
-  .intake { grid-column: 1; grid-row: 2; }
+  .intake { grid-column: 1; grid-row: 2; margin-top: 0; }
   .telemetry { grid-column: 1; grid-row: 3; grid-template-columns: 1fr; justify-items: center; text-align: center; }
   .telemetry-icon { grid-row: auto; width: 30px; }
   .edge { grid-column: 2; grid-row: 2 / 4; padding: 6px; }
