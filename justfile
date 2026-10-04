@@ -18,6 +18,14 @@ up-local:
 start-jobs:
     @bash demo.sh start-jobs
 
+# push the current pipelines to Expanso Cloud (lint + Cloud validate first)
+redeploy:
+    @bash demo.sh redeploy
+
+# the demos linter plus Expanso Cloud's server-side validate, no deploy
+validate-cloud:
+    @bash demo.sh validate-cloud
+
 # stop everything and stop the jobs in Cloud
 down:
     @bash demo.sh down

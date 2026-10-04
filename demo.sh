@@ -256,8 +256,21 @@ foreign_jobs() {
     | .spec.name' <<<"$jobs"
 }
 
+# Expanso Cloud's graph lint is stricter than any validator we can call, so
+# the all-demos linter runs before every deploy; then Cloud's own validate.
+lint_pipelines() {
+  local job
+  uv run --quiet -s ../_demo-kit/lint-demo-pipelines.py . >/dev/null \
+    || die "pipelines fail the demos linter: just pipeline-check"
+  for job in "${JOBS[@]}"; do
+    cloud_cli job validate "pipelines/$job.yaml" >/dev/null 2>&1 \
+      || die "Expanso Cloud rejects pipelines/$job.yaml: just validate-cloud"
+  done
+}
+
 deploy_cloud() {
   local job out
+  lint_pipelines
   for job in "${JOBS[@]}"; do
     if out="$(cloud_cli job deploy "pipelines/$job.yaml" 2>&1)"; then
       say "  $job deployed to Expanso Cloud (selector role=pos-store)"
@@ -432,6 +445,8 @@ usage: ./demo.sh <command>
                 Start pos-guard and pos-uplink in the Expanso Cloud console.
   up-local      the same with a local control plane per node; jobs run at once
   start-jobs    start both jobs in Expanso Cloud from the terminal
+redeploy      lint, Cloud-validate and deploy the current pipelines to Cloud
+validate-cloud lint and Cloud-validate the pipelines without deploying
   down          stop everything and stop the jobs in Cloud
   status        what is running
   cut S | restore S          drop or restore store S's network (s1..s4)
@@ -450,6 +465,8 @@ main() {
     up) cmd_up ;;
     up-local) cmd_up_local ;;
     start-jobs) check_cloud_env; jobs_start ;;
+    redeploy) check_env; check_cloud_env; deploy_cloud ;;
+    validate-cloud) check_env; check_cloud_env; lint_pipelines; say "pipelines pass the linter and Expanso Cloud validate" ;;
     down) cmd_down ;;
     status) cmd_status ;;
     cut) control link "{\"store_id\": \"${1:?store}\", \"cut\": true}" ;;
