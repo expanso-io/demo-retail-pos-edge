@@ -27,8 +27,9 @@ Framing: a retail and payments group. No names anywhere.
    business. Registers are cartoon figures; particles leave each one.
 2. **The thing, live (0:15-0:45).** Start the two jobs in Expanso Cloud.
    Each store's edge node lights up. The inspector shows one real swipe on
-   the left (card number, cardholder name, cashier) and the record that left
-   on the right: a join ID, the basket, store, register, location, local
+   the left (full card number, track 2, CVV, cardholder, SKU codes) and the
+   record that left on the right: a join ID, the basket named from the
+   catalog, store, register, location, local
    time, store temperature, and the fields that were stripped. The store's
    window display changes with what is selling there. (P1, P2, P4, P6)
 3. **The break, on purpose (0:45-1:20).** Presenter keys, one at a time:

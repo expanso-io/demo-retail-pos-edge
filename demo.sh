@@ -162,6 +162,7 @@ edge_up() {
   # environment; the job files only name them.
   STORE_ID="$store" \
   STORE_PROFILE="$(uv run --quiet -s scripts/stores.py profile "$store")" \
+  STORE_CATALOG="$(uv run --quiet -s scripts/stores.py catalog)" \
   REGISTER_KEYS="$(REGISTER_KEY_SEED="$(env_get REGISTER_KEY_SEED)" \
     uv run --quiet -s scripts/stores.py keys "$store")" \
   JOIN_ID_KEY="$(env_get JOIN_ID_KEY)" \

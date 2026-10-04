@@ -22,7 +22,8 @@ config:
       path: "${UPLINK_QUEUE_DB}"
   pipeline:
     processors:
-      - mapping: |
+      - label: stamp_uplink
+        mapping: |
           root = this
           root.uplink.store_id = env("STORE_ID")
           root.uplink.queued_at = now()
@@ -36,6 +37,7 @@ config:
         initial_interval: 1s
         max_interval: 5s
       output:
+        label: warehouse_ingest
         http_client:
           url: "${WAREHOUSE_URL}"
           verb: POST

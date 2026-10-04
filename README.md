@@ -9,10 +9,13 @@ search, recommendations and personalisation, but card data may not leave
 the card business. This demo runs four stores with twelve tills, an Expanso
 Edge node in each store, and a warehouse behind the DMZ, and shows:
 
-1. **Anonymised at the source.** Each store's node turns the card number
-   into a join ID (HMAC-SHA256, algorithm `jid1`, one key for the group),
-   strips cardholder, expiry, cashier and loyalty email, and adds store,
-   till, location, local time and the store's temperature.
+1. **Anonymised at the source.** Tills emit what a terminal prints: full
+   card number, track 2, CVV, expiry, cardholder, operator code and SKU
+   lines. Each store's node turns the card number into a join ID
+   (HMAC-SHA256, algorithm `jid1`, one key for the group), strips every
+   card and person field, resolves SKUs to product names and categories
+   from the catalog, and adds store, till, location, local time and the
+   store's temperature.
 2. **Untrusted tills are checked before the DMZ.** Every swipe's signature,
    schema, totals and text fields are verified at the store; a final scan
    blocks any card number in any field. What fails stays in the store with

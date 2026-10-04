@@ -54,6 +54,25 @@ def test_signature_matches_pos_guard_canon() -> None:
     assert reg.sign(rec) == want
 
 
+def test_till_record_is_raw_terminal_data() -> None:
+    # The till emits what a terminal prints; names and categories come from
+    # the catalog at the edge, never from the register.
+    rng = random.Random(7)
+    store = {"store_id": "s1", "registers": 1}
+    shopper = stores.make_shoppers([store], 1, rng)[0]
+    assert shopper["track2"].startswith(shopper["pan"] + "=" + shopper["expiry"])
+    assert len(shopper["cvv"]) == 3 and shopper["name"].isupper()
+    assert warehouse.card_numbers_in({"t": shopper["track2"]}) == [shopper["pan"]]
+    catalog = {sku: (name, category) for sku, name, category, _, _ in stores.CATALOG}
+    world = stores.World.__new__(stores.World)
+    world.sensor_temp = lambda _sid: None
+    reg = stores.Register.__new__(stores.Register)
+    reg.world = world
+    for line in reg.pick_items(rng, None):
+        assert set(line) == {"sku", "qty", "unit_cents"}, line
+        assert line["sku"] in catalog
+
+
 def test_warehouse_scan_finds_card_numbers_anywhere() -> None:
     assert warehouse.card_numbers_in({"note": "card 4539 1488 0343 6467 declined"})
     assert warehouse.card_numbers_in({"a": [{"b": "4539148803436467"}]})

@@ -697,7 +697,7 @@ function dl(target, rows) {
 }
 
 function basketText(items) {
-  return (items || []).map((i) => `${i.qty}× ${i.name}`).join(", ");
+  return (items || []).map((i) => `${i.qty}× ${i.name || i.sku}`).join(", ");
 }
 
 function renderInspect(data) {
@@ -706,17 +706,19 @@ function renderInspect(data) {
   $("ins-txn").textContent = data.txn_id || "";
 
   if (!raw && !shared) return;
-  const stripped = new Set(shared ? shared.stripped : ["pan", "cardholder", "expiry", "cashier", "loyalty_email"]);
+  const stripped = new Set(shared ? shared.stripped : ["pan", "track2", "cvv", "expiry", "cardholder", "auth_code", "cashier", "loyalty_email"]);
   const gone = (field) => (stripped.has(field) || field === "pan" ? "gone" : "");
 
   if (raw) {
     dl($("ins-raw"), [
       ["card number", spaced(raw.pan), gone("pan")],
-      ["cardholder", raw.cardholder, gone("cardholder")],
+      ["track 2", raw.track2, gone("track2")],
+      ["cvv", raw.cvv, gone("cvv")],
       ["expiry", raw.expiry, gone("expiry")],
+      ["cardholder", raw.cardholder, gone("cardholder")],
       ["cashier", raw.cashier, gone("cashier")],
       ["loyalty email", raw.loyalty_email, gone("loyalty_email")],
-      ["basket", basketText(raw.items)],
+      ["lines", basketText(raw.items)],
       ["total", money(raw.total_cents, raw.currency)],
       ["note", raw.note],
       ["till", raw.register_id],

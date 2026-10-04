@@ -62,8 +62,9 @@ records cross the DMZ.
 **Driver**: start both jobs in the Expanso Cloud console.
 
 > Expanso Cloud pushes two jobs to a node in every store. Look at one swipe.
-> On the left, what the till sent: card number, cardholder, cashier. On the
-> right, what left the store: a join ID, the basket, the store, the till,
+> On the left, what the till sent: full card number, track 2, CVV,
+> cardholder, SKU codes. On the right, what left the store: a join ID, the
+> basket by product name, the store, the till,
 > local time and the store's temperature. The card number became a one-way
 > keyed hash, the same algorithm at every store, defined once centrally.
 > Riverside is at twenty-nine degrees, and its window display is already

