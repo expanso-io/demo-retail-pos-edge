@@ -436,12 +436,12 @@ main {
 .col.raw h3 { color: var(--raw); }
 .col.shared h3 { color: var(--ok); }
 .col { border-radius: 0; padding: 8px 10px; min-width: 0; }
-.cols .col { height: 320px; overflow: auto; }
+.cols .col { min-height: 470px; }
 .cols dl { align-items: start; }
-.cols dd { height: 20px; overflow: auto; }
-.cols dd[data-field="track 2"], .cols dd[data-field="note"] { height: 38px; }
-.cols dd[data-field="lines"], .cols dd[data-field="basket"] { height: 58px; }
-.cols dd[data-field="stripped"] { height: 76px; }
+.cols dd { min-height: 20px; }
+.cols dd[data-field="track 2"], .cols dd[data-field="note"] { min-height: 38px; }
+.cols dd[data-field="lines"], .cols dd[data-field="basket"] { min-height: 58px; }
+.cols dd[data-field="stripped"] { min-height: 76px; }
 .col.raw { background: var(--raw-soft); }
 .col.shared { background: var(--ok-soft); }
 dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 10px; row-gap: 1px; font-size: 13px; }
