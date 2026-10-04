@@ -399,7 +399,7 @@ function renderWarehouse(wh) {
   const scan = wh.card_scan || { card_numbers: 0, rows_scanned: 0 };
   setNum("wh-cards", fmt(scan.card_numbers));
   $("wh-zero").dataset.state = scan.card_numbers ? "bad" : "ok";
-  $("wh-scanned").textContent = scan.rows_scanned ? "every row scanned" : "nothing landed yet";
+  $("wh-scanned").textContent = scan.rows_scanned ? "rows scanned" : "awaiting rows";
   setNum("wh-multi", fmt(wh.shoppers_multi_store));
   setNum("wh-online", fmt(wh.online_matched));
   renderFeed(wh);
@@ -904,13 +904,12 @@ function measureTillLane(id, sid) {
 
   const busY = bottom + 9;
   const target = L.edgeIn;
-  const rail = target.x - 12;
+  const rail = rel(refs.stores.get(sid).intake).x - 24;
 
   const path = [
     { x: r.x + r.w / 2, y: r.y + r.h },
     { x: r.x + r.w / 2, y: busY },
     { x: rail, y: busY },
-    { x: rail, y: target.y },
     target,
   ];
 

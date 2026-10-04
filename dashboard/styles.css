@@ -413,6 +413,7 @@ main {
 .wh-zero .num { font-size: 32px; font-weight: 700; color: var(--ok); line-height: 1.1; }
 .wh-zero[data-state="bad"] { background: var(--err-soft); }
 .wh-zero[data-state="bad"] .num { color: var(--err); }
+.wh-row { grid-column: 1 / -1; grid-template-columns: 36px minmax(0, 1fr); align-items: baseline; gap: 8px; }
 .wh-row .num { font-size: 18px; }
 .l.small { font-size: 13px; }
 /* A changed count lifts and settles, so a landing is visible without a flash. */
