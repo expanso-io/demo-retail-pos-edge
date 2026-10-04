@@ -356,7 +356,7 @@ main {
   margin-left: 14px;
 }
 .dmz span {
-  position: absolute; top: 50%; left: -2px;
+  position: absolute; top: 78%; left: -2px;
   transform: translate(-50%, 50%) rotate(-90deg);
   white-space: nowrap; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--text); background: var(--surface); padding: 6px 10px;
@@ -415,7 +415,8 @@ main {
 .wh-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 12px; margin-top: 8px; align-items: start; }
 .warehouse .l { font-size: 13px; color: var(--text-dim); }
 .wh-big, .wh-row, .wh-zero { display: grid; }
-.wh-big .num { font-size: 24px; font-weight: 700; }
+.wh-big { padding-top: 8px; }
+.wh-big .num { font-size: 32px; font-weight: 700; line-height: 1.1; }
 .wh-zero { background: var(--ok-soft); border-radius: 0; padding: 8px 10px; align-self: stretch; }
 .wh-zero .num { font-size: 32px; font-weight: 700; color: var(--ok); line-height: 1.1; }
 .wh-zero[data-state="bad"] { background: var(--err-soft); }
@@ -436,6 +437,11 @@ main {
 .col.shared h3 { color: var(--ok); }
 .col { border-radius: 0; padding: 8px 10px; min-width: 0; }
 .cols .col { height: 320px; overflow: auto; }
+.cols dl { align-items: start; }
+.cols dd { height: 20px; overflow: auto; }
+.cols dd[data-field="track 2"], .cols dd[data-field="note"] { height: 38px; }
+.cols dd[data-field="lines"], .cols dd[data-field="basket"] { height: 58px; }
+.cols dd[data-field="stripped"] { height: 76px; }
 .col.raw { background: var(--raw-soft); }
 .col.shared { background: var(--ok-soft); }
 dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 10px; row-gap: 1px; font-size: 13px; }

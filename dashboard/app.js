@@ -715,9 +715,9 @@ function dl(target, rows) {
   target.textContent = "";
 
   for (const [k, v, cls] of rows) {
-    if (v === undefined || v === null || v === "") continue;
     const dt = h("dt", cls === "gone" ? "gone" : "", k);
-    const dd = h("dd", cls || "", v);
+    const dd = h("dd", cls || "", v === undefined || v === null || v === "" ? "—" : v);
+    dd.dataset.field = k;
     target.append(dt, dd);
   }
 }
