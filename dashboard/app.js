@@ -211,13 +211,12 @@ function buildStores(stores) {
 
     const intake = h("button", "intake");
     intake.type = "button";
-    intake.title = "View latest till record. Count: records retained in the store database.";
+    intake.title = "View latest till record. Count: records in the store database.";
     intake.setAttribute("aria-label", `View latest till record from ${s.name}`);
     intake.addEventListener("click", () => showStoreRecord(s.store_id));
     const intakeIcon = svgUse("intake-icon", "database");
     const eventCount = h("span", "num", "0");
-    const pendingCount = h("span", "pending-count", "");
-    intake.append(intakeIcon, h("b", "", "Store events"), eventCount, pendingCount);
+    intake.append(intakeIcon, h("b", "", "Store events"), eventCount);
     const telemetry = h("div", "telemetry");
     const telemetryIcon = h("span", "telemetry-icon", "°C");
     const telemetryValue = h("span", "telemetry-value", "—");
@@ -245,7 +244,7 @@ function buildStores(stores) {
     row.append(front);
     root.append(row);
     refs.stores.set(s.store_id, {
-      row, front, therm, edge, status, jobs, collectJob, uplinkJob, telemetry, telemetryIcon, telemetryValue, pendingCount, qNum, qIcon, queue, bNum, bIcon, link, closed, shopToggle, intake, intakeIcon, eventCount,
+      row, front, therm, edge, status, jobs, collectJob, uplinkJob, telemetry, telemetryIcon, telemetryValue, qNum, qIcon, queue, bNum, bIcon, link, closed, shopToggle, intake, intakeIcon, eventCount,
     });
   }
 
@@ -312,7 +311,6 @@ function renderStore(s, now) {
   ref.shopToggle.textContent = open ? "Close store" : "Open store";
   ref.shopToggle.setAttribute("aria-label", `${open ? "Close" : "Open"} ${s.name}`);
   ref.eventCount.textContent = s.database ? fmt(s.database.total) : "—";
-  ref.pendingCount.textContent = s.database ? `${fmt(s.database.pending)} pending` : "Connecting";
   const sensor = s.sensor || {};
 
   if (sensor.on && sensor.temp_c !== null) {
@@ -611,6 +609,9 @@ $("record-close").addEventListener("click", () => recordDialog.close());
 
 recordDialog.addEventListener("close", () => {
   if (recordRequest) recordRequest.abort();
+
+  // Focus would return to the Store events button and draw a ring on camera.
+  if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
 });
 
 function highlightJson(value) {
