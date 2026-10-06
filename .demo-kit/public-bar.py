@@ -54,7 +54,7 @@ from bs4 import BeautifulSoup
 from jsonschema import Draft202012Validator
 
 
-PUBLIC_BAR_VERSION = "1.2.0"
+PUBLIC_BAR_VERSION = "1.2.1"
 CRITERIA = {
     1: "Runs",
     2: "Platform",
@@ -983,18 +983,18 @@ def check_justfile(repo: Path, audit: Audit) -> None:
         )
 
 
-def readme_code(text: str) -> Iterable[tuple[int, str]]:
-    """Yield (line number, code) for fenced lines and inline code spans."""
+def readme_code(text: str) -> Iterable[tuple[int, str, bool]]:
+    """Yield (line number, code, fenced) for fenced lines and inline code."""
     fenced = False
     for number, line in enumerate(text.splitlines(), start=1):
         if FENCE.match(line):
             fenced = not fenced
             continue
         if fenced:
-            yield number, line
+            yield number, line, True
         else:
             for match in INLINE_CODE.finditer(line):
-                yield number, match.group(1)
+                yield number, match.group(1), False
 
 
 def code_commands(code: str) -> Iterable[list[str]]:
@@ -1059,10 +1059,18 @@ def check_readme_lifecycle(repo: Path, audit: Audit) -> None:
     readme = readmes[0]
     shown: set[str] = set()
     launchers: list[str] = []
-    for number, code in readme_code(readme.read_text(encoding="utf-8")):
+    for number, code, fenced in readme_code(readme.read_text(encoding="utf-8")):
         for words in code_commands(code):
             if words[0] == "just" and len(words) > 1:
                 shown.add(words[1])
+            # A lone inline path such as `scripts/serve.py` names a file; it
+            # is a command only when written to run, as in `./scripts/serve.py`.
+            if (
+                not fenced
+                and len(words) == 1
+                and not words[0].startswith(("./", "../"))
+            ):
+                continue
             launched = launched_script(words)
             if launched and is_lifecycle_launcher(*launched):
                 launchers.append(f"{readme.name}:{number} `{' '.join(words)}`")
