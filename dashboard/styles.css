@@ -152,7 +152,7 @@ main {
 .window .w-n { font-family: var(--mono); color: var(--window-dim); }
 .window .w-alert { font-family: var(--mono); color: #ffb4ab; }
 .window[data-fresh="1"] { border-color: var(--ok); }
-.shop-actions { display: flex; align-items: center; gap: 13px; }
+.shop-actions { display: flex; flex: none; align-items: center; gap: 13px; }
 .shop-toggle {
   position: relative; z-index: 4; flex: none;
   border: 1px solid var(--line-strong); padding: 2px 8px;
