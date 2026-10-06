@@ -1,9 +1,9 @@
 # Fixture run: pos-guard and pos-uplink
 
-**Result: PASS**, 56 checks in 64 s.
-Run on 2026-10-05T19:51:25-07:00, at revision `79fc303`
+**Result: PASS**, 56 checks in 62 s.
+Run on 2026-10-05T20:27:35-07:00, at revision `f194fed`
 with uncommitted changes to the proof inputs.
-Inputs digest `4855d5345c1704a6`: the pipelines, store profiles,
+Inputs digest `d517c36488ce61de`: the pipelines, store profiles,
 store, warehouse and certificate code and the fixtures. `just test` fails when
 the tree no longer matches this digest, so this report cannot describe a
 different revision of the jobs.
@@ -52,7 +52,7 @@ Tools: expanso-edge v2.1.21, expanso-cli Expanso CLI version v2.1.21, python 3.1
 |---|---|---|---|---|
 | 1 | uplink presents a certificate from the wrong authority | 0 | 6 | 14 connections refused by the warehouse |
 | 2 | right certificates, WAN link cut, nodes restarted | 0 | 6 | queue file survived the restart |
-| 3 | link restored | 6 | 0 | 2 batches, 4806 bytes, 0 duplicates |
+| 3 | link restored | 6 | 0 | 2 batches, 4809 bytes, 0 duplicates |
 
 Delivery without a valid client certificate from the group's authority fails and the
 records stay on disk; after the link returns they cross once. The rest of the negative
@@ -159,14 +159,14 @@ Register roster at the end of the run: `s1-r1` ok, `s1-r2` closed, `s1-r3` silen
     "lon": 13.41,
     "register_id": "s1-r1",
     "sensor": "ok",
-    "sensor_at": 1791255022.782269,
+    "sensor_at": 1791257193.9683368,
     "store_id": "s1",
     "store_name": "Northgate",
     "temp_c": 21.4,
     "weekday": "Monday"
   },
   "currency": "EUR",
-  "edge_at": "2026-10-05T19:50:22.797312-07:00",
+  "edge_at": "2026-10-05T20:26:33.985063-07:00",
   "entry_mode": "contactless",
   "join_id": "jid1_2b4482b6875ffdb4c6eff793",
   "note": "",
@@ -183,7 +183,7 @@ Register roster at the end of the run: `s1-r1` ok, `s1-r2` closed, `s1-r3` silen
   "total_cents": 890,
   "txn_id": "s1-r1-fixture-00001",
   "uplink": {
-    "queued_at": "2026-10-05T19:50:53.662338-07:00",
+    "queued_at": "2026-10-05T20:27:04.672706-07:00",
     "store_id": "s1"
   }
 }
@@ -194,7 +194,7 @@ Register roster at the end of the run: `s1-r1` ok, `s1-r2` closed, `s1-r3` silen
 ```json
 {
   "note": "",
-  "quarantined_at": "2026-10-05T19:50:22.795339-07:00",
+  "quarantined_at": "2026-10-05T20:26:33.980754-07:00",
   "reason": "signature mismatch: altered after the register signed it",
   "reasons": [
     "signature mismatch: altered after the register signed it"
@@ -210,13 +210,21 @@ Register roster at the end of the run: `s1-r1` ok, `s1-r2` closed, `s1-r3` silen
 
 | File | sha256 |
 |---|---|
-| `pipelines/pos-guard.yaml` | 56f65ee63b6d0dfe |
-| `pipelines/pos-uplink.yaml` | f288ae39535c30be |
+| `pipelines/pos-guard.yaml` | f0e4bafd3a99f917 |
+| `pipelines/pos-uplink.yaml` | d999f03feeb5ea68 |
 | `config/stores.json` | bb9e7123cc444550 |
 | `scripts/stores.py` | 27935905f179a2ff |
-| `scripts/warehouse.py` | 5dd586455a920e9b |
+| `scripts/warehouse.py` | 199fb3fe9e31af0f |
 | `scripts/pki.py` | e6ac4621392ce8e7 |
-| `scripts/fixtures.py` | f310de3b37ffb001 |
-| `scripts/fixture_run.py` | fe64cd561f3c6f4d |
+| `scripts/fixtures.py` | fc326ffd3a3b084b |
+| `scripts/fixture_run.py` | 42eb8b6059a93670 |
 | `fixtures/swipes.json` | 24ee975b8df63474 |
 | `fixtures/expected.json` | bf1b8f4e1ce46659 |
+| `fixtures/replay/guard.input.jsonl` | fe9cdb32da08553e |
+| `fixtures/replay/uplink.input.jsonl` | cf271788252bcc10 |
+| `fixtures/replay/guard.expected.schema.json` | 50d55031fbd0782c |
+| `fixtures/replay/uplink.expected.schema.json` | f0fbfc27f4ccead7 |
+| `fixtures/replay/config/register-keys.json` | b7566774a3a19ee1 |
+| `fixtures/replay/config/join-id-key.txt` | 8dd15ccf35f4495c |
+| `fixtures/replay/config/store-profile.json` | 42b5e6baa758cca9 |
+| `fixtures/replay/config/store-catalog.json` | b047c34559555868 |

@@ -35,6 +35,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD = ROOT / "dashboard"
+PROOF = ROOT / "docs" / "proof"
 RUNTIME = ROOT / ".runtime"
 CONFIG = ROOT / "config" / "stores.json"
 STORES_URL = "http://127.0.0.1:8642"
@@ -292,8 +293,28 @@ class Handler(SimpleHTTPRequestHandler):
         elif self.path.startswith("/api/inspect"):
             txn = self.path.partition("txn=")[2] or None
             self.reply(200, inspect(txn))
+        elif self.path.startswith("/proof/"):
+            self.proof(self.path[len("/proof/"):].partition("?")[0])
         else:
             super().do_GET()
+
+    def proof(self, name: str) -> None:
+        """The dated proof reports in docs/proof, read-only; latest.md is the newest."""
+        if name == "latest.md":
+            try:
+                name = json.loads((PROOF / "latest.json").read_text())["report"]
+            except (OSError, ValueError, KeyError):
+                name = ""
+        target = PROOF / name
+        if not name or "/" in name or not target.is_file() or target.suffix not in {".md", ".json"}:
+            self.reply(404, {"error": "no such report"})
+            return
+        body = target.read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
     def do_POST(self) -> None:  # noqa: N802 - http.server API
         verb = self.path.removeprefix("/api/control/")
@@ -329,7 +350,8 @@ def main() -> int:
     if args.check:
         assert (DASHBOARD / "index.html").is_file()
         assert store_ids(), "config/stores.json lists no stores"
-        for name in ("app.js", "styles.css", "fonts/fonts.css"):
+        for name in ("app.js", "styles.css", "tokens.css", "fonts/fonts.css", "explorer.html",
+                     "explorer.css", "explorer.js"):
             assert (DASHBOARD / name).is_file(), f"dashboard/{name} missing"
         print(f"ok: dashboard files, {len(store_ids())} stores configured")
         return 0

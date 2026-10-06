@@ -1,0 +1,663 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "pos-guard replay output",
+  "type": "array",
+  "minItems": 8,
+  "maxItems": 8,
+  "allOf": [
+    {
+      "contains": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "basket",
+          "card_brand",
+          "context",
+          "currency",
+          "edge_at",
+          "entry_mode",
+          "join_id",
+          "note",
+          "stripped",
+          "total_cents",
+          "txn_id"
+        ],
+        "properties": {
+          "basket": {
+            "const": [
+              {
+                "category": "hot drinks",
+                "name": "Flat white",
+                "qty": 2,
+                "sku": "HD-01",
+                "unit_cents": 340
+              },
+              {
+                "category": "bakery",
+                "name": "Croissant",
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ]
+          },
+          "card_brand": {
+            "const": "visa"
+          },
+          "currency": {
+            "const": "EUR"
+          },
+          "entry_mode": {
+            "const": "contactless"
+          },
+          "join_id": {
+            "const": "jid1_2b4482b6875ffdb4c6eff793"
+          },
+          "note": {
+            "const": ""
+          },
+          "stripped": {
+            "const": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ]
+          },
+          "total_cents": {
+            "const": 890
+          },
+          "txn_id": {
+            "const": "s1-r1-fixture-00001"
+          },
+          "context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "country",
+              "district",
+              "hour",
+              "lat",
+              "local_time",
+              "lon",
+              "register_id",
+              "sensor",
+              "sensor_at",
+              "store_id",
+              "store_name",
+              "temp_c",
+              "weekday"
+            ],
+            "properties": {
+              "country": {
+                "const": "DE"
+              },
+              "district": {
+                "const": "Northgate"
+              },
+              "hour": {
+                "const": 11
+              },
+              "lat": {
+                "const": 52.55
+              },
+              "local_time": {
+                "const": "2026-10-05T11:15:02+02:00"
+              },
+              "lon": {
+                "const": 13.41
+              },
+              "register_id": {
+                "const": "s1-r1"
+              },
+              "sensor": {
+                "const": "sensor missing"
+              },
+              "store_id": {
+                "const": "s1"
+              },
+              "store_name": {
+                "const": "Northgate"
+              },
+              "temp_c": {
+                "const": null
+              },
+              "weekday": {
+                "const": "Monday"
+              },
+              "sensor_at": {
+                "const": null
+              }
+            }
+          },
+          "edge_at": {
+            "type": "string",
+            "minLength": 20
+          }
+        }
+      }
+    },
+    {
+      "contains": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "basket",
+          "card_brand",
+          "context",
+          "currency",
+          "edge_at",
+          "entry_mode",
+          "join_id",
+          "note",
+          "stripped",
+          "total_cents",
+          "txn_id"
+        ],
+        "properties": {
+          "basket": {
+            "const": [
+              {
+                "category": "cold drinks",
+                "name": "Iced latte",
+                "qty": 1,
+                "sku": "CD-01",
+                "unit_cents": 420
+              },
+              {
+                "category": "cold drinks",
+                "name": "Lemonade",
+                "qty": 1,
+                "sku": "CD-03",
+                "unit_cents": 280
+              }
+            ]
+          },
+          "card_brand": {
+            "const": "mastercard"
+          },
+          "currency": {
+            "const": "EUR"
+          },
+          "entry_mode": {
+            "const": "chip"
+          },
+          "join_id": {
+            "const": "jid1_33e369b81b77a6e30ec989f8"
+          },
+          "note": {
+            "const": ""
+          },
+          "stripped": {
+            "const": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ]
+          },
+          "total_cents": {
+            "const": 700
+          },
+          "txn_id": {
+            "const": "s1-r2-fixture-00002"
+          },
+          "context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "country",
+              "district",
+              "hour",
+              "lat",
+              "local_time",
+              "lon",
+              "register_id",
+              "sensor",
+              "sensor_at",
+              "store_id",
+              "store_name",
+              "temp_c",
+              "weekday"
+            ],
+            "properties": {
+              "country": {
+                "const": "DE"
+              },
+              "district": {
+                "const": "Northgate"
+              },
+              "hour": {
+                "const": 11
+              },
+              "lat": {
+                "const": 52.55
+              },
+              "local_time": {
+                "const": "2026-10-05T11:15:09+02:00"
+              },
+              "lon": {
+                "const": 13.41
+              },
+              "register_id": {
+                "const": "s1-r2"
+              },
+              "sensor": {
+                "const": "sensor missing"
+              },
+              "store_id": {
+                "const": "s1"
+              },
+              "store_name": {
+                "const": "Northgate"
+              },
+              "temp_c": {
+                "const": null
+              },
+              "weekday": {
+                "const": "Monday"
+              },
+              "sensor_at": {
+                "const": null
+              }
+            }
+          },
+          "edge_at": {
+            "type": "string",
+            "minLength": 20
+          }
+        }
+      }
+    },
+    {
+      "contains": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "basket",
+          "card_brand",
+          "context",
+          "currency",
+          "edge_at",
+          "entry_mode",
+          "join_id",
+          "note",
+          "stripped",
+          "total_cents",
+          "txn_id"
+        ],
+        "properties": {
+          "basket": {
+            "const": [
+              {
+                "category": "bakery",
+                "name": "Sourdough loaf",
+                "qty": 1,
+                "sku": "BK-02",
+                "unit_cents": 480
+              }
+            ]
+          },
+          "card_brand": {
+            "const": "amex"
+          },
+          "currency": {
+            "const": "EUR"
+          },
+          "entry_mode": {
+            "const": "contactless"
+          },
+          "join_id": {
+            "const": "jid1_99304a24e80c22327bd731b2"
+          },
+          "note": {
+            "const": ""
+          },
+          "stripped": {
+            "const": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ]
+          },
+          "total_cents": {
+            "const": 480
+          },
+          "txn_id": {
+            "const": "s1-r1-fixture-00005"
+          },
+          "context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "country",
+              "district",
+              "hour",
+              "lat",
+              "local_time",
+              "lon",
+              "register_id",
+              "sensor",
+              "sensor_at",
+              "store_id",
+              "store_name",
+              "temp_c",
+              "weekday"
+            ],
+            "properties": {
+              "country": {
+                "const": "DE"
+              },
+              "district": {
+                "const": "Northgate"
+              },
+              "hour": {
+                "const": 11
+              },
+              "lat": {
+                "const": 52.55
+              },
+              "local_time": {
+                "const": "2026-10-05T11:15:30+02:00"
+              },
+              "lon": {
+                "const": 13.41
+              },
+              "register_id": {
+                "const": "s1-r1"
+              },
+              "sensor": {
+                "const": "sensor missing"
+              },
+              "store_id": {
+                "const": "s1"
+              },
+              "store_name": {
+                "const": "Northgate"
+              },
+              "temp_c": {
+                "const": null
+              },
+              "weekday": {
+                "const": "Monday"
+              },
+              "sensor_at": {
+                "const": null
+              }
+            }
+          },
+          "edge_at": {
+            "type": "string",
+            "minLength": 20
+          }
+        }
+      }
+    },
+    {
+      "contains": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "note",
+          "quarantined_at",
+          "reason",
+          "reasons",
+          "register_id",
+          "store_id",
+          "total_cents",
+          "txn_id"
+        ],
+        "properties": {
+          "note": {
+            "const": ""
+          },
+          "register_id": {
+            "const": "s1-r1"
+          },
+          "total_cents": {
+            "const": 211
+          },
+          "txn_id": {
+            "const": "s1-r1-fixture-00007"
+          },
+          "quarantined_at": {
+            "type": "string",
+            "minLength": 20
+          },
+          "store_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^signature\\ mismatch:\\ altered\\ after\\ the\\ register\\ signed\\ it"
+          },
+          "reasons": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "contains": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "note",
+          "quarantined_at",
+          "reason",
+          "reasons",
+          "register_id",
+          "store_id",
+          "total_cents",
+          "txn_id"
+        ],
+        "properties": {
+          "note": {
+            "const": ""
+          },
+          "register_id": {
+            "const": "s1-r3"
+          },
+          "total_cents": {
+            "const": 160
+          },
+          "txn_id": {
+            "const": "s1-r3-fixture-00009"
+          },
+          "quarantined_at": {
+            "type": "string",
+            "minLength": 20
+          },
+          "store_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^malformed:\\ missing\\ pan"
+          },
+          "reasons": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "contains": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "note",
+          "quarantined_at",
+          "reason",
+          "reasons",
+          "register_id",
+          "store_id",
+          "total_cents",
+          "txn_id"
+        ],
+        "properties": {
+          "note": {
+            "const": ""
+          },
+          "register_id": {
+            "const": "s1-r2"
+          },
+          "total_cents": {
+            "const": 420
+          },
+          "txn_id": {
+            "const": "s1-r2-fixture-00011"
+          },
+          "quarantined_at": {
+            "type": "string",
+            "minLength": 20
+          },
+          "store_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^stale:\\ "
+          },
+          "reasons": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "contains": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "note",
+          "quarantined_at",
+          "reason",
+          "reasons",
+          "register_id",
+          "store_id",
+          "total_cents",
+          "txn_id"
+        ],
+        "properties": {
+          "note": {
+            "const": ""
+          },
+          "register_id": {
+            "const": "s1-r9"
+          },
+          "total_cents": {
+            "const": 340
+          },
+          "txn_id": {
+            "const": "s1-r9-fixture-00012"
+          },
+          "quarantined_at": {
+            "type": "string",
+            "minLength": 20
+          },
+          "store_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^unknown\\ register:\\ not\\ enrolled\\ here"
+          },
+          "reasons": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "contains": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "note",
+          "quarantined_at",
+          "reason",
+          "reasons",
+          "register_id",
+          "store_id",
+          "total_cents",
+          "txn_id"
+        ],
+        "properties": {
+          "note": {
+            "const": ""
+          },
+          "register_id": {
+            "const": "s1-r1"
+          },
+          "total_cents": {
+            "const": 600000
+          },
+          "txn_id": {
+            "const": "s1-r1-fixture-00014"
+          },
+          "quarantined_at": {
+            "type": "string",
+            "minLength": 20
+          },
+          "store_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^range:\\ total\\ over\\ limit"
+          },
+          "reasons": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

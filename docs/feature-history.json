@@ -1,0 +1,286 @@
+{
+  "about": "Features of the board and pipelines that earlier revisions had or have, so a rebuild cannot drop one silently. status: retained (present now), restored (removed earlier, back now), replaced (a deliberate redesign does the same job), needs_decision (removed, restoring contradicts the current design). check says where the proof lives in the current tree.",
+  "repo": "demo-retail-pos-edge",
+  "baseline": "372f44b",
+  "features": [
+    {
+      "id": "presenter-keys",
+      "title": "Presenter keys t l m i x s n a r p d and 1-9 drive the simulators",
+      "status": "retained",
+      "since": "dd3a8d4",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "const KEYS = { t: \"tamper\""
+      }
+    },
+    {
+      "id": "arrow-store-paging",
+      "title": "Left and Right arrow keys pick the focused store",
+      "status": "retained",
+      "since": "this revision",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "k === \"arrowleft\""
+      }
+    },
+    {
+      "id": "theme-toggle",
+      "title": "Light by default, explicit dark toggle remembered per browser",
+      "status": "retained",
+      "since": "dd3a8d4",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "localStorage.setItem(\"pos-theme\""
+      }
+    },
+    {
+      "id": "pause-shoppers",
+      "title": "Pause shoppers toggle",
+      "status": "retained",
+      "since": "9d5b4ca",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "shoppers-motion"
+      }
+    },
+    {
+      "id": "open-close-store",
+      "title": "Close or open a store, and click a till to switch it",
+      "status": "retained",
+      "since": "dd3a8d4",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "control(\"register\""
+      }
+    },
+    {
+      "id": "till-record-dialog",
+      "title": "Store events opens the latest raw till record",
+      "status": "retained",
+      "since": "a0c3df4",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "showStoreRecord"
+      }
+    },
+    {
+      "id": "telemetry-snapshot",
+      "title": "Telemetry endpoint opens the store's latest snapshot",
+      "status": "retained",
+      "since": "bcdb594",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "showStoreTelemetry"
+      }
+    },
+    {
+      "id": "warehouse-feed",
+      "title": "Warehouse endpoint feed with record JSON on click and arrivals per minute",
+      "status": "retained",
+      "since": "a18a6ed",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "showReceivedRecord"
+      }
+    },
+    {
+      "id": "inspector",
+      "title": "One swipe: at the register versus what left the store",
+      "status": "retained",
+      "since": "dd3a8d4",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "renderInspect"
+      }
+    },
+    {
+      "id": "quarantine-list",
+      "title": "Kept in the store list with reasons",
+      "status": "retained",
+      "since": "dd3a8d4",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "renderQuarantine"
+      }
+    },
+    {
+      "id": "warehouse-card-scan",
+      "title": "Warehouse's own card-number scan reads zero",
+      "status": "retained",
+      "since": "dd3a8d4",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "wh-cards"
+      }
+    },
+    {
+      "id": "silent-till-flag",
+      "title": "A silent till is flagged to the store display and the board",
+      "status": "retained",
+      "since": "581d0d2",
+      "check": {
+        "file": "pipelines/pos-guard.yaml",
+        "contains": "silent for"
+      }
+    },
+    {
+      "id": "uplink-disk-queue",
+      "title": "Clean records queue on the store's disk and drain once after an outage",
+      "status": "retained",
+      "since": "581d0d2",
+      "check": {
+        "file": "pipelines/pos-uplink.yaml",
+        "contains": "sqlite:"
+      }
+    },
+    {
+      "id": "quarantine-in-store",
+      "title": "Failed scans stay in the store with their reason",
+      "status": "retained",
+      "since": "581d0d2",
+      "check": {
+        "file": "pipelines/pos-guard.yaml",
+        "contains": "quarantine_file"
+      }
+    },
+    {
+      "id": "durable-source",
+      "title": "Tills commit to a store database; jobs collect the backlog and acknowledge after delivery",
+      "status": "retained",
+      "since": "fae271f",
+      "check": {
+        "file": "pipelines/pos-guard.yaml",
+        "contains": "acknowledge_source"
+      }
+    },
+    {
+      "id": "step-explorer",
+      "title": "Step explorer with the real input and output of each stage",
+      "status": "retained",
+      "since": "this revision",
+      "check": {
+        "file": "dashboard/explorer.html",
+        "contains": "id=\"explorer\""
+      }
+    },
+    {
+      "id": "window-display",
+      "title": "Each store's window display shows the top seller of the last 10-second sales window and silent tills",
+      "status": "restored",
+      "since": "581d0d2",
+      "removed_by": "a7ce627 (board), fae271f (pipeline output)",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "renderWindow"
+      },
+      "note": "pos-guard sends the sales window again; the fixture run checks the units per category."
+    },
+    {
+      "id": "cloud-job-counts",
+      "title": "The Cloud badge counts running jobs, for example pos-guard 4/4 and pos-uplink 4/4",
+      "status": "restored",
+      "since": "dd3a8d4",
+      "removed_by": "a0c3df4",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "pos-uplink ${uplink}/${n}"
+      }
+    },
+    {
+      "id": "key-hint",
+      "title": "On-screen reminder to pick a store and click a till",
+      "status": "restored",
+      "since": "dd3a8d4",
+      "removed_by": "f6a46b2",
+      "check": {
+        "file": "dashboard/index.html",
+        "contains": "pick a store"
+      },
+      "note": "Moved from the page footer into the presenter bar so the board keeps its height."
+    },
+    {
+      "id": "till-face-symbol",
+      "title": "Register drawn as an SVG with a face per state",
+      "status": "replaced",
+      "since": "dd3a8d4",
+      "removed_by": "9d5b4ca",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "dataset.face"
+      },
+      "note": "Cash-register art with the same idle, ring, off, crash and alarm states."
+    },
+    {
+      "id": "arriving-events",
+      "title": "Arriving events panel",
+      "status": "replaced",
+      "since": "dd3a8d4",
+      "removed_by": "a18a6ed",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "renderFeed"
+      },
+      "note": "Replaced by the warehouse endpoint feed."
+    },
+    {
+      "id": "pending-count",
+      "title": "A pending count beside Store events",
+      "status": "replaced",
+      "since": "a7ce627",
+      "removed_by": "6a3fdc0",
+      "note": "Commit message: Store events shows one static count. Pending versus quarantined is distinguished in the inspector."
+    },
+    {
+      "id": "pipeline-status-text",
+      "title": "0 of 2 pipelines running text",
+      "status": "replaced",
+      "since": "dd3a8d4",
+      "removed_by": "99e09d4",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "Collect database"
+      },
+      "note": "Per-job running rows on every edge node."
+    },
+    {
+      "id": "register-seen-on-swipe",
+      "title": "A swipe also marks its register as seen",
+      "status": "replaced",
+      "since": "581d0d2",
+      "removed_by": "fae271f",
+      "check": {
+        "file": "pipelines/pos-guard.yaml",
+        "contains": "remember_telemetry"
+      },
+      "note": "Register heartbeats from the store telemetry endpoint are the liveness signal."
+    },
+    {
+      "id": "swipe-http-input",
+      "title": "Registers POST swipes to the node and get an in-memory acknowledgement",
+      "status": "replaced",
+      "since": "581d0d2",
+      "removed_by": "fae271f",
+      "check": {
+        "file": "pipelines/pos-guard.yaml",
+        "contains": "store_database"
+      },
+      "note": "Replaced by the durable store database, so swipes survive stopped jobs (README, collection survives stopped jobs)."
+    },
+    {
+      "id": "kit-skeleton",
+      "title": "Template placeholders from the kit stamp: k1-k4, pill-src, pill-pipe, pill-edge, pill-sink, feed, sink-rows, src-rate, edge-rate, produce, workspace-init, workspace-check",
+      "status": "replaced",
+      "since": "1607580",
+      "removed_by": "dd3a8d4",
+      "note": "Placeholders for a board that did not exist yet, replaced by the real board."
+    },
+    {
+      "id": "cloud-control-lanes",
+      "title": "Dashed lane and particles from Expanso Cloud to each store node on every control-plane poll",
+      "status": "needs_decision",
+      "since": "dd3a8d4",
+      "removed_by": "9d5b4ca",
+      "note": "The 2 by 2 store layout has no free channel from the Cloud badge to the two left-hand nodes; restoring it means drawing across the store fronts. Node connection is still shown by the node's light, its Running label and the n of 4 NODES pill. Not restored without a decision."
+    }
+  ]
+}

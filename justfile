@@ -56,6 +56,8 @@ test:
     bash -n demo.sh
     uv run --quiet -s tests/test_stores.py
     uv run --quiet -s tests/test_wan_security.py
+    uv run --quiet -s scripts/fixtures.py --check
+    uv run --quiet -s tests/test_public_bar.py
 
 # Expanso pipelines: syntax, then the all-demos rules (logs, a real output,
 # short lines, no blank lines in config, generate only for timers).
@@ -73,6 +75,24 @@ video-check:
 js-check:
     @[ -x ../../anti-slop/check ] || { echo "skip: anti-slop not present"; exit 0; }
     ../../anti-slop/check dashboard/app.js
+    ../../anti-slop/check dashboard/explorer.js
+
+# One-shot proof: both shipped jobs on real Expanso Edge nodes against the
+# fixture swipes. Writes docs/proof/<date>-fixture-run.md and the explorer data.
+proof:
+    uv run --quiet -s scripts/fixture_run.py
+
+# Rendered page width and text contrast at 320, 400, 768 and 1440 px, light
+# and dark, on the board (with every fault injected) and the explorer.
+# Needs the board up: just up-local
+ui-audit:
+    uv run --quiet -s scripts/ui_audit.py --faults --paging http://localhost:{{port}}/explorer.html http://localhost:{{port}}/ http://localhost:{{port}}/explorer.html
+
+# The shared public-bar check (vendored in .demo-kit): all five criteria.
+# lane=static needs no browser; lane=all also needs Playwright Chromium and
+# PUBLIC_BAR_AXE_PATH (see .github/workflows/public-bar.yml).
+public-bar lane="static":
+    uv run --python 3.12.13 --with beautifulsoup4==4.13.5 --with jsonschema==4.25.1 --with playwright==1.55.0 --with pyyaml==6.0.3 python .demo-kit/public-bar.py --repo . --manifest public-bar.toml --report artifacts/public-bar.md --lane {{lane}}
 
 check: test validate pipeline-check video-check js-check clean-check
 

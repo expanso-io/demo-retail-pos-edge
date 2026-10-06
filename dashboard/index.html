@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Point of sale at the edge</title>
 <link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="styles.css">
 <script>
   // Theme before first paint, so a remembered dark board never flashes light.
@@ -52,6 +53,7 @@
   </div>
   <span class="sub">every swipe leaves as a join ID with its context</span>
   <span class="pills">
+    <a class="pill link" href="explorer.html">Step explorer</a>
     <span class="pill" id="pill-mode" data-state="off">EXPANSO OFF</span>
     <button type="button" class="pill toggle" id="shoppers-motion" aria-pressed="false">Pause shoppers</button>
     <button type="button" class="pill toggle" id="theme" aria-pressed="false">DARK</button>
@@ -139,7 +141,7 @@
 <div class="console" id="console" hidden>
   <span class="console-title">Presenter</span>
   <span class="console-store" id="console-store">s1</span>
-  <span class="console-hint">1-4 pick a store · click a till to switch it · localhost only</span>
+  <span class="console-hint">1-4 or Left and Right pick a store · click a till to switch it · localhost only</span>
   <button type="button" data-act="tamper">t tamper</button>
   <button type="button" data-act="leak">l card in note</button>
   <button type="button" data-act="malformed">m malformed</button>

@@ -144,6 +144,21 @@ write_node_config() {
   } >|"$dir/node.yaml"
 }
 
+# The jobs read their store's configuration from files, not the environment:
+# the till keys and the group's join key stay in owner-only files on the node.
+write_store_config() {
+  local store="$1" dir
+  dir="$(node_dir "$store")/config"
+  mkdir -p "$dir"
+  chmod 700 "$dir"
+  uv run --quiet -s scripts/stores.py profile "$store" >|"$dir/store-profile.json"
+  uv run --quiet -s scripts/stores.py catalog >|"$dir/store-catalog.json"
+  REGISTER_KEY_SEED="$(env_get REGISTER_KEY_SEED)" \
+    uv run --quiet -s scripts/stores.py keys "$store" >|"$dir/register-keys.json"
+  env_get JOIN_ID_KEY >|"$dir/join-id-key.txt"
+  chmod 600 "$dir"/*
+}
+
 edge_up() {
   local store="$1" mode="$2" n dir data
   n="$(store_n "$store")"
@@ -170,14 +185,11 @@ edge_up() {
     fi
     args+=(--data-dir "$data")
   fi
-  # Everything the jobs read from their node. Secrets stay in this process's
-  # environment; the job files only name them.
+  # Everything the jobs read from their node. Keys and store configuration
+  # are owner-only files under config/; the job files only name the directory.
+  write_store_config "$store"
   STORE_ID="$store" \
-  STORE_PROFILE="$(uv run --quiet -s scripts/stores.py profile "$store")" \
-  STORE_CATALOG="$(uv run --quiet -s scripts/stores.py catalog)" \
-  REGISTER_KEYS="$(REGISTER_KEY_SEED="$(env_get REGISTER_KEY_SEED)" \
-    uv run --quiet -s scripts/stores.py keys "$store")" \
-  JOIN_ID_KEY="$(env_get JOIN_ID_KEY)" \
+  POS_CONFIG_DIR="$dir/config" \
   STORE_SOURCE_URL="http://127.0.0.1:$STORES_PORT" \
   OUTBOX_ADDR="127.0.0.1:$((OUTBOX_BASE + n))" \
   OUTBOX_URL="http://127.0.0.1:$((OUTBOX_BASE + n))/outbox" \

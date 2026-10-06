@@ -20,7 +20,7 @@ config:
       allowed_verbs: [POST]
   buffer:
     sqlite:
-      path: "${UPLINK_QUEUE_DB}"
+      path: "${UPLINK_QUEUE_DB:uplink-queue.db}"
   pipeline:
     processors:
       - label: stamp_uplink

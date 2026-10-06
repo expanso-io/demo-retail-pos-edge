@@ -80,6 +80,14 @@ def test_warehouse_scan_finds_card_numbers_anywhere() -> None:
                                           "local_time": "2026-10-02T05:23:35+02:00"})
 
 
+def test_warehouse_scan_ignores_digits_inside_identifiers() -> None:
+    # 310087491616811 is Luhn-valid and sits inside a real join ID's hex.
+    assert not warehouse.card_numbers_in({"join_id": "jid1_5b310087491616811bec96d9"})
+    assert warehouse.card_numbers_in({"note": "card 4111 1111 1111 1111, declined"})
+    assert warehouse.card_numbers_in({"note": "4111-1111-1111-1111"})
+    assert warehouse.card_numbers_in({"note": "(4111111111111111)"})
+
+
 def test_database_retains_uncollected_records_across_restart() -> None:
     with tempfile.TemporaryDirectory(dir=ROOT) as directory:
         path = Path(directory) / "events.db"

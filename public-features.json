@@ -1,0 +1,181 @@
+{
+  "version": 1,
+  "features": [
+    {
+      "id": "raw",
+      "description": "Explorer stage: the raw swipe as the till wrote it and as pos-guard leased it"
+    },
+    {
+      "id": "scan",
+      "description": "Explorer stage: signature, schema, totals, range, age and injection scan"
+    },
+    {
+      "id": "join",
+      "description": "Explorer stage: join ID, strip and product names"
+    },
+    {
+      "id": "context",
+      "description": "Explorer stage: store temperature context"
+    },
+    {
+      "id": "route",
+      "description": "Explorer stage: final card-number scan, then quarantine or uplink"
+    },
+    {
+      "id": "warehouse",
+      "description": "Explorer stage: the warehouse receipt over mutual TLS"
+    },
+    {
+      "id": "window-display",
+      "description": "Each store's window display shows the top seller of the last 10-second sales window and silent tills"
+    },
+    {
+      "id": "cloud-job-counts",
+      "description": "The Cloud badge counts running jobs per store node"
+    },
+    {
+      "id": "presenter-keys",
+      "description": "Presenter keys drive tamper, leak, malformed, injection, crash, sensor, network, auto and reset"
+    },
+    {
+      "id": "store-paging",
+      "description": "Left and Right and the number keys pick the focused store on the board"
+    },
+    {
+      "id": "theme-toggle",
+      "description": "Light by default with an explicit dark toggle on the board and the explorer"
+    },
+    {
+      "id": "pause-shoppers",
+      "description": "Pause and resume the shoppers on the board"
+    },
+    {
+      "id": "open-close-store",
+      "description": "Close or open a store and switch a till on or off"
+    },
+    {
+      "id": "till-record-dialog",
+      "description": "Store events opens the latest raw till record"
+    },
+    {
+      "id": "telemetry-snapshot",
+      "description": "Telemetry endpoint opens the store's latest snapshot"
+    },
+    {
+      "id": "warehouse-feed",
+      "description": "Warehouse endpoint feed with record JSON on click"
+    },
+    {
+      "id": "inspector",
+      "description": "One swipe: at the register versus what left the store"
+    },
+    {
+      "id": "quarantine-list",
+      "description": "Kept in the store list with reasons"
+    },
+    {
+      "id": "warehouse-card-scan",
+      "description": "The warehouse's own card-number scan"
+    },
+    {
+      "id": "silent-till-flag",
+      "description": "A silent till is flagged to the store display"
+    },
+    {
+      "id": "uplink-disk-queue",
+      "description": "Clean records queue on the store's disk and drain once after an outage"
+    },
+    {
+      "id": "durable-source",
+      "description": "Tills commit to a store database; jobs collect the backlog and acknowledge after delivery"
+    },
+    {
+      "id": "mutual-tls-uplink",
+      "description": "The WAN leg is HTTPS with a client certificate per store"
+    },
+    {
+      "id": "fixture-proof-run",
+      "description": "A dated fixture run of both jobs on Expanso Edge nodes"
+    },
+    {
+      "id": "ui-audit",
+      "description": "Rendered width and contrast audit at 320, 400, 768 and 1440 pixels"
+    }
+  ],
+  "routes": [
+    {
+      "id": "explorer",
+      "path": "/explorer.html"
+    },
+    {
+      "id": "board",
+      "path": "/"
+    },
+    {
+      "id": "latest-proof",
+      "path": "/proof/latest.md"
+    }
+  ],
+  "controls": [
+    {
+      "id": "copy-stage-input",
+      "selector": "#copy-input"
+    },
+    {
+      "id": "copy-stage-output",
+      "selector": "#copy-output"
+    },
+    {
+      "id": "copy-command-proof",
+      "selector": "#copy-cmd-proof"
+    },
+    {
+      "id": "copy-command-board",
+      "selector": "#copy-cmd-board"
+    },
+    {
+      "id": "copy-command-cloud",
+      "selector": "#copy-cmd-cloud"
+    },
+    {
+      "id": "copy-command-deploy",
+      "selector": "#copy-cmd-deploy"
+    },
+    {
+      "id": "copy-command-warehouse",
+      "selector": "#copy-cmd-warehouse"
+    },
+    {
+      "id": "copy-command-check",
+      "selector": "#copy-cmd-check"
+    }
+  ],
+  "downloads": [
+    {
+      "id": "download-recorded-run",
+      "selector": "#download-run"
+    },
+    {
+      "id": "download-stage-messages",
+      "selector": "#download-stage"
+    }
+  ],
+  "browser_assertions": [
+    {
+      "id": "page-stages",
+      "description": "Left and Right page the explorer stages without moving the page"
+    },
+    {
+      "id": "light-default",
+      "description": "Light is the default theme and dark is an explicit toggle"
+    },
+    {
+      "id": "no-sideways-scroll",
+      "description": "No horizontal scroll at 320, 400, 768 and 1440 pixels"
+    },
+    {
+      "id": "copy-feedback",
+      "description": "Every copy and download reports success or failure where it was clicked"
+    }
+  ]
+}

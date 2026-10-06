@@ -1,0 +1,54 @@
+{
+  "HD-01": {
+    "name": "Flat white",
+    "category": "hot drinks"
+  },
+  "HD-02": {
+    "name": "Black tea",
+    "category": "hot drinks"
+  },
+  "HD-03": {
+    "name": "Hot chocolate",
+    "category": "hot drinks"
+  },
+  "CD-01": {
+    "name": "Iced latte",
+    "category": "cold drinks"
+  },
+  "CD-02": {
+    "name": "Sparkling water",
+    "category": "cold drinks"
+  },
+  "CD-03": {
+    "name": "Lemonade",
+    "category": "cold drinks"
+  },
+  "IC-01": {
+    "name": "Ice cream tub",
+    "category": "ice cream"
+  },
+  "BK-01": {
+    "name": "Croissant",
+    "category": "bakery"
+  },
+  "BK-02": {
+    "name": "Sourdough loaf",
+    "category": "bakery"
+  },
+  "SW-01": {
+    "name": "Chicken wrap",
+    "category": "sandwiches"
+  },
+  "SW-02": {
+    "name": "Cheese sandwich",
+    "category": "sandwiches"
+  },
+  "SN-01": {
+    "name": "Crisps",
+    "category": "snacks"
+  },
+  "SN-02": {
+    "name": "Fruit cup",
+    "category": "fresh fruit"
+  }
+}

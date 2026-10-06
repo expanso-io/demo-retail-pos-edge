@@ -1,95 +1,4 @@
-/* Card data stays in the store. Light by default (a high street on paper);
-   the dark toggle is remembered per browser. Token names follow
-   _demo-kit/DESIGN_SYSTEM.md so the linter checks contrast on them.
-
-   One hue, one meaning:
-     --accent  Expanso (edge nodes, Cloud, control lanes)
-     --raw     a raw swipe, card number and all
-     --ok      a shareable record and the warehouse it lands in
-     --warn    a dropped network, a growing disk queue, a silent sensor
-     --err     a record kept in the store: tampered, malformed, card number
-
-   Type: Bricolage Grotesque (vendored) for words, monospace only for data
-   and identifiers. Rails: 13 / 14 / 18 / 24 / 32 px. */
-:root {
-  color-scheme: light;
-
-  --bg:        #f5f0e6;
-  --surface:   #fbf8f2;
-  --surface-2: #f8f6f0;
-  --line:      #ddd3c2;
-  --line-strong: #b5a990;
-
-  --text:      #1e2330;
-  --text-dim:  #545b68;
-
-  --accent:    #5b34d6;
-  --raw:       #14538f;
-  --ok:        #0b7466;
-  --warn:      #935700;
-  --err:       #bf2f25;
-
-  --accent-soft: #ece6ff;
-  --raw-soft:    #e3eefa;
-  --ok-soft:     #def2ee;
-  --warn-soft:   #fcefd9;
-  --err-soft:    #fbe4e1;
-
-  /* illustration */
-  --wall:      #efe5d3;
-  --store-events: #e6d6b9;
-  --awning-a:  #e3d3b6;
-  --awning-b:  #f6eedf;
-  --till:      #384050;
-  --till-screen: #dcefe9;
-  --till-face: #1e2330;
-  --till-off:  #9aa0a9;
-  --receipt:   #ffffff;
-  --card:      #1b67b0;
-  --window:    #22283a;
-  --window-ink: #e9f3f0;
-  --window-dim: #a9b6c4;
-  --light-off: #8a909a;
-  --light-on:  #1fa855;
-
-  --sans: "Bricolage Grotesque", ui-sans-serif, sans-serif;
-  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg:        #12151c;
-  --surface:   #1a1e27;
-  --surface-2: #1f2430;
-  --line:      #303849;
-  --line-strong: #4a556b;
-  --text:      #eef1f6;
-  --text-dim:  #a6afbe;
-  --accent:    #a88dff;
-  --raw:       #6fb3ff;
-  --ok:        #5fd3b8;
-  --warn:      #f0b35a;
-  --err:       #ff8b80;
-  --accent-soft: #2a2447;
-  --raw-soft:    #172a40;
-  --ok-soft:     #133530;
-  --warn-soft:   #3a2c14;
-  --err-soft:    #3d1d1b;
-  --wall:      #262b37;
-  --store-events: #3a342b;
-  --awning-a:  #3a4152;
-  --awning-b:  #2c3240;
-  --till:      #c9cfda;
-  --till-screen: #1f3a35;
-  --till-face: #e9f3f0;
-  --till-off:  #596070;
-  --receipt:   #eef1f6;
-  --card:      #6fb3ff;
-  --window:    #0b0e14;
-  --light-off: #4f5666;
-  --light-on:  #43d77a;
-}
-
+/* Card data stays in the store: the board. Tokens live in tokens.css. */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 [hidden] { display: none !important; }
 html, body { overflow-x: hidden; }
@@ -135,6 +44,8 @@ body {
 .pill[data-state="warn"] { border-color: var(--warn); color: var(--warn); }
 .pill[data-state="cloud"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 button.pill { cursor: pointer; }
+a.pill.link { color: var(--accent); text-decoration: none; }
+a.pill.link:hover { text-decoration: underline; }
 
 main {
   padding: 10px 16px 6px; display: grid; gap: 10px; min-height: 0;
@@ -218,7 +129,7 @@ main {
 }
 .awning {
   height: 10px;
-  background: repeating-linear-gradient(90deg, var(--awning-a) 0 22px, var(--awning-b) 22px 44px);
+  background: linear-gradient(90deg, var(--awning-a) 50%, var(--awning-b) 50%) 0 0 / 44px 100%;
   border-top: 1px solid var(--line-strong);
   border-bottom: 3px solid var(--line-strong);
 }

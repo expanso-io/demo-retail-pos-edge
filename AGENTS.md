@@ -25,12 +25,18 @@ them.
   duplicates.
 - Pipeline INFO logs go to `<data-dir>/executions/*/logs/pipeline.log`, not
   the node console (WARN and up only).
-- Secrets live only in `.env` (mode 600) and `.cloud-state/`; demo.sh
-  generates `JOIN_ID_KEY` and `REGISTER_KEY_SEED` once. Expanso CLI calls
+- Secrets live only in `.env` (mode 600), `.cloud-state/` and `.secrets/pki/`
+  (the WAN certificate authority and keys); demo.sh generates `JOIN_ID_KEY`,
+  `REGISTER_KEY_SEED` and the certificates once. Expanso CLI calls
   always pass `--endpoint` and `--api-key`; never a profile, never
   `~/.expanso`, never `expanso-edge` without `--data-dir`.
 - Presenter UI is localhost only. The board drives simulators and links,
   never Cloud jobs.
+- `.demo-kit/` is vendored from `../_demo-kit` by `sync-public-bar.py`; never edit
+  it. `just public-bar all` runs the shared check. Job config comes from
+  `POS_CONFIG_DIR` files so the replay needs no environment.
+- Anything that changes the jobs, fixtures, `stores.py`, `warehouse.py` or
+  `pki.py` needs `just proof` afterwards; `just test` fails on a stale proof.
 - Before a commit: `just check` (includes the JS anti-slop gate; fix
   spacing with `oxlint --fix` from `../../anti-slop`).
 

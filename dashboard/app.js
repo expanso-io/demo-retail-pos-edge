@@ -1261,6 +1261,19 @@ document.addEventListener("keydown", (e) => {
   if (e.target instanceof HTMLInputElement) return;
   const k = e.key.toLowerCase();
 
+  if (k === "arrowleft" || k === "arrowright") {
+    const ids = [...refs.stores.keys()];
+    const at = Math.max(0, ids.indexOf(focusStore));
+
+    if (ids.length) {
+      focusStore = ids[(at + (k === "arrowright" ? 1 : ids.length - 1)) % ids.length];
+      markFocus();
+      e.preventDefault();
+    }
+
+    return;
+  }
+
   if (k === "p") { $("console").hidden = !$("console").hidden;
 
  return; }

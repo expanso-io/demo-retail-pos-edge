@@ -204,6 +204,54 @@ def audit(session: str, url: str, settle_ms: int, state: str) -> list[dict]:
     return rows
 
 
+PAGING = r"""
+(() => {
+  const stage = () => Number(document.querySelector('.step[aria-selected="true"]').id.split('-')[1]) + 1;
+  const hash = () => location.hash;
+  window.scrollTo(0, 1200);
+  return { y: window.scrollY, stage: stage(), hash: hash() };
+})()
+"""
+
+STATE = "(() => ({ y: window.scrollY, stage: Number(document.querySelector('.step[aria-selected=\"true\"]').id.split('-')[1]) + 1, hash: location.hash, doc: document.documentElement.scrollHeight }))()"
+
+FEEDBACK = r"""
+(() => new Promise((resolve) => {
+  const copy = document.getElementById('copy-output');
+  const note = document.getElementById('stage-feedback');
+  copy.click();
+  setTimeout(() => resolve({ text: note.textContent, state: note.dataset.state }), 600);
+}))()
+"""
+
+
+def paging(session: str, url: str, settle_ms: int) -> list[str]:
+    """Left and Right page the stages without moving the page; copying says so."""
+    problems = []
+    browser(session, "open", url + "#swipe=clean-hot-drinks&stage=3")
+    for width in (320, 1440):
+        browser(session, "set", "viewport", str(width), "700")
+        browser(session, "reload")
+        browser(session, "wait", str(settle_ms))
+        start = json.loads(browser(session, "eval", PAGING))
+        for key, want in (("ArrowRight", 1), ("ArrowRight", 1), ("ArrowLeft", -1), ("ArrowLeft", -1)):
+            before = json.loads(browser(session, "eval", STATE))
+            browser(session, "press", key)
+            after = json.loads(browser(session, "eval", STATE))
+            if after["stage"] != before["stage"] + want:
+                problems.append(f"{width}px: {key} moved stage {before['stage']} to {after['stage']}")
+            if abs(after["y"] - before["y"]) > 1:
+                problems.append(f"{width}px: {key} scrolled the page from {before['y']} to {after['y']}")
+            if f"stage={after['stage']}" not in after["hash"]:
+                problems.append(f"{width}px: the address did not follow the stage")
+        if start["y"] < 100:
+            problems.append(f"{width}px: page too short to test scroll retention")
+        note = json.loads(browser(session, "eval", FEEDBACK))
+        if note["state"] not in ("ok", "fail") or not note["text"]:
+            problems.append(f"{width}px: Copy showed no success or failure message")
+    return problems
+
+
 def verdict(row: dict) -> list[str]:
     problems = []
     if row["scrollWidth"] > row["width"] or row["bodyScrollWidth"] > row["width"]:
@@ -223,6 +271,7 @@ def main() -> int:
     ap.add_argument("--session", default="pos-edge-ui-audit")
     ap.add_argument("--settle-ms", type=int, default=2500)
     ap.add_argument("--json", help="write every measurement to this file")
+    ap.add_argument("--paging", help="explorer URL: also test arrow-key paging and copy feedback")
     ap.add_argument("--faults", action="store_true",
                     help="also audit the board with every fault injected (needs the demo up)")
     args = ap.parse_args()
@@ -243,14 +292,21 @@ def main() -> int:
                 for problem in problems:
                     print(f"       {problem}")
                 failed += bool(problems)
+        if args.paging:
+            problems = paging(args.session, args.paging, args.settle_ms)
+            print(f"{'FAIL' if problems else 'ok  '} {args.paging} arrow-key paging keeps the "
+                  "scroll position, copy reports its result")
+            for problem in problems:
+                print(f"       {problem}")
+            failed += bool(problems)
+            everything.append({"paging": problems})
     finally:
         subprocess.run(["agent-browser", "--session", args.session, "close"],
                        capture_output=True, text=True)
     if args.json:
         with open(args.json, "w") as handle:
             json.dump(everything, handle, indent=2)
-    print(f"{len(everything) - failed} of {len(everything)} page, theme and width "
-          f"combinations pass")
+    print(f"{len(everything) - failed} of {len(everything)} checks pass")
     return 1 if failed else 0
 
 

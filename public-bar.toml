@@ -1,0 +1,168 @@
+version = 1
+
+[repository]
+name = "demo-retail-pos-edge"
+published = true
+
+[web]
+document = "dashboard/explorer.html"
+explanation_selector = "#explanation"
+explorer_selector = "#explorer"
+run_selector = "#run"
+deploy_selector = "#deploy"
+
+[browser]
+url = "http://127.0.0.1:8649/explorer.html"
+ready_url = "http://127.0.0.1:8649/explorer.html"
+start_command = ["uv", "run", "-s", "scripts/dashboard.py", "--port", "8649"]
+stop_command = ["true"]
+theme_toggle_selector = "#theme"
+stage_selector = "[data-stage-id]"
+current_stage_selector = "[data-stage-id][aria-current='step']"
+scroll_anchor_selector = "#explorer"
+json_selectors = ["pre[data-public-json]"]
+
+[[browser.controls]]
+id = "copy-stage-input"
+kind = "copy"
+selector = "#copy-input"
+feedback_selector = "#stage-feedback"
+success_text = "Copied"
+failure_text = "Copy failed"
+
+[[browser.controls]]
+id = "copy-stage-output"
+kind = "copy"
+selector = "#copy-output"
+feedback_selector = "#stage-feedback"
+success_text = "Copied"
+failure_text = "Copy failed"
+
+[[browser.controls]]
+id = "download-recorded-run"
+kind = "download"
+selector = "#download-run"
+feedback_selector = "#stage-feedback"
+success_text = "Saved"
+failure_text = "Download failed"
+failure_url_pattern = "**/data/stages.json"
+
+[[browser.controls]]
+id = "copy-command-proof"
+kind = "copy"
+selector = "#copy-cmd-proof"
+feedback_selector = "#feedback-proof"
+success_text = "Copied"
+failure_text = "Copy failed"
+
+[[browser.controls]]
+id = "copy-command-board"
+kind = "copy"
+selector = "#copy-cmd-board"
+feedback_selector = "#feedback-board"
+success_text = "Copied"
+failure_text = "Copy failed"
+
+[[browser.controls]]
+id = "copy-command-cloud"
+kind = "copy"
+selector = "#copy-cmd-cloud"
+feedback_selector = "#feedback-cloud"
+success_text = "Copied"
+failure_text = "Copy failed"
+
+[[browser.controls]]
+id = "copy-command-deploy"
+kind = "copy"
+selector = "#copy-cmd-deploy"
+feedback_selector = "#feedback-deploy"
+success_text = "Copied"
+failure_text = "Copy failed"
+
+[[browser.controls]]
+id = "copy-command-warehouse"
+kind = "copy"
+selector = "#copy-cmd-warehouse"
+feedback_selector = "#feedback-warehouse"
+success_text = "Copied"
+failure_text = "Copy failed"
+
+[[browser.controls]]
+id = "copy-command-check"
+kind = "copy"
+selector = "#copy-cmd-check"
+feedback_selector = "#feedback-check"
+success_text = "Copied"
+failure_text = "Copy failed"
+
+[[pipelines]]
+id = "pos-guard"
+path = "pipelines/pos-guard.yaml"
+input = "fixtures/replay/guard.input.jsonl"
+expected_schema = "fixtures/replay/guard.expected.schema.json"
+expected_count = 8
+timeout_seconds = 60
+
+[[pipelines]]
+id = "pos-uplink"
+path = "pipelines/pos-uplink.yaml"
+input = "fixtures/replay/uplink.input.jsonl"
+expected_schema = "fixtures/replay/uplink.expected.schema.json"
+expected_count = 3
+timeout_seconds = 60
+
+[[stages]]
+id = "raw"
+pipeline = "pos-guard"
+selector = "[data-stage-id='raw']"
+input = "fixtures/stages/raw.input.jsonl"
+output = "fixtures/stages/raw.output.jsonl"
+
+[[stages]]
+id = "scan"
+pipeline = "pos-guard"
+selector = "[data-stage-id='scan']"
+input = "fixtures/stages/scan.input.jsonl"
+output = "fixtures/stages/scan.output.jsonl"
+
+[[stages]]
+id = "join"
+pipeline = "pos-guard"
+selector = "[data-stage-id='join']"
+input = "fixtures/stages/join.input.jsonl"
+output = "fixtures/stages/join.output.jsonl"
+
+[[stages]]
+id = "context"
+pipeline = "pos-guard"
+selector = "[data-stage-id='context']"
+input = "fixtures/stages/context.input.jsonl"
+output = "fixtures/stages/context.output.jsonl"
+
+[[stages]]
+id = "route"
+pipeline = "pos-guard"
+selector = "[data-stage-id='route']"
+input = "fixtures/stages/route.input.jsonl"
+output = "fixtures/stages/route.output.jsonl"
+
+[[stages]]
+id = "warehouse"
+pipeline = "pos-uplink"
+selector = "[data-stage-id='warehouse']"
+input = "fixtures/stages/warehouse.input.jsonl"
+output = "fixtures/stages/warehouse.output.jsonl"
+
+[[yaml]]
+path = ".demo.yaml"
+role = "support"
+
+[[platforms]]
+name = "regulated"
+profile = "regulated"
+files = ["docs/security-evidence.md"]
+security_evidence = "docs/security-evidence.md"
+
+[regressions]
+features = "public-features.json"
+removal_files = ["public-removals/*.json"]

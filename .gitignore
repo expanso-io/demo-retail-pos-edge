@@ -13,3 +13,13 @@ __pycache__/
 # local secrets and edge node state
 .secrets/
 .expanso-edge/
+
+# public-bar reports
+artifacts/
+
+# replay leftovers
+uplink-queue.db*
+
+# vendored selftest fixtures contain known-bad files the check must not scan;
+# `uv run -s sync-public-bar.py` restores them, `public-bar.py --selftest` needs them
+.demo-kit/tests/

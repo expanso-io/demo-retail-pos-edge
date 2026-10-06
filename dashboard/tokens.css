@@ -1,0 +1,91 @@
+/* Palette and type tokens shared by the board (styles.css) and the step
+   explorer (explorer.css). Light is the default; dark is an explicit toggle
+   remembered per browser (data-theme on <html>).
+
+   One hue, one meaning:
+     --accent  Expanso (edge nodes, Cloud, control lanes)
+     --raw     a raw swipe, card number and all
+     --ok      a shareable record and the warehouse it lands in
+     --warn    a dropped network, a growing disk queue, a silent sensor
+     --err     a record kept in the store: tampered, malformed, card number
+
+   Type: Bricolage Grotesque (vendored) for words, monospace only for data
+   and identifiers. Rails: 13 / 14 / 18 / 24 / 32 px. */
+:root {
+  color-scheme: light;
+
+  --bg:        #f5f0e6;
+  --surface:   #fbf8f2;
+  --surface-2: #f8f6f0;
+  --line:      #ddd3c2;
+  --line-strong: #b5a990;
+
+  --text:      #1e2330;
+  --text-dim:  #545b68;
+
+  --accent:    #5b34d6;
+  --raw:       #14538f;
+  --ok:        #0b7466;
+  --warn:      #935700;
+  --err:       #bf2f25;
+
+  --accent-soft: #ece6ff;
+  --raw-soft:    #e3eefa;
+  --ok-soft:     #def2ee;
+  --warn-soft:   #fcefd9;
+  --err-soft:    #fbe4e1;
+
+  /* illustration */
+  --wall:      #efe5d3;
+  --store-events: #e6d6b9;
+  --awning-a:  #e3d3b6;
+  --awning-b:  #f6eedf;
+  --till:      #384050;
+  --till-screen: #dcefe9;
+  --till-face: #1e2330;
+  --till-off:  #9aa0a9;
+  --receipt:   #fbf9f4;
+  --card:      #1b67b0;
+  --window:    #22283a;
+  --window-ink: #e9f3f0;
+  --window-dim: #a9b6c4;
+  --light-off: #8a909a;
+  --light-on:  #1fa855;
+
+  --sans: "Bricolage Grotesque", ui-sans-serif, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:        #12151c;
+  --surface:   #1a1e27;
+  --surface-2: #1f2430;
+  --line:      #303849;
+  --line-strong: #4a556b;
+  --text:      #eef1f6;
+  --text-dim:  #a6afbe;
+  --accent:    #a88dff;
+  --raw:       #6fb3ff;
+  --ok:        #5fd3b8;
+  --warn:      #f0b35a;
+  --err:       #ff8b80;
+  --accent-soft: #2a2447;
+  --raw-soft:    #172a40;
+  --ok-soft:     #133530;
+  --warn-soft:   #3a2c14;
+  --err-soft:    #3d1d1b;
+  --wall:      #262b37;
+  --store-events: #3a342b;
+  --awning-a:  #3a4152;
+  --awning-b:  #2c3240;
+  --till:      #c9cfda;
+  --till-screen: #1f3a35;
+  --till-face: #e9f3f0;
+  --till-off:  #596070;
+  --receipt:   #eef1f6;
+  --card:      #6fb3ff;
+  --window:    #0b0e14;
+  --light-off: #4f5666;
+  --light-on:  #43d77a;
+}

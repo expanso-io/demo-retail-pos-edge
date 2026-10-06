@@ -1,0 +1,339 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "pos-uplink replay output",
+  "type": "array",
+  "minItems": 3,
+  "maxItems": 3,
+  "allOf": [
+    {
+      "contains": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "basket",
+          "card_brand",
+          "context",
+          "currency",
+          "edge_at",
+          "entry_mode",
+          "join_id",
+          "note",
+          "stripped",
+          "total_cents",
+          "txn_id",
+          "uplink"
+        ],
+        "properties": {
+          "basket": {
+            "const": [
+              {
+                "category": "hot drinks",
+                "name": "Flat white",
+                "qty": 2,
+                "sku": "HD-01",
+                "unit_cents": 340
+              },
+              {
+                "category": "bakery",
+                "name": "Croissant",
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ]
+          },
+          "card_brand": {
+            "const": "visa"
+          },
+          "context": {
+            "const": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:02+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r1",
+              "sensor": "sensor missing",
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "temp_c": null,
+              "weekday": "Monday",
+              "sensor_at": null
+            }
+          },
+          "currency": {
+            "const": "EUR"
+          },
+          "entry_mode": {
+            "const": "contactless"
+          },
+          "join_id": {
+            "const": "jid1_2b4482b6875ffdb4c6eff793"
+          },
+          "note": {
+            "const": ""
+          },
+          "stripped": {
+            "const": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ]
+          },
+          "total_cents": {
+            "const": 890
+          },
+          "txn_id": {
+            "const": "s1-r1-fixture-00001"
+          },
+          "edge_at": {
+            "const": "2026-10-05T09:16:00.000000+00:00"
+          },
+          "uplink": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "queued_at",
+              "store_id"
+            ],
+            "properties": {
+              "store_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "queued_at": {
+                "type": "string",
+                "minLength": 20
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "contains": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "basket",
+          "card_brand",
+          "context",
+          "currency",
+          "edge_at",
+          "entry_mode",
+          "join_id",
+          "note",
+          "stripped",
+          "total_cents",
+          "txn_id",
+          "uplink"
+        ],
+        "properties": {
+          "basket": {
+            "const": [
+              {
+                "category": "cold drinks",
+                "name": "Iced latte",
+                "qty": 1,
+                "sku": "CD-01",
+                "unit_cents": 420
+              },
+              {
+                "category": "cold drinks",
+                "name": "Lemonade",
+                "qty": 1,
+                "sku": "CD-03",
+                "unit_cents": 280
+              }
+            ]
+          },
+          "card_brand": {
+            "const": "mastercard"
+          },
+          "context": {
+            "const": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:09+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r2",
+              "sensor": "sensor missing",
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "temp_c": null,
+              "weekday": "Monday",
+              "sensor_at": null
+            }
+          },
+          "currency": {
+            "const": "EUR"
+          },
+          "entry_mode": {
+            "const": "chip"
+          },
+          "join_id": {
+            "const": "jid1_33e369b81b77a6e30ec989f8"
+          },
+          "note": {
+            "const": ""
+          },
+          "stripped": {
+            "const": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ]
+          },
+          "total_cents": {
+            "const": 700
+          },
+          "txn_id": {
+            "const": "s1-r2-fixture-00002"
+          },
+          "edge_at": {
+            "const": "2026-10-05T09:16:00.000000+00:00"
+          },
+          "uplink": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "queued_at",
+              "store_id"
+            ],
+            "properties": {
+              "store_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "queued_at": {
+                "type": "string",
+                "minLength": 20
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "contains": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "basket",
+          "card_brand",
+          "context",
+          "currency",
+          "edge_at",
+          "entry_mode",
+          "join_id",
+          "note",
+          "stripped",
+          "total_cents",
+          "txn_id",
+          "uplink"
+        ],
+        "properties": {
+          "basket": {
+            "const": [
+              {
+                "category": "bakery",
+                "name": "Sourdough loaf",
+                "qty": 1,
+                "sku": "BK-02",
+                "unit_cents": 480
+              }
+            ]
+          },
+          "card_brand": {
+            "const": "amex"
+          },
+          "context": {
+            "const": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:30+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r1",
+              "sensor": "sensor missing",
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "temp_c": null,
+              "weekday": "Monday",
+              "sensor_at": null
+            }
+          },
+          "currency": {
+            "const": "EUR"
+          },
+          "entry_mode": {
+            "const": "contactless"
+          },
+          "join_id": {
+            "const": "jid1_99304a24e80c22327bd731b2"
+          },
+          "note": {
+            "const": ""
+          },
+          "stripped": {
+            "const": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ]
+          },
+          "total_cents": {
+            "const": 480
+          },
+          "txn_id": {
+            "const": "s1-r1-fixture-00005"
+          },
+          "edge_at": {
+            "const": "2026-10-05T09:16:00.000000+00:00"
+          },
+          "uplink": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "queued_at",
+              "store_id"
+            ],
+            "properties": {
+              "store_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "queued_at": {
+                "type": "string",
+                "minLength": 20
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

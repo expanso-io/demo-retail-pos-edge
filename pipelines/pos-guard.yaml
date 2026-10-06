@@ -28,10 +28,7 @@ config:
           processors:
             - unarchive:
                 format: json_array
-            - mapping: |
-                meta kind = "swipe"
-                meta captured_at = this.captured_at
-                root = this.record
+            - mapping: meta kind = "swipe"
         - label: store_telemetry
           http_client:
             url: "${STORE_SOURCE_URL:http://127.0.0.1:8642}/telemetry/${STORE_ID}"
@@ -56,8 +53,11 @@ config:
               - resource: remember_telemetry
           - check: '@kind == "tick"'
             processors:
+              - resource: load_config
               - resource: check_roster
           - processors:
+              - resource: unwrap_lease
+              - resource: load_config
               - resource: scan_swipe
               - label: by_scan_result
                 switch:
@@ -145,7 +145,52 @@ config:
     - label: store_state
       memory:
         default_ttl: 1h
+    # The node's store configuration: register-keys.json, join-id-key.txt,
+    # store-profile.json and store-catalog.json. Keys stay in files (mode
+    # 0600), not in the job or the environment. The default directory exists
+    # only in a checkout of this repository; a node without POS_CONFIG_DIR
+    # finds nothing and quarantines every swipe instead of running on keys
+    # it was never given.
+    - label: store_config
+      file:
+        directory: "${POS_CONFIG_DIR:fixtures/replay/config}"
   processor_resources:
+    # The store API leases {captured_at, record}; keep the capture time.
+    - label: unwrap_lease
+      processors:
+        - mapping: |
+            meta captured_at = this.captured_at
+            root = this.record
+    - label: load_config
+      processors:
+        - branch:
+            processors:
+              - cache:
+                  resource: store_config
+                  operator: get
+                  key: register-keys.json
+            result_map: meta config_register_keys = content().string()
+        - branch:
+            processors:
+              - cache:
+                  resource: store_config
+                  operator: get
+                  key: join-id-key.txt
+            result_map: meta config_join_id_key = content().string().trim()
+        - branch:
+            processors:
+              - cache:
+                  resource: store_config
+                  operator: get
+                  key: store-profile.json
+            result_map: meta config_store_profile = content().string()
+        - branch:
+            processors:
+              - cache:
+                  resource: store_config
+                  operator: get
+                  key: store-catalog.json
+            result_map: meta config_store_catalog = content().string()
     # Climate readings and register heartbeats are remembered, not forwarded.
     - label: remember_telemetry
       processors:
@@ -165,7 +210,7 @@ config:
     - label: check_roster
       processors:
         - mapping: |
-            let registers = env("REGISTER_KEYS").parse_json().keys().sort()
+            let registers = @config_register_keys.parse_json().keys().sort()
             root = $registers.map_each(r -> {"register_id": r})
         - unarchive:
             format: json_array
@@ -223,7 +268,7 @@ config:
       processors:
         - mapping: |
             let doc = this
-            let keys = env("REGISTER_KEYS").parse_json()
+            let keys = @config_register_keys.parse_json()
             let key = $keys.get(this.register_id.or("?")).or("")
             let items = this.items.or([])
             let lines = $items.map_each(i -> "%v:%v:%v".format(i.sku, i.qty, i.unit_cents))
@@ -291,9 +336,9 @@ config:
     - label: join_id_and_strip
       processors:
         - mapping: |
-            let store = env("STORE_PROFILE").parse_json()
-            let catalog = env("STORE_CATALOG").parse_json()
-            let join_key = env("JOIN_ID_KEY")
+            let store = @config_store_profile.parse_json()
+            let catalog = @config_store_catalog.parse_json()
+            let join_key = @config_join_id_key
             let jid = "jid1_" + this.pan.hash("hmac_sha256", $join_key).encode("hex").slice(0, 24)
             let local = this.ts.ts_format("2006-01-02T15:04:05Z07:00", $store.tz)
             root.txn_id = this.txn_id

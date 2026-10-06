@@ -64,6 +64,62 @@ GUARD_TAPS = {"scan_swipe": "scanned", "join_id_and_strip": "joined",
               "add_store_temperature": "context", "to_quarantine": "quarantined"}
 
 
+# What the explorer says about each stage. `resource` is the label in the job
+# file; the line number is looked up in the committed YAML, so the explorer's
+# pointers cannot drift from the pipelines.
+STAGE_DEFS = [
+    {"id": "raw", "title": "Raw swipe", "file": "pipelines/pos-guard.yaml",
+     "resource": "store_database",
+     "what": "The till writes what a card terminal prints: card number, track 2, CVV, expiry, "
+             "cardholder, operator code, SKU lines and a signature, into the store's own "
+             "database. pos-guard leases it from the store API and keeps the time the "
+             "till captured it."},
+    {"id": "scan", "title": "Scan", "file": "pipelines/pos-guard.yaml", "resource": "scan_swipe",
+     "what": "Checks the signature against the till's enrolled key, the required fields, "
+             "that the lines add up to the total, the value limit, that the record is not "
+             "more than 120 seconds old, and text fields for injection patterns. It adds "
+             "scan.reasons. An empty list passes; a swipe the scan cannot read at all, or "
+             "from a register not enrolled here, is quarantined."},
+    {"id": "join", "title": "Join ID and strip", "file": "pipelines/pos-guard.yaml",
+     "resource": "join_id_and_strip",
+     "what": "Replaces the card number with a one-way join ID (jid1: HMAC-SHA256 under the "
+             "group's key, so the same card gives the same ID at every store). Resolves SKUs "
+             "to product names and categories, adds the store, till, location and local time, "
+             "and copies nothing that could identify a person. The fields it left behind are "
+             "listed under stripped."},
+    {"id": "context", "title": "Store context", "file": "pipelines/pos-guard.yaml",
+     "resource": "add_store_temperature",
+     "what": "Adds the store's temperature from the climate sensor's latest reading. A "
+             "reading more than 15 seconds old is not used: the record goes without it and "
+             "says the sensor is missing."},
+    {"id": "route", "title": "Final scan, then quarantine or uplink",
+     "file": "pipelines/pos-guard.yaml", "resource": "block_card_numbers",
+     "what": "A last scan of the outgoing record for anything shaped like a card number, in "
+             "any field. A hit is quarantined. Quarantined records are written to a file in "
+             "the store with the reason and a masked note, and never leave. Clean records go "
+             "to the uplink's queue on the store's disk, stamped with the store and the "
+             "time they were queued."},
+    {"id": "warehouse", "title": "Warehouse receipt", "file": "pipelines/pos-uplink.yaml",
+     "resource": "warehouse_ingest",
+     "what": "pos-uplink sends queued records in batches over HTTPS with the store's client "
+             "certificate. The warehouse accepts a batch only from a certificate issued by "
+             "the group's authority, only for that store's own records, and stores each "
+             "transaction ID once. The record leaves the queue when the warehouse answers."},
+]
+
+
+def stage_defs() -> list[dict]:
+    out = []
+    for stage in STAGE_DEFS:
+        lines = (ROOT / stage["file"]).read_text().splitlines()
+        line = next((n for n, text in enumerate(lines, 1)
+                     if text.strip().endswith(f"label: {stage['resource']}")), None)
+        if line is None:
+            raise SystemExit(f"{stage['file']} has no label {stage['resource']}")
+        out.append({**stage, "line": line})
+    return out
+
+
 def free_port() -> int:
     with socket.socket() as s:
         s.bind(("127.0.0.1", 0))
@@ -308,16 +364,20 @@ class Node:
     def start(self, world: "World", certs: Path, jobs: tuple[Path, Path]) -> None:
         sid = self.sid
         profile = fixtures.store_profile(sid)
+        config = self.dir / "config"
+        config.mkdir(mode=0o700, exist_ok=True)
+        for name, text in {
+                "register-keys.json": json.dumps(fixtures.register_keys(sid)),
+                "join-id-key.txt": fixtures.JOIN_ID_KEY + "\n",
+                "store-profile.json": json.dumps({k: profile[k] for k in (
+                    "store_id", "name", "district", "country", "tz", "lat", "lon")}),
+                "store-catalog.json": json.dumps({sku: {"name": n, "category": c}
+                                                  for sku, n, c, _, _ in stores.CATALOG})}.items():
+            (config / name).write_text(text)
+            (config / name).chmod(0o600)
         env = {**os.environ,
                "STORE_ID": sid,
-               "STORE_PROFILE": json.dumps({k: profile[k] for k in (
-                   "store_id", "name", "district", "country", "tz", "lat", "lon")},
-                   separators=(",", ":")),
-               "STORE_CATALOG": json.dumps({sku: {"name": n, "category": c}
-                                            for sku, n, c, _, _ in stores.CATALOG},
-                                           separators=(",", ":")),
-               "REGISTER_KEYS": json.dumps(fixtures.register_keys(sid), separators=(",", ":")),
-               "JOIN_ID_KEY": fixtures.JOIN_ID_KEY,
+               "POS_CONFIG_DIR": str(config),
                "STORE_SOURCE_URL": f"http://127.0.0.1:{world.source.port}",
                "OUTBOX_ADDR": f"127.0.0.1:{self.outbox}",
                "OUTBOX_URL": f"http://127.0.0.1:{self.outbox}/outbox",
@@ -672,10 +732,18 @@ def write_outputs(swipes: dict, expected: dict, checks: Checks, shipped: dict, t
              "revision": revision, "inputs_sha256": digest["sha256"],
              "tools": tool_versions(), "passed": passed,
              "checks": len(checks.rows), "seconds": round(time.time() - started)}
+    stage_dir = ROOT / "fixtures" / "stages"
+    stage_dir.mkdir(parents=True, exist_ok=True)
+    for index, stage in enumerate(stage_defs()):
+        for side in ("input", "output"):
+            rows = [{"swipe": sc["id"], "message": sc["stages"][index][side]}
+                    for sc in stages if sc["stages"][index][side] is not None]
+            (stage_dir / f"{stage['id']}.{side}.jsonl").write_text(
+                "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows))
     explorer = ROOT / "dashboard" / "data" / "stages.json"
     explorer.parent.mkdir(parents=True, exist_ok=True)
-    explorer.write_text(json.dumps({**stamp, "scenarios": stages}, indent=2,
-                                   ensure_ascii=False) + "\n")
+    explorer.write_text(json.dumps({**stamp, "stage_defs": stage_defs(), "scenarios": stages},
+                                   indent=2, ensure_ascii=False) + "\n")
     report = ROOT / "docs" / "proof" / f"{now.date().isoformat()}-fixture-run.md"
     report.parent.mkdir(parents=True, exist_ok=True)
     report.write_text(render_report(stamp, digest, swipes, expected, checks, shipped, stages))

@@ -39,7 +39,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-CARD = re.compile(r"(?<!\d)(?:\d[ -]?){12,18}\d(?!\d)")
+# A digit run inside an identifier (a hex join ID can hold 15 digits in a row)
+# is not a card number; a card number stands alone or is separated by spaces.
+CARD = re.compile(r"(?<!\w)(?:\d[ -]?){12,18}\d(?!\w)")
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS records (

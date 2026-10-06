@@ -1,0 +1,1 @@
+fixture-join-key-demo-retail-pos-edge

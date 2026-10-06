@@ -26,6 +26,7 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -69,6 +70,10 @@ DIGEST_INPUTS = [
     "pipelines/pos-guard.yaml", "pipelines/pos-uplink.yaml", "config/stores.json",
     "scripts/stores.py", "scripts/warehouse.py", "scripts/pki.py", "scripts/fixtures.py",
     "scripts/fixture_run.py", "fixtures/swipes.json", "fixtures/expected.json",
+    "fixtures/replay/guard.input.jsonl", "fixtures/replay/uplink.input.jsonl",
+    "fixtures/replay/guard.expected.schema.json", "fixtures/replay/uplink.expected.schema.json",
+    "fixtures/replay/config/register-keys.json", "fixtures/replay/config/join-id-key.txt",
+    "fixtures/replay/config/store-profile.json", "fixtures/replay/config/store-catalog.json",
 ]
 
 
@@ -289,6 +294,101 @@ def build() -> tuple[dict, dict]:
     return swipes, expected
 
 
+# ------------------------------------------------------------- shared replay
+# The shared public-bar check replays each job from a file of JSON lines to a
+# file, with no environment. These are its inputs and the schemas its output
+# must satisfy, built from the same oracle as the proof run. Store s1 only:
+# the replay uses one store's configuration, and s2 is covered by the proof run.
+
+REPLAY_STORE = "s1"
+
+
+def replay_config() -> dict[str, str]:
+    """The store configuration directory the replay's default POS_CONFIG_DIR points at."""
+    catalog = {sku: {"name": n, "category": c} for sku, n, c, _, _ in stores.CATALOG}
+    profile = {k: store_profile(REPLAY_STORE)[k]
+               for k in ("store_id", "name", "district", "country", "tz", "lat", "lon")}
+    return {
+        "register-keys.json": json.dumps(register_keys(REPLAY_STORE), indent=2) + "\n",
+        "join-id-key.txt": JOIN_ID_KEY + "\n",
+        "store-profile.json": json.dumps(profile, indent=2) + "\n",
+        "store-catalog.json": json.dumps(catalog, indent=2) + "\n",
+    }
+
+
+def lines(items: list[dict]) -> str:
+    return "".join(json.dumps(i, ensure_ascii=False) + "\n" for i in items)
+
+
+def guard_clean_output(case: dict) -> dict:
+    """What pos-guard emits for a clean swipe when no sensor has reported."""
+    out = expected_clean(case)
+    del out["uplink"]
+    out["context"].update(sensor="sensor missing", temp_c=None, sensor_at=None)
+    return out
+
+
+def const_object(value: dict, loose: dict[str, dict]) -> dict:
+    """A closed schema: every key must be present, fixed values are const."""
+    props = {k: {"const": v} for k, v in value.items() if k not in loose}
+    props.update(loose)
+    return {"type": "object", "additionalProperties": False, "required": sorted(props),
+            "properties": props}
+
+
+TIMESTAMP = {"type": "string", "minLength": 20}
+
+
+def guard_schema(replay_cases: list[dict]) -> dict:
+    wanted = []
+    for case in replay_cases:
+        if case["id"].startswith("clean"):
+            rec = guard_clean_output(case)
+            context = const_object(rec["context"], {})
+            schema = const_object({k: v for k, v in rec.items() if k != "context"},
+                                  {"context": context, "edge_at": TIMESTAMP})
+        else:
+            want = expected_quarantine(case)
+            schema = const_object(
+                {"note": want["note"], "register_id": want["register_id"],
+                 "total_cents": want["total_cents"], "txn_id": want["txn_id"]},
+                {"quarantined_at": TIMESTAMP, "store_id": {"type": ["string", "null"]},
+                 "reason": {"type": "string",
+                            "pattern": "^" + re.escape(want["reason_starts_with"])},
+                 "reasons": {"type": "array", "minItems": 1, "items": {"type": "string"}}})
+        wanted.append({"contains": schema})
+    return {"$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "pos-guard replay output", "type": "array",
+            "minItems": len(wanted), "maxItems": len(wanted), "allOf": wanted}
+
+
+def uplink_schema(clean_outputs: list[dict]) -> dict:
+    wanted = []
+    for rec in clean_outputs:
+        schema = const_object({k: v for k, v in rec.items()},
+                              {"uplink": const_object({}, {
+                                  "store_id": {"type": ["string", "null"]},
+                                  "queued_at": TIMESTAMP})})
+        wanted.append({"contains": schema})
+    return {"$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "pos-uplink replay output", "type": "array",
+            "minItems": len(wanted), "maxItems": len(wanted), "allOf": wanted}
+
+
+def replay_files(all_cases: list[dict]) -> dict[str, str]:
+    mine = [c for c in all_cases if c["store"] == REPLAY_STORE]
+    clean = [guard_clean_output(c) for c in mine if c["id"].startswith("clean")]
+    for rec in clean:
+        rec["edge_at"] = "2026-10-05T09:16:00.000000+00:00"
+    files = {f"fixtures/replay/config/{name}": text for name, text in replay_config().items()}
+    files["fixtures/replay/guard.input.jsonl"] = lines(
+        [{"captured_at": c["captured_at"], "record": c["record"]} for c in mine])
+    files["fixtures/replay/guard.expected.schema.json"] = render(guard_schema(mine))
+    files["fixtures/replay/uplink.input.jsonl"] = lines(clean)
+    files["fixtures/replay/uplink.expected.schema.json"] = render(uplink_schema(clean))
+    return files
+
+
 def render(obj: dict) -> str:
     return json.dumps(obj, indent=2, ensure_ascii=False) + "\n"
 
@@ -300,6 +400,7 @@ def main() -> int:
     swipes, expected = build()
     files = {ROOT / "fixtures" / "swipes.json": render(swipes),
              ROOT / "fixtures" / "expected.json": render(expected)}
+    files.update({ROOT / name: text for name, text in replay_files(swipes["cases"]).items()})
     if args.check:
         stale = [str(p.relative_to(ROOT)) for p, text in files.items()
                  if not p.exists() or p.read_text() != text]
@@ -308,8 +409,8 @@ def main() -> int:
             return 1
         print(f"ok: fixtures match their generator ({len(swipes['cases'])} swipes)")
         return 0
-    (ROOT / "fixtures").mkdir(exist_ok=True)
     for path, text in files.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text)
     print(f"wrote {len(files)} files, {len(swipes['cases'])} swipes")
     return 0
