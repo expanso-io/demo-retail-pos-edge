@@ -54,7 +54,7 @@ from bs4 import BeautifulSoup
 from jsonschema import Draft202012Validator
 
 
-PUBLIC_BAR_VERSION = "1.2.1"
+PUBLIC_BAR_VERSION = "1.2.2"
 CRITERIA = {
     1: "Runs",
     2: "Platform",
@@ -1039,6 +1039,9 @@ def launched_script(words: list[str]) -> tuple[str, list[str]] | None:
 
 
 def is_lifecycle_launcher(script: str, arguments: list[str]) -> bool:
+    # A harness under tests/ runs checks, not the demo.
+    if {"tests", "test"} & set(Path(script).parts[:-1]):
+        return False
     stem = Path(script).name
     for suffix in SCRIPT_SUFFIXES:
         stem = stem.removesuffix(suffix)
