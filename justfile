@@ -55,6 +55,7 @@ test:
     uv run --quiet -s scripts/dashboard.py --check
     bash -n demo.sh
     uv run --quiet -s tests/test_stores.py
+    uv run --quiet -s tests/test_wan_security.py
 
 # Expanso pipelines: syntax, then the all-demos rules (logs, a real output,
 # short lines, no blank lines in config, generate only for timers).

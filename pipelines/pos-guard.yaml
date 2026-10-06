@@ -7,7 +7,7 @@
 #              local time, store temperature
 #   5 block    a final card-number scan of the outgoing record
 #   6 route    quarantine stays in the store; clean records go to the uplink
-#              queue
+#              queue and into the window display's 10-second sales window
 name: pos-guard
 type: pipeline
 description: Scan, anonymize and add context to every swipe at the store
@@ -93,15 +93,33 @@ config:
                     retries: 10
                     retry_period: 1s
                     max_retry_backoff: 5s
+              # A clean record goes two ways: to the uplink queue, and into the
+              # 10-second sales window the store's window display shows.
               - check: '@route == "clean"'
                 output:
-                  label: uplink_outbox
-                  http_client:
-                    url: "${OUTBOX_URL}"
-                    batch_as_multipart: false
-                    retries: 10
-                    retry_period: 1s
-                    max_retry_backoff: 5s
+                  label: deliver_clean
+                  broker:
+                    pattern: fan_out
+                    outputs:
+                      - label: uplink_outbox
+                        http_client:
+                          url: "${OUTBOX_URL}"
+                          batch_as_multipart: false
+                          retries: 10
+                          retry_period: 1s
+                          max_retry_backoff: 5s
+                      - label: store_display
+                        http_client:
+                          url: "${DISPLAY_URL}/sales"
+                          retries: 10
+                          retry_period: 1s
+                          max_retry_backoff: 5s
+                          batching:
+                            period: 10s
+                            processors:
+                              - archive:
+                                  format: json_array
+                              - resource: sales_window
         - label: acknowledge_source
           http_client:
             url: "${STORE_SOURCE_URL:http://127.0.0.1:8642}/ack/${STORE_ID}"
@@ -182,6 +200,25 @@ config:
                     message: >-
                       register ${! this.register_id } silent for
                       ${! this.silent_s }s: flagged to the store display
+    # The store display gets a 10 s sales window, computed here at the edge.
+    - label: sales_window
+      processors:
+        - mapping: |
+            let items = this.filter(r -> r.basket != null).map_each(r -> r.basket).flatten()
+            let categories = $items.map_each(i -> i.category).unique()
+            root.store_id = this.index(0).context.store_id
+            root.window_s = 10
+            root.sales = this.length()
+            root.temp_c = this.index(-1).context.temp_c
+            root.by_category = $categories.map_each(c -> {
+              "category": c,
+              "units": $items.filter(i -> i.category == c).map_each(i -> i.qty).sum()
+            }).sort_by(x -> 0 - x.units)
+        - log:
+            level: INFO
+            message: >-
+              store display ${! this.store_id }: ${! this.sales } sales in
+              ${! this.window_s }s, top ${! this.by_category.index(0).category }
     - label: scan_swipe
       processors:
         - mapping: |

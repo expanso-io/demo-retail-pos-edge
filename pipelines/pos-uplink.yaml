@@ -1,7 +1,8 @@
 # pos-uplink: the store's only path out, through its WAN link to the core
 # network. Clean records queue on the store's disk (sqlite buffer) and leave
 # only once the warehouse accepts them, so a dropped link loses nothing and
-# the registers never wait for it.
+# the registers never wait for it. The link is HTTPS with a client
+# certificate per store; there is no plaintext or token-only path.
 name: pos-uplink
 type: pipeline
 description: Queue clean records on the store's disk and drain them to the warehouse
@@ -39,10 +40,18 @@ config:
       output:
         label: warehouse_ingest
         http_client:
-          url: "${WAREHOUSE_URL}"
+          url: "https://${WAREHOUSE_HOST}/ingest"
           verb: POST
           headers:
             Content-Type: application/json
+          # Mutual TLS: the node trusts only the group CA for the warehouse,
+          # and the warehouse accepts only this store's certificate.
+          tls:
+            enabled: true
+            root_cas_file: "${WAREHOUSE_CA_FILE}"
+            client_certs:
+              - cert_file: "${STORE_CLIENT_CERT_FILE}"
+                key_file: "${STORE_CLIENT_KEY_FILE}"
           timeout: 5s
           retries: 3
           retry_period: 2s

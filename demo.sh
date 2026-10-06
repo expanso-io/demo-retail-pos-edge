@@ -6,14 +6,16 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 cd "$ROOT"
 
 PORT="${PORT:-8640}"
-WAREHOUSE_PORT=8641
+WAREHOUSE_PORT=8641  # TLS ingest, reached through each store's WAN link
 STORES_PORT=8642
+WAREHOUSE_ADMIN_PORT=8643  # loopback read API for the board
 OUTBOX_BASE=8650     # store N's pos-guard -> pos-uplink, on the node
 WAN_BASE=8660        # store N's WAN link to the warehouse
 DISPLAY_BASE=8670    # store N's window display
 API_BASE=8680        # store N's local edge API (local mode)
 RUNTIME="$ROOT/.runtime"
 CLOUD_STATE="$ROOT/.cloud-state"
+PKI_DIR="$ROOT/.secrets/pki"
 ENV_FILE="$ROOT/.env"
 JOBS=(pos-guard pos-uplink)
 read -r -a STORES <<<"$(jq -r '[.stores[].store_id] | join(" ")' config/stores.json)"
@@ -46,6 +48,13 @@ check_env() {
       say "generated $name in .env"
     fi
   done
+}
+
+# The WAN leg is mutual TLS: one CA, a warehouse certificate and a client
+# certificate per store, created once and kept owner-only under .secrets/.
+check_pki() {
+  uv run --quiet -s scripts/pki.py init "$PKI_DIR" "${STORES[@]}" >/dev/null \
+    || die "could not create the WAN certificates (scripts/pki.py)"
 }
 
 check_cloud_env() {
@@ -83,11 +92,14 @@ wait_http() {
 warehouse_up() {
   pid_alive "$RUNTIME/warehouse.pid" && return 0
   port_busy "$WAREHOUSE_PORT" && die "port $WAREHOUSE_PORT is in use"
+  port_busy "$WAREHOUSE_ADMIN_PORT" && die "port $WAREHOUSE_ADMIN_PORT is in use"
   nohup uv run --quiet -s scripts/warehouse.py --port "$WAREHOUSE_PORT" \
+    --admin-port "$WAREHOUSE_ADMIN_PORT" --tls-cert "$PKI_DIR/warehouse.pem" \
+    --tls-key "$PKI_DIR/warehouse.key" --client-ca "$PKI_DIR/ca.pem" \
     >|"$RUNTIME/warehouse.log" 2>&1 &
   echo $! >|"$RUNTIME/warehouse.pid"
-  wait_http "http://127.0.0.1:$WAREHOUSE_PORT/stats" warehouse "$RUNTIME/warehouse.log"
-  say "warehouse: 127.0.0.1:$WAREHOUSE_PORT"
+  wait_http "http://127.0.0.1:$WAREHOUSE_ADMIN_PORT/stats" warehouse "$RUNTIME/warehouse.log"
+  say "warehouse: TLS 127.0.0.1:$WAREHOUSE_PORT (client certificate required)"
 }
 
 stores_up() {
@@ -170,7 +182,10 @@ edge_up() {
   OUTBOX_ADDR="127.0.0.1:$((OUTBOX_BASE + n))" \
   OUTBOX_URL="http://127.0.0.1:$((OUTBOX_BASE + n))/outbox" \
   DISPLAY_URL="http://127.0.0.1:$((DISPLAY_BASE + n))" \
-  WAREHOUSE_URL="http://127.0.0.1:$((WAN_BASE + n))/ingest" \
+  WAREHOUSE_HOST="127.0.0.1:$((WAN_BASE + n))" \
+  WAREHOUSE_CA_FILE="$PKI_DIR/ca.pem" \
+  STORE_CLIENT_CERT_FILE="$PKI_DIR/clients/$store.pem" \
+  STORE_CLIENT_KEY_FILE="$PKI_DIR/clients/$store.key" \
   QUARANTINE_FILE="$dir/quarantine.jsonl" \
   UPLINK_QUEUE_DB="$dir/uplink-queue.db" \
     nohup expanso-edge "${args[@]}" >|"$dir/edge.log" 2>&1 &
@@ -364,6 +379,7 @@ wait_ingest_closed() {
 cmd_up() {
   local store foreign
   check_env
+  check_pki
   check_cloud_env
   cmd_down >/dev/null
   mkdir -p "$RUNTIME"
@@ -391,6 +407,7 @@ workspace would land on the store nodes: $(tr '\n' ' ' <<<"$foreign")
 cmd_up_local() {
   local store
   check_env
+  check_pki
   cmd_down >/dev/null
   mkdir -p "$RUNTIME"
   wipe_store_state

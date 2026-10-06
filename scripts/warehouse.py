@@ -6,14 +6,23 @@
 """The data warehouse behind the DMZ: a SQLite sink and its read API.
 
 Each store's pos-uplink job POSTs JSON arrays of shareable records to
-/ingest through that store's WAN link. A record is stored once per txn_id;
-a redelivery after a link cut is counted, not stored twice.
+/ingest through that store's WAN link. The ingest port speaks only TLS 1.3
+and requires a client certificate issued by the group's CA (scripts/pki.py);
+the certificate's common name is the store, and a batch carrying another
+store's records is refused. There is no plaintext ingest and no token to
+leak. A record is stored once per txn_id; a redelivery after a link cut is
+counted, not stored twice.
+
+The read API for the board (stats, one record, reset) is a separate
+listener on the loopback interface and cannot ingest.
 
 The warehouse runs its own card-number check, independent of the edge: every
 string in every stored row is scanned for a Luhn-valid 13 to 19 digit run.
 The board shows that count; it should always read zero.
 
-    uv run -s scripts/warehouse.py --port 8641 --db .runtime/warehouse.db
+    uv run -s scripts/warehouse.py --port 8641 --admin-port 8643 \\
+        --tls-cert .secrets/pki/warehouse.pem --tls-key .secrets/pki/warehouse.key \\
+        --client-ca .secrets/pki/ca.pem --db .runtime/warehouse.db
 """
 
 from __future__ import annotations
@@ -21,7 +30,9 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import socketserver
 import sqlite3
+import ssl
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -87,6 +98,20 @@ def parse_ts(value: str | None) -> float | None:
         return None
 
 
+class Forbidden(Exception):
+    """A store presented a valid certificate but sent another store's records."""
+
+
+def peer_store(connection: ssl.SSLSocket) -> str | None:
+    """The common name of the verified client certificate, or None."""
+    cert = connection.getpeercert()
+    for rdn in (cert or {}).get("subject", ()):
+        for key, value in rdn:
+            if key == "commonName":
+                return value
+    return None
+
+
 class Warehouse:
     def __init__(self, db: Path, profiles: Path):
         db.parent.mkdir(parents=True, exist_ok=True)
@@ -95,6 +120,8 @@ class Warehouse:
         self.lock = threading.Lock()
         self.duplicates = 0
         self.rejected = 0
+        self.refused_connections = 0
+        self.forbidden_batches = 0
         self.batches = 0
         self.bytes_in = 0
         self.card_hits = 0
@@ -117,9 +144,21 @@ class Warehouse:
             self.rows_scanned = len(rows)
             self.card_hits = sum(len(card_numbers_in(json.loads(b))) for (b,) in rows)
 
-    def ingest(self, payload: bytes) -> int:
+    def refuse_connection(self) -> None:
+        with self.lock:
+            self.refused_connections += 1
+
+    def ingest(self, payload: bytes, store: str) -> int:
+        """Stores a batch. `store` is the verified certificate name; every
+        record in the batch must belong to it, or nothing is stored."""
         data = json.loads(payload)
         records = data if isinstance(data, list) else [data]
+        for rec in records:
+            owner = rec.get("context", {}).get("store_id") if isinstance(rec, dict) else None
+            if owner != store:
+                with self.lock:
+                    self.forbidden_batches += 1
+                raise Forbidden(f"certificate for {store} cannot deliver {owner} records")
         now = time.time()
         new = 0
         with self.lock:
@@ -178,6 +217,8 @@ class Warehouse:
                 "bytes_in": self.bytes_in,
                 "duplicates_ignored": self.duplicates,
                 "rejected": self.rejected,
+                "wan": {"refused_connections": self.refused_connections,
+                        "forbidden_batches": self.forbidden_batches},
                 "per_store": per_store,
                 "shoppers": len(join_ids),
                 "shoppers_multi_store": multi,
@@ -203,58 +244,124 @@ class Warehouse:
             self.conn.execute("DELETE FROM records")
             self.conn.commit()
             self.duplicates = self.batches = self.bytes_in = self.rejected = 0
+            self.refused_connections = self.forbidden_batches = 0
             self.card_hits = self.rows_scanned = 0
             self.per_store_batches.clear()
         self.load_profiles()
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--port", type=int, default=8641)
-    ap.add_argument("--db", default=str(ROOT / ".runtime" / "warehouse.db"))
-    ap.add_argument("--profiles", default=str(ROOT / ".runtime" / "online-profiles.json"))
-    args = ap.parse_args()
-    wh = Warehouse(Path(args.db), Path(args.profiles))
+def tls_context(cert: Path, key: Path, client_ca: Path) -> ssl.SSLContext:
+    ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ctx.minimum_version = ssl.TLSVersion.TLSv1_3
+    ctx.load_cert_chain(cert, key)
+    ctx.load_verify_locations(client_ca)
+    ctx.verify_mode = ssl.CERT_REQUIRED
+    return ctx
 
-    class H(BaseHTTPRequestHandler):
-        def reply(self, code: int, obj: object) -> None:
-            body = json.dumps(obj).encode()
-            self.send_response(code)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
 
-        def do_POST(self) -> None:  # noqa: N802 - http.server API
-            n = int(self.headers.get("Content-Length") or 0)
-            payload = self.rfile.read(n)
-            if self.path == "/ingest":
+def reply(handler: BaseHTTPRequestHandler, code: int, obj: object) -> None:
+    body = json.dumps(obj).encode()
+    handler.send_response(code)
+    handler.send_header("Content-Type", "application/json")
+    handler.send_header("Content-Length", str(len(body)))
+    handler.end_headers()
+    handler.wfile.write(body)
+
+
+class IngestServer(ThreadingHTTPServer):
+    """The WAN-facing listener. The handshake runs in the worker thread, so a
+    plaintext or unauthenticated peer can never stall the accept loop."""
+
+    daemon_threads = True
+
+    def __init__(self, address: tuple[str, int], context: ssl.SSLContext, wh: Warehouse):
+        self.context = context
+        self.wh = wh
+        super().__init__(address, self.handler_class())
+
+    def handler_class(self) -> type[BaseHTTPRequestHandler]:
+        wh = self.wh
+
+        class Ingest(BaseHTTPRequestHandler):
+            def do_POST(self) -> None:  # noqa: N802 - http.server API
+                n = int(self.headers.get("Content-Length") or 0)
+                payload = self.rfile.read(n)
+                store = peer_store(self.connection)  # type: ignore[arg-type]
+                if self.path != "/ingest" or store is None:
+                    reply(self, 404 if store else 401, {"error": "not found"})
+                    return
                 try:
-                    self.reply(200, {"stored": wh.ingest(payload)})
+                    reply(self, 200, {"stored": wh.ingest(payload, store)})
+                except Forbidden as exc:
+                    reply(self, 403, {"error": str(exc)})
                 except (ValueError, sqlite3.Error) as exc:
-                    self.reply(400, {"error": str(exc)})
-            elif self.path == "/reset":
-                wh.reset()
-                self.reply(200, {"reset": True})
-            else:
-                self.reply(404, {"error": "not found"})
+                    reply(self, 400, {"error": str(exc)})
 
+            def do_GET(self) -> None:  # noqa: N802 - http.server API
+                reply(self, 405, {"error": "ingest only"})
+
+            def log_message(self, *args: object) -> None:
+                pass
+
+        return Ingest
+
+    def process_request_thread(self, request: object, client_address: object) -> None:
+        sock: socketserver.socket.socket = request  # type: ignore[assignment]
+        try:
+            sock.settimeout(5)
+            tls = self.context.wrap_socket(sock, server_side=True)
+        except (ssl.SSLError, OSError):
+            self.wh.refuse_connection()
+            self.shutdown_request(request)
+            return
+        super().process_request_thread(tls, client_address)  # type: ignore[arg-type]
+
+
+def admin_server(port: int, wh: Warehouse) -> ThreadingHTTPServer:
+    class Admin(BaseHTTPRequestHandler):
         def do_GET(self) -> None:  # noqa: N802 - http.server API
             if self.path == "/stats":
-                self.reply(200, wh.stats())
+                reply(self, 200, wh.stats())
             elif self.path.startswith("/record/"):
                 rec = wh.record(self.path[8:])
-                self.reply(200 if rec else 404, rec or {"error": "not found"})
+                reply(self, 200 if rec else 404, rec or {"error": "not found"})
             else:
-                self.reply(404, {"error": "not found"})
+                reply(self, 404, {"error": "not found"})
+
+        def do_POST(self) -> None:  # noqa: N802 - http.server API
+            if self.path == "/reset":
+                wh.reset()
+                reply(self, 200, {"reset": True})
+            else:
+                reply(self, 404, {"error": "not found"})
 
         def log_message(self, *args: object) -> None:
             pass
 
-    srv = ThreadingHTTPServer(("127.0.0.1", args.port), H)
-    print(f"warehouse on 127.0.0.1:{args.port}", flush=True)
+    return ThreadingHTTPServer(("127.0.0.1", port), Admin)
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--bind", default="127.0.0.1", help="interface for the TLS ingest port")
+    ap.add_argument("--port", type=int, default=8641, help="TLS ingest port")
+    ap.add_argument("--admin-port", type=int, default=8643, help="loopback read API")
+    ap.add_argument("--db", default=str(ROOT / ".runtime" / "warehouse.db"))
+    ap.add_argument("--profiles", default=str(ROOT / ".runtime" / "online-profiles.json"))
+    ap.add_argument("--tls-cert", type=Path, required=True)
+    ap.add_argument("--tls-key", type=Path, required=True)
+    ap.add_argument("--client-ca", type=Path, required=True,
+                    help="CA that issues the store certificates")
+    args = ap.parse_args()
+    wh = Warehouse(Path(args.db), Path(args.profiles))
+    ingest = IngestServer((args.bind, args.port),
+                          tls_context(args.tls_cert, args.tls_key, args.client_ca), wh)
+    admin = admin_server(args.admin_port, wh)
+    threading.Thread(target=admin.serve_forever, daemon=True).start()
+    print(f"warehouse: TLS ingest {args.bind}:{args.port}, read API 127.0.0.1:{args.admin_port}",
+          flush=True)
     try:
-        srv.serve_forever()
+        ingest.serve_forever()
     except KeyboardInterrupt:
         pass
     return 0

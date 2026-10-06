@@ -124,8 +124,8 @@ def test_warehouse_receipts_are_ordered_and_deduplicated() -> None:
         sink = warehouse.Warehouse(Path(folder) / "warehouse.db", Path(folder) / "profiles.json")
         records = [{"txn_id": f"receipt-{i}", "join_id": "jid1_test",
                     "total_cents": i, "context": {"store_id": "s1"}} for i in range(65)]
-        sink.ingest(json.dumps(records).encode())
-        sink.ingest(json.dumps(records).encode())
+        sink.ingest(json.dumps(records).encode(), "s1")
+        sink.ingest(json.dumps(records).encode(), "s1")
         state = sink.stats()
         receipts = state["recent_receipts"]
         assert state["rows"] == 65
