@@ -108,7 +108,7 @@ config:
                           retries: 10
                           retry_period: 1s
                           max_retry_backoff: 5s
-                      - label: store_display
+                      - label: sales_window_display
                         http_client:
                           url: "${DISPLAY_URL}/sales"
                           retries: 10
@@ -235,7 +235,9 @@ config:
               this.pan.or(""),
               $lines.join(",")
             ].join("|").catch("")
-            let signed = $canon.hash("hmac_sha256", $key + "").encode("hex")
+            let signed = if $key == "" { "" } else {
+              $canon.hash("hmac_sha256", $key).encode("hex")
+            }
             let required = ["txn_id", "register_id", "ts", "pan", "items", "total_cents", "sig"]
             let missing = $required.filter(f -> $doc.get(f) == null)
             let ts = this.ts.or("1970-01-01T00:00:00Z")
@@ -261,6 +263,11 @@ config:
               if $total > 500000 { "range: total over limit" } else { null },
               if $injected { "injection pattern in a text field" } else { null }
             ].filter(r -> r != null)
+        # A swipe the scan cannot read at all is quarantined, never retried.
+        - catch:
+            - mapping: |
+                root = this
+                root.scan.reasons = ["malformed: the scan could not read this swipe"]
     # The quarantined record keeps its evidence but never its card number.
     - label: to_quarantine
       processors:

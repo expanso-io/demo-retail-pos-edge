@@ -463,6 +463,40 @@ class WanLink:
             return {"cut": self.cut, "bytes_up": self.bytes_up, "bytes_down": self.bytes_down}
 
 
+def serve_display(display: Display, port: int) -> ThreadingHTTPServer:
+    """A store's window display endpoint: pos-guard posts the sales window and
+    the register roster here. Returns the running server."""
+
+    class H(BaseHTTPRequestHandler):
+        def do_POST(self) -> None:  # noqa: N802 - http.server API
+            n = int(self.headers.get("Content-Length") or 0)
+            try:
+                body = json.loads(self.rfile.read(n) or b"{}")
+            except json.JSONDecodeError:
+                self.send_response(400)
+                self.end_headers()
+                return
+            if not isinstance(body, dict):
+                self.send_response(422)
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
+            if self.path.startswith("/sales"):
+                display.on_sales(body)
+            elif self.path.startswith("/roster"):
+                display.on_roster(body)
+            self.send_response(200)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+
+        def log_message(self, *args: object) -> None:
+            pass
+
+    srv = ThreadingHTTPServer(("127.0.0.1", port), H)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    return srv
+
+
 class World:
     def __init__(self, seed: str, join_key: str, runtime: Path, mean_gap_s: float):
         cfg = load_config()
@@ -547,35 +581,7 @@ class World:
             self.serve_display(store)
 
     def serve_display(self, store: dict) -> None:
-        display = self.displays[store["store_id"]]
-
-        class H(BaseHTTPRequestHandler):
-            def do_POST(self) -> None:  # noqa: N802 - http.server API
-                n = int(self.headers.get("Content-Length") or 0)
-                try:
-                    body = json.loads(self.rfile.read(n) or b"{}")
-                except json.JSONDecodeError:
-                    self.send_response(400)
-                    self.end_headers()
-                    return
-                if not isinstance(body, dict):
-                    self.send_response(422)
-                    self.send_header("Content-Length", "0")
-                    self.end_headers()
-                    return
-                if self.path.startswith("/sales"):
-                    display.on_sales(body)
-                elif self.path.startswith("/roster"):
-                    display.on_roster(body)
-                self.send_response(200)
-                self.send_header("Content-Length", "0")
-                self.end_headers()
-
-            def log_message(self, *args: object) -> None:
-                pass
-
-        srv = ThreadingHTTPServer(("127.0.0.1", DISPLAY_BASE + store["n"]), H)
-        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        serve_display(self.displays[store["store_id"]], DISPLAY_BASE + store["n"])
 
     def state(self) -> dict:
         stores = []

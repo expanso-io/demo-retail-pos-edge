@@ -163,7 +163,14 @@ function buildStores(stores) {
     });
     const shopActions = h("div", "shop-actions");
     shopActions.append(closed, shopToggle);
-    frontage.append(sign, shopActions);
+    const win = h("div", "window");
+    win.setAttribute("aria-label", `${s.name} window display`);
+    const wk = h("span", "w-k", "window display");
+    const wv = h("span", "w-v", "waiting for sales");
+    const wn = h("span", "w-n", "");
+    const wa = h("span", "w-alert", "");
+    win.append(wk, wv, wn, wa);
+    frontage.append(sign, win, shopActions);
     const tills = h("div", "tills");
 
     for (const r of s.registers) {
@@ -248,7 +255,7 @@ function buildStores(stores) {
     row.append(front);
     root.append(row);
     refs.stores.set(s.store_id, {
-      row, front, therm, edge, status, jobs, collectJob, uplinkJob, telemetry, telemetryIcon, telemetryValue, qNum, qIcon, queue, bNum, bIcon, link, closed, shopToggle, intake, intakeIcon, eventCount,
+      row, front, therm, win, wk, wv, wn, wa, edge, status, jobs, collectJob, uplinkJob, telemetry, telemetryIcon, telemetryValue, qNum, qIcon, queue, bNum, bIcon, link, closed, shopToggle, intake, intakeIcon, eventCount,
     });
   }
 
@@ -285,19 +292,27 @@ function renderHeader(state) {
   const pill = $("pill-mode");
   const cloud = $("cloud");
   const n = state.stores.length;
+  const guard = state.stores.filter((s) => s.edge.jobs["pos-guard"]).length;
+  const uplink = state.stores.filter((s) => s.edge.jobs["pos-uplink"]).length;
   const connected = state.stores.filter((s) => s.edge.connected).length;
+  const jobs = $("cloud-jobs");
 
   if (state.mode === "cloud") {
     pill.dataset.state = "cloud";
     pill.textContent = `EXPANSO CLOUD · ${connected}/${n} NODES`;
     cloud.querySelector(".cloud-name").textContent = "Expanso Cloud";
+    jobs.textContent = guard || uplink
+      ? `pos-guard ${guard}/${n} · pos-uplink ${uplink}/${n} running`
+      : "pos-guard · pos-uplink deployed, stopped";
   } else if (state.mode === "local") {
     pill.dataset.state = "on";
     pill.textContent = "LOCAL CONTROL PLANE";
     cloud.querySelector(".cloud-name").textContent = "Local control plane";
+    jobs.textContent = `pos-guard ${guard}/${n} · pos-uplink ${uplink}/${n} running`;
   } else {
     pill.dataset.state = "off";
     pill.textContent = "EXPANSO OFF";
+    jobs.textContent = "no store node connected";
   }
 
   cloud.dataset.state = connected ? "on" : "off";
@@ -332,6 +347,7 @@ function renderStore(s, now) {
   const silent = Object.values(s.display?.roster || {}).filter((r) => r.status === "silent");
 
   if (s.edge.jobs["pos-guard"] && silent.length) ref.telemetryValue.textContent += ` · ${silent.length} silent till${silent.length === 1 ? "" : "s"}`;
+  renderWindow(s, ref, silent);
 
   const es = edgeState(s);
   ref.edge.dataset.state = es;
@@ -355,6 +371,37 @@ function renderStore(s, now) {
     t.btn.setAttribute("aria-label", `${s.name} ${tillName(r.id)}: ${r.state}. Switch ${r.state === "open" ? "off" : "on"}`);
 
   }
+}
+
+/* The store's window display shows only what pos-guard sends it: the top
+ * category of the last 10-second sales window, and any till it flagged silent. */
+function renderWindow(s, ref, silent) {
+  const display = s.display || {};
+  const w = display.window;
+  const fresh = Boolean(w) && Date.now() / 1000 - w.received_at < 25;
+  ref.win.dataset.fresh = fresh && s.edge.jobs["pos-guard"] ? "1" : "0";
+
+  if (!s.edge.jobs["pos-guard"]) {
+    ref.wk.textContent = "window display";
+    ref.wv.textContent = "pipeline stopped";
+    ref.wn.textContent = "";
+  } else if (fresh && w.by_category && w.by_category.length) {
+    const top = w.by_category[0];
+
+    const before = (display.previous && display.previous.by_category || [])
+      .find((c) => c.category === top.category);
+
+    ref.wk.textContent = "top seller now";
+    ref.wv.textContent = top.category;
+    ref.wn.textContent = !before || top.units > before.units ? "↑ rising" : "steady";
+  } else {
+    ref.wk.textContent = "window display";
+    ref.wv.textContent = "waiting for sales";
+    ref.wn.textContent = "";
+  }
+
+  ref.wa.textContent = silent.length
+    ? `${silent.map((r) => tillName(r.register_id)).join(", ")} silent` : "";
 }
 
 function tillFace(r, now) {

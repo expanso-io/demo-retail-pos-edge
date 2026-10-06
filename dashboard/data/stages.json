@@ -1,0 +1,5301 @@
+{
+  "generated": "2026-10-05T19:51:25-07:00",
+  "date": "2026-10-05",
+  "revision": {
+    "commit": "79fc30323bf5ed13150a6e3f9c76611a8f9d0d48",
+    "short": "79fc303",
+    "dirty": true
+  },
+  "inputs_sha256": "4855d5345c1704a69985a01c85daf947519549776bb37238b1d4495220a6d73b",
+  "tools": {
+    "expanso-edge": "v2.1.21",
+    "expanso-cli": "Expanso CLI version v2.1.21",
+    "python": "3.12.13",
+    "openssl": "OpenSSL 3.6.4 25 Aug 2026 (Library: OpenSSL 3.6.4 25 Aug 2026)"
+  },
+  "passed": true,
+  "checks": 56,
+  "seconds": 64,
+  "scenarios": [
+    {
+      "id": "clean-hot-drinks",
+      "title": "A clean sale: two flat whites and a croissant",
+      "store": "s1",
+      "txn_id": "s1-r1-fixture-00001",
+      "outcome": "clean",
+      "reason": null,
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s1-r1-fixture-00001",
+            "register_id": "s1-r1",
+            "ts": "2026-10-05T09:15:02.000Z",
+            "pan": "4111111111111111",
+            "track2": "4111111111111111=2812101123456789",
+            "cvv": "123",
+            "expiry": "2812",
+            "cardholder": "BAKKER/A",
+            "card_brand": "visa",
+            "entry_mode": "contactless",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "HD-01",
+                "qty": 2,
+                "unit_cents": 340
+              },
+              {
+                "sku": "BK-01",
+                "qty": 1,
+                "unit_cents": 210
+              }
+            ],
+            "total_cents": 890,
+            "currency": "EUR",
+            "note": "",
+            "loyalty_email": "ana.bakker@example.net",
+            "sig": "38b0fe133b457e03a4b13f28bf999911965e2c2ef568751b5bf481a70487c34d"
+          },
+          "output": {
+            "captured_at": 1791191703.5,
+            "record": {
+              "txn_id": "s1-r1-fixture-00001",
+              "register_id": "s1-r1",
+              "ts": "2026-10-05T09:15:02.000Z",
+              "pan": "4111111111111111",
+              "track2": "4111111111111111=2812101123456789",
+              "cvv": "123",
+              "expiry": "2812",
+              "cardholder": "BAKKER/A",
+              "card_brand": "visa",
+              "entry_mode": "contactless",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "HD-01",
+                  "qty": 2,
+                  "unit_cents": 340
+                },
+                {
+                  "sku": "BK-01",
+                  "qty": 1,
+                  "unit_cents": 210
+                }
+              ],
+              "total_cents": 890,
+              "currency": "EUR",
+              "note": "",
+              "loyalty_email": "ana.bakker@example.net",
+              "sig": "38b0fe133b457e03a4b13f28bf999911965e2c2ef568751b5bf481a70487c34d"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 2,
+                "sku": "HD-01",
+                "unit_cents": 340
+              },
+              {
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "",
+            "pan": "4111111111111111",
+            "register_id": "s1-r1",
+            "sig": "38b0fe133b457e03a4b13f28bf999911965e2c2ef568751b5bf481a70487c34d",
+            "total_cents": 890,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:15:02.000Z",
+            "txn_id": "s1-r1-fixture-00001"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 2,
+                "sku": "HD-01",
+                "unit_cents": 340
+              },
+              {
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "",
+            "pan": "4111111111111111",
+            "register_id": "s1-r1",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "38b0fe133b457e03a4b13f28bf999911965e2c2ef568751b5bf481a70487c34d",
+            "total_cents": 890,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:15:02.000Z",
+            "txn_id": "s1-r1-fixture-00001"
+          }
+        },
+        {
+          "id": "join",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 2,
+                "sku": "HD-01",
+                "unit_cents": 340
+              },
+              {
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "",
+            "pan": "4111111111111111",
+            "register_id": "s1-r1",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "38b0fe133b457e03a4b13f28bf999911965e2c2ef568751b5bf481a70487c34d",
+            "total_cents": 890,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:15:02.000Z",
+            "txn_id": "s1-r1-fixture-00001"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "hot drinks",
+                "name": "Flat white",
+                "qty": 2,
+                "sku": "HD-01",
+                "unit_cents": 340
+              },
+              {
+                "category": "bakery",
+                "name": "Croissant",
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:02+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r1",
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.419895-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 890,
+            "txn_id": "s1-r1-fixture-00001"
+          },
+          "skipped": null
+        },
+        {
+          "id": "context",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "hot drinks",
+                "name": "Flat white",
+                "qty": 2,
+                "sku": "HD-01",
+                "unit_cents": 340
+              },
+              {
+                "category": "bakery",
+                "name": "Croissant",
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:02+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r1",
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.419895-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 890,
+            "txn_id": "s1-r1-fixture-00001"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "hot drinks",
+                "name": "Flat white",
+                "qty": 2,
+                "sku": "HD-01",
+                "unit_cents": 340
+              },
+              {
+                "category": "bakery",
+                "name": "Croissant",
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:02+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r1",
+              "sensor": "ok",
+              "sensor_at": 1791255071.331538,
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "temp_c": 21.4,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.419895-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 890,
+            "txn_id": "s1-r1-fixture-00001"
+          },
+          "skipped": null
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "hot drinks",
+                "name": "Flat white",
+                "qty": 2,
+                "sku": "HD-01",
+                "unit_cents": 340
+              },
+              {
+                "category": "bakery",
+                "name": "Croissant",
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:02+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r1",
+              "sensor": "ok",
+              "sensor_at": 1791255071.331538,
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "temp_c": 21.4,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.419895-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 890,
+            "txn_id": "s1-r1-fixture-00001"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "hot drinks",
+                "name": "Flat white",
+                "qty": 2,
+                "sku": "HD-01",
+                "unit_cents": 340
+              },
+              {
+                "category": "bakery",
+                "name": "Croissant",
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:02+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r1",
+              "sensor": "ok",
+              "sensor_at": 1791255071.331538,
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "temp_c": 21.4,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.419895-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 890,
+            "txn_id": "s1-r1-fixture-00001",
+            "uplink": {
+              "queued_at": "2026-10-05T19:51:12.438928-07:00",
+              "store_id": "s1"
+            }
+          },
+          "route": "clean",
+          "note": null,
+          "final_scan": "clean"
+        },
+        {
+          "id": "warehouse",
+          "ran": true,
+          "input": {
+            "request": "POST https://warehouse/ingest",
+            "authenticated_as": "client certificate CN=s1",
+            "records_in_batch": 3,
+            "record": {
+              "basket": [
+                {
+                  "category": "hot drinks",
+                  "name": "Flat white",
+                  "qty": 2,
+                  "sku": "HD-01",
+                  "unit_cents": 340
+                },
+                {
+                  "category": "bakery",
+                  "name": "Croissant",
+                  "qty": 1,
+                  "sku": "BK-01",
+                  "unit_cents": 210
+                }
+              ],
+              "card_brand": "visa",
+              "context": {
+                "country": "DE",
+                "district": "Northgate",
+                "hour": 11,
+                "lat": 52.55,
+                "local_time": "2026-10-05T11:15:02+02:00",
+                "lon": 13.41,
+                "register_id": "s1-r1",
+                "sensor": "ok",
+                "sensor_at": 1791255071.331538,
+                "store_id": "s1",
+                "store_name": "Northgate",
+                "temp_c": 21.4,
+                "weekday": "Monday"
+              },
+              "currency": "EUR",
+              "edge_at": "2026-10-05T19:51:11.419895-07:00",
+              "entry_mode": "contactless",
+              "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+              "note": "",
+              "stripped": [
+                "pan",
+                "track2",
+                "cvv",
+                "expiry",
+                "cardholder",
+                "auth_code",
+                "cashier",
+                "loyalty_email"
+              ],
+              "total_cents": 890,
+              "txn_id": "s1-r1-fixture-00001",
+              "uplink": {
+                "queued_at": "2026-10-05T19:51:12.438928-07:00",
+                "store_id": "s1"
+              }
+            }
+          },
+          "output": {
+            "status": 200,
+            "response": {
+              "stored": 3
+            },
+            "stored_row": {
+              "record": {
+                "basket": [
+                  {
+                    "category": "hot drinks",
+                    "name": "Flat white",
+                    "qty": 2,
+                    "sku": "HD-01",
+                    "unit_cents": 340
+                  },
+                  {
+                    "category": "bakery",
+                    "name": "Croissant",
+                    "qty": 1,
+                    "sku": "BK-01",
+                    "unit_cents": 210
+                  }
+                ],
+                "card_brand": "visa",
+                "context": {
+                  "country": "DE",
+                  "district": "Northgate",
+                  "hour": 11,
+                  "lat": 52.55,
+                  "local_time": "2026-10-05T11:15:02+02:00",
+                  "lon": 13.41,
+                  "register_id": "s1-r1",
+                  "sensor": "ok",
+                  "sensor_at": 1791255071.331538,
+                  "store_id": "s1",
+                  "store_name": "Northgate",
+                  "temp_c": 21.4,
+                  "weekday": "Monday"
+                },
+                "currency": "EUR",
+                "edge_at": "2026-10-05T19:51:11.419895-07:00",
+                "entry_mode": "contactless",
+                "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+                "note": "",
+                "stripped": [
+                  "pan",
+                  "track2",
+                  "cvv",
+                  "expiry",
+                  "cardholder",
+                  "auth_code",
+                  "cashier",
+                  "loyalty_email"
+                ],
+                "total_cents": 890,
+                "txn_id": "s1-r1-fixture-00001",
+                "uplink": {
+                  "queued_at": "2026-10-05T19:51:12.438928-07:00",
+                  "store_id": "s1"
+                }
+              },
+              "received_at": 1791255073.3545148,
+              "queued_s": 0.92
+            }
+          },
+          "skipped": null
+        }
+      ]
+    },
+    {
+      "id": "clean-cold-drinks",
+      "title": "A clean sale: iced latte and lemonade",
+      "store": "s1",
+      "txn_id": "s1-r2-fixture-00002",
+      "outcome": "clean",
+      "reason": null,
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s1-r2-fixture-00002",
+            "register_id": "s1-r2",
+            "ts": "2026-10-05T09:15:09.000Z",
+            "pan": "5555555555554444",
+            "track2": "5555555555554444=2906101123456789",
+            "cvv": "456",
+            "expiry": "2906",
+            "cardholder": "VISSER/B",
+            "card_brand": "mastercard",
+            "entry_mode": "chip",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "CD-01",
+                "qty": 1,
+                "unit_cents": 420
+              },
+              {
+                "sku": "CD-03",
+                "qty": 1,
+                "unit_cents": 280
+              }
+            ],
+            "total_cents": 700,
+            "currency": "EUR",
+            "note": "",
+            "sig": "fa02b8ef96c3693a92851c9507140d4cbd6e1463c056a1a7c21001e5e664ea1a"
+          },
+          "output": {
+            "captured_at": 1791191710.5,
+            "record": {
+              "txn_id": "s1-r2-fixture-00002",
+              "register_id": "s1-r2",
+              "ts": "2026-10-05T09:15:09.000Z",
+              "pan": "5555555555554444",
+              "track2": "5555555555554444=2906101123456789",
+              "cvv": "456",
+              "expiry": "2906",
+              "cardholder": "VISSER/B",
+              "card_brand": "mastercard",
+              "entry_mode": "chip",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "CD-01",
+                  "qty": 1,
+                  "unit_cents": 420
+                },
+                {
+                  "sku": "CD-03",
+                  "qty": 1,
+                  "unit_cents": 280
+                }
+              ],
+              "total_cents": 700,
+              "currency": "EUR",
+              "note": "",
+              "sig": "fa02b8ef96c3693a92851c9507140d4cbd6e1463c056a1a7c21001e5e664ea1a"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "chip",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "CD-01",
+                "unit_cents": 420
+              },
+              {
+                "qty": 1,
+                "sku": "CD-03",
+                "unit_cents": 280
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s1-r2",
+            "sig": "fa02b8ef96c3693a92851c9507140d4cbd6e1463c056a1a7c21001e5e664ea1a",
+            "total_cents": 700,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:15:09.000Z",
+            "txn_id": "s1-r2-fixture-00002"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "chip",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "CD-01",
+                "unit_cents": 420
+              },
+              {
+                "qty": 1,
+                "sku": "CD-03",
+                "unit_cents": 280
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s1-r2",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "fa02b8ef96c3693a92851c9507140d4cbd6e1463c056a1a7c21001e5e664ea1a",
+            "total_cents": 700,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:15:09.000Z",
+            "txn_id": "s1-r2-fixture-00002"
+          }
+        },
+        {
+          "id": "join",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "chip",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "CD-01",
+                "unit_cents": 420
+              },
+              {
+                "qty": 1,
+                "sku": "CD-03",
+                "unit_cents": 280
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s1-r2",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "fa02b8ef96c3693a92851c9507140d4cbd6e1463c056a1a7c21001e5e664ea1a",
+            "total_cents": 700,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:15:09.000Z",
+            "txn_id": "s1-r2-fixture-00002"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "cold drinks",
+                "name": "Iced latte",
+                "qty": 1,
+                "sku": "CD-01",
+                "unit_cents": 420
+              },
+              {
+                "category": "cold drinks",
+                "name": "Lemonade",
+                "qty": 1,
+                "sku": "CD-03",
+                "unit_cents": 280
+              }
+            ],
+            "card_brand": "mastercard",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:09+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r2",
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.42-07:00",
+            "entry_mode": "chip",
+            "join_id": "jid1_33e369b81b77a6e30ec989f8",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 700,
+            "txn_id": "s1-r2-fixture-00002"
+          },
+          "skipped": null
+        },
+        {
+          "id": "context",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "cold drinks",
+                "name": "Iced latte",
+                "qty": 1,
+                "sku": "CD-01",
+                "unit_cents": 420
+              },
+              {
+                "category": "cold drinks",
+                "name": "Lemonade",
+                "qty": 1,
+                "sku": "CD-03",
+                "unit_cents": 280
+              }
+            ],
+            "card_brand": "mastercard",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:09+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r2",
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.42-07:00",
+            "entry_mode": "chip",
+            "join_id": "jid1_33e369b81b77a6e30ec989f8",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 700,
+            "txn_id": "s1-r2-fixture-00002"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "cold drinks",
+                "name": "Iced latte",
+                "qty": 1,
+                "sku": "CD-01",
+                "unit_cents": 420
+              },
+              {
+                "category": "cold drinks",
+                "name": "Lemonade",
+                "qty": 1,
+                "sku": "CD-03",
+                "unit_cents": 280
+              }
+            ],
+            "card_brand": "mastercard",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:09+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r2",
+              "sensor": "ok",
+              "sensor_at": 1791255071.331538,
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "temp_c": 21.4,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.42-07:00",
+            "entry_mode": "chip",
+            "join_id": "jid1_33e369b81b77a6e30ec989f8",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 700,
+            "txn_id": "s1-r2-fixture-00002"
+          },
+          "skipped": null
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "cold drinks",
+                "name": "Iced latte",
+                "qty": 1,
+                "sku": "CD-01",
+                "unit_cents": 420
+              },
+              {
+                "category": "cold drinks",
+                "name": "Lemonade",
+                "qty": 1,
+                "sku": "CD-03",
+                "unit_cents": 280
+              }
+            ],
+            "card_brand": "mastercard",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:09+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r2",
+              "sensor": "ok",
+              "sensor_at": 1791255071.331538,
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "temp_c": 21.4,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.42-07:00",
+            "entry_mode": "chip",
+            "join_id": "jid1_33e369b81b77a6e30ec989f8",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 700,
+            "txn_id": "s1-r2-fixture-00002"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "cold drinks",
+                "name": "Iced latte",
+                "qty": 1,
+                "sku": "CD-01",
+                "unit_cents": 420
+              },
+              {
+                "category": "cold drinks",
+                "name": "Lemonade",
+                "qty": 1,
+                "sku": "CD-03",
+                "unit_cents": 280
+              }
+            ],
+            "card_brand": "mastercard",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:09+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r2",
+              "sensor": "ok",
+              "sensor_at": 1791255071.331538,
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "temp_c": 21.4,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.42-07:00",
+            "entry_mode": "chip",
+            "join_id": "jid1_33e369b81b77a6e30ec989f8",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 700,
+            "txn_id": "s1-r2-fixture-00002",
+            "uplink": {
+              "queued_at": "2026-10-05T19:51:12.440971-07:00",
+              "store_id": "s1"
+            }
+          },
+          "route": "clean",
+          "note": null,
+          "final_scan": "clean"
+        },
+        {
+          "id": "warehouse",
+          "ran": true,
+          "input": {
+            "request": "POST https://warehouse/ingest",
+            "authenticated_as": "client certificate CN=s1",
+            "records_in_batch": 3,
+            "record": {
+              "basket": [
+                {
+                  "category": "cold drinks",
+                  "name": "Iced latte",
+                  "qty": 1,
+                  "sku": "CD-01",
+                  "unit_cents": 420
+                },
+                {
+                  "category": "cold drinks",
+                  "name": "Lemonade",
+                  "qty": 1,
+                  "sku": "CD-03",
+                  "unit_cents": 280
+                }
+              ],
+              "card_brand": "mastercard",
+              "context": {
+                "country": "DE",
+                "district": "Northgate",
+                "hour": 11,
+                "lat": 52.55,
+                "local_time": "2026-10-05T11:15:09+02:00",
+                "lon": 13.41,
+                "register_id": "s1-r2",
+                "sensor": "ok",
+                "sensor_at": 1791255071.331538,
+                "store_id": "s1",
+                "store_name": "Northgate",
+                "temp_c": 21.4,
+                "weekday": "Monday"
+              },
+              "currency": "EUR",
+              "edge_at": "2026-10-05T19:51:11.42-07:00",
+              "entry_mode": "chip",
+              "join_id": "jid1_33e369b81b77a6e30ec989f8",
+              "note": "",
+              "stripped": [
+                "pan",
+                "track2",
+                "cvv",
+                "expiry",
+                "cardholder",
+                "auth_code",
+                "cashier"
+              ],
+              "total_cents": 700,
+              "txn_id": "s1-r2-fixture-00002",
+              "uplink": {
+                "queued_at": "2026-10-05T19:51:12.440971-07:00",
+                "store_id": "s1"
+              }
+            }
+          },
+          "output": {
+            "status": 200,
+            "response": {
+              "stored": 3
+            },
+            "stored_row": {
+              "record": {
+                "basket": [
+                  {
+                    "category": "cold drinks",
+                    "name": "Iced latte",
+                    "qty": 1,
+                    "sku": "CD-01",
+                    "unit_cents": 420
+                  },
+                  {
+                    "category": "cold drinks",
+                    "name": "Lemonade",
+                    "qty": 1,
+                    "sku": "CD-03",
+                    "unit_cents": 280
+                  }
+                ],
+                "card_brand": "mastercard",
+                "context": {
+                  "country": "DE",
+                  "district": "Northgate",
+                  "hour": 11,
+                  "lat": 52.55,
+                  "local_time": "2026-10-05T11:15:09+02:00",
+                  "lon": 13.41,
+                  "register_id": "s1-r2",
+                  "sensor": "ok",
+                  "sensor_at": 1791255071.331538,
+                  "store_id": "s1",
+                  "store_name": "Northgate",
+                  "temp_c": 21.4,
+                  "weekday": "Monday"
+                },
+                "currency": "EUR",
+                "edge_at": "2026-10-05T19:51:11.42-07:00",
+                "entry_mode": "chip",
+                "join_id": "jid1_33e369b81b77a6e30ec989f8",
+                "note": "",
+                "stripped": [
+                  "pan",
+                  "track2",
+                  "cvv",
+                  "expiry",
+                  "cardholder",
+                  "auth_code",
+                  "cashier"
+                ],
+                "total_cents": 700,
+                "txn_id": "s1-r2-fixture-00002",
+                "uplink": {
+                  "queued_at": "2026-10-05T19:51:12.440971-07:00",
+                  "store_id": "s1"
+                }
+              },
+              "received_at": 1791255073.3545148,
+              "queued_s": 0.91
+            }
+          },
+          "skipped": null
+        }
+      ]
+    },
+    {
+      "id": "clean-same-card-other-store",
+      "title": "The same card at another store, which has no climate sensor",
+      "store": "s2",
+      "txn_id": "s2-r1-fixture-00003",
+      "outcome": "clean",
+      "reason": null,
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s2-r1-fixture-00003",
+            "register_id": "s2-r1",
+            "ts": "2026-10-05T09:15:14.000Z",
+            "pan": "4111111111111111",
+            "track2": "4111111111111111=2812101123456789",
+            "cvv": "123",
+            "expiry": "2812",
+            "cardholder": "BAKKER/A",
+            "card_brand": "visa",
+            "entry_mode": "contactless",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "SW-01",
+                "qty": 1,
+                "unit_cents": 590
+              },
+              {
+                "sku": "SN-02",
+                "qty": 1,
+                "unit_cents": 320
+              }
+            ],
+            "total_cents": 910,
+            "currency": "EUR",
+            "note": "",
+            "loyalty_email": "ana.bakker@example.net",
+            "sig": "8ed407526f92eba5112b509182963a20c970348a6ee86c6d5b085516c6adadde"
+          },
+          "output": {
+            "captured_at": 1791191715.5,
+            "record": {
+              "txn_id": "s2-r1-fixture-00003",
+              "register_id": "s2-r1",
+              "ts": "2026-10-05T09:15:14.000Z",
+              "pan": "4111111111111111",
+              "track2": "4111111111111111=2812101123456789",
+              "cvv": "123",
+              "expiry": "2812",
+              "cardholder": "BAKKER/A",
+              "card_brand": "visa",
+              "entry_mode": "contactless",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "SW-01",
+                  "qty": 1,
+                  "unit_cents": 590
+                },
+                {
+                  "sku": "SN-02",
+                  "qty": 1,
+                  "unit_cents": 320
+                }
+              ],
+              "total_cents": 910,
+              "currency": "EUR",
+              "note": "",
+              "loyalty_email": "ana.bakker@example.net",
+              "sig": "8ed407526f92eba5112b509182963a20c970348a6ee86c6d5b085516c6adadde"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "SW-01",
+                "unit_cents": 590
+              },
+              {
+                "qty": 1,
+                "sku": "SN-02",
+                "unit_cents": 320
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "",
+            "pan": "4111111111111111",
+            "register_id": "s2-r1",
+            "sig": "8ed407526f92eba5112b509182963a20c970348a6ee86c6d5b085516c6adadde",
+            "total_cents": 910,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:15:14.000Z",
+            "txn_id": "s2-r1-fixture-00003"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "SW-01",
+                "unit_cents": 590
+              },
+              {
+                "qty": 1,
+                "sku": "SN-02",
+                "unit_cents": 320
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "",
+            "pan": "4111111111111111",
+            "register_id": "s2-r1",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "8ed407526f92eba5112b509182963a20c970348a6ee86c6d5b085516c6adadde",
+            "total_cents": 910,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:15:14.000Z",
+            "txn_id": "s2-r1-fixture-00003"
+          }
+        },
+        {
+          "id": "join",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "SW-01",
+                "unit_cents": 590
+              },
+              {
+                "qty": 1,
+                "sku": "SN-02",
+                "unit_cents": 320
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "",
+            "pan": "4111111111111111",
+            "register_id": "s2-r1",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "8ed407526f92eba5112b509182963a20c970348a6ee86c6d5b085516c6adadde",
+            "total_cents": 910,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:15:14.000Z",
+            "txn_id": "s2-r1-fixture-00003"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "sandwiches",
+                "name": "Chicken wrap",
+                "qty": 1,
+                "sku": "SW-01",
+                "unit_cents": 590
+              },
+              {
+                "category": "fresh fruit",
+                "name": "Fruit cup",
+                "qty": 1,
+                "sku": "SN-02",
+                "unit_cents": 320
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:14+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754481-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 910,
+            "txn_id": "s2-r1-fixture-00003"
+          },
+          "skipped": null
+        },
+        {
+          "id": "context",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "sandwiches",
+                "name": "Chicken wrap",
+                "qty": 1,
+                "sku": "SW-01",
+                "unit_cents": 590
+              },
+              {
+                "category": "fresh fruit",
+                "name": "Fruit cup",
+                "qty": 1,
+                "sku": "SN-02",
+                "unit_cents": 320
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:14+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754481-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 910,
+            "txn_id": "s2-r1-fixture-00003"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "sandwiches",
+                "name": "Chicken wrap",
+                "qty": 1,
+                "sku": "SW-01",
+                "unit_cents": 590
+              },
+              {
+                "category": "fresh fruit",
+                "name": "Fruit cup",
+                "qty": 1,
+                "sku": "SN-02",
+                "unit_cents": 320
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:14+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "sensor": "sensor missing",
+              "sensor_at": null,
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "temp_c": null,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754481-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 910,
+            "txn_id": "s2-r1-fixture-00003"
+          },
+          "skipped": null
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "sandwiches",
+                "name": "Chicken wrap",
+                "qty": 1,
+                "sku": "SW-01",
+                "unit_cents": 590
+              },
+              {
+                "category": "fresh fruit",
+                "name": "Fruit cup",
+                "qty": 1,
+                "sku": "SN-02",
+                "unit_cents": 320
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:14+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "sensor": "sensor missing",
+              "sensor_at": null,
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "temp_c": null,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754481-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 910,
+            "txn_id": "s2-r1-fixture-00003"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "sandwiches",
+                "name": "Chicken wrap",
+                "qty": 1,
+                "sku": "SW-01",
+                "unit_cents": 590
+              },
+              {
+                "category": "fresh fruit",
+                "name": "Fruit cup",
+                "qty": 1,
+                "sku": "SN-02",
+                "unit_cents": 320
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:14+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "sensor": "sensor missing",
+              "sensor_at": null,
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "temp_c": null,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754481-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 910,
+            "txn_id": "s2-r1-fixture-00003",
+            "uplink": {
+              "queued_at": "2026-10-05T19:51:12.783807-07:00",
+              "store_id": "s2"
+            }
+          },
+          "route": "clean",
+          "note": null,
+          "final_scan": "clean"
+        },
+        {
+          "id": "warehouse",
+          "ran": true,
+          "input": {
+            "request": "POST https://warehouse/ingest",
+            "authenticated_as": "client certificate CN=s2",
+            "records_in_batch": 3,
+            "record": {
+              "basket": [
+                {
+                  "category": "sandwiches",
+                  "name": "Chicken wrap",
+                  "qty": 1,
+                  "sku": "SW-01",
+                  "unit_cents": 590
+                },
+                {
+                  "category": "fresh fruit",
+                  "name": "Fruit cup",
+                  "qty": 1,
+                  "sku": "SN-02",
+                  "unit_cents": 320
+                }
+              ],
+              "card_brand": "visa",
+              "context": {
+                "country": "DE",
+                "district": "Riverside",
+                "hour": 11,
+                "lat": 52.49,
+                "local_time": "2026-10-05T11:15:14+02:00",
+                "lon": 13.45,
+                "register_id": "s2-r1",
+                "sensor": "sensor missing",
+                "sensor_at": null,
+                "store_id": "s2",
+                "store_name": "Riverside",
+                "temp_c": null,
+                "weekday": "Monday"
+              },
+              "currency": "EUR",
+              "edge_at": "2026-10-05T19:51:11.754481-07:00",
+              "entry_mode": "contactless",
+              "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+              "note": "",
+              "stripped": [
+                "pan",
+                "track2",
+                "cvv",
+                "expiry",
+                "cardholder",
+                "auth_code",
+                "cashier",
+                "loyalty_email"
+              ],
+              "total_cents": 910,
+              "txn_id": "s2-r1-fixture-00003",
+              "uplink": {
+                "queued_at": "2026-10-05T19:51:12.783807-07:00",
+                "store_id": "s2"
+              }
+            }
+          },
+          "output": {
+            "status": 200,
+            "response": {
+              "stored": 3
+            },
+            "stored_row": {
+              "record": {
+                "basket": [
+                  {
+                    "category": "sandwiches",
+                    "name": "Chicken wrap",
+                    "qty": 1,
+                    "sku": "SW-01",
+                    "unit_cents": 590
+                  },
+                  {
+                    "category": "fresh fruit",
+                    "name": "Fruit cup",
+                    "qty": 1,
+                    "sku": "SN-02",
+                    "unit_cents": 320
+                  }
+                ],
+                "card_brand": "visa",
+                "context": {
+                  "country": "DE",
+                  "district": "Riverside",
+                  "hour": 11,
+                  "lat": 52.49,
+                  "local_time": "2026-10-05T11:15:14+02:00",
+                  "lon": 13.45,
+                  "register_id": "s2-r1",
+                  "sensor": "sensor missing",
+                  "sensor_at": null,
+                  "store_id": "s2",
+                  "store_name": "Riverside",
+                  "temp_c": null,
+                  "weekday": "Monday"
+                },
+                "currency": "EUR",
+                "edge_at": "2026-10-05T19:51:11.754481-07:00",
+                "entry_mode": "contactless",
+                "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+                "note": "",
+                "stripped": [
+                  "pan",
+                  "track2",
+                  "cvv",
+                  "expiry",
+                  "cardholder",
+                  "auth_code",
+                  "cashier",
+                  "loyalty_email"
+                ],
+                "total_cents": 910,
+                "txn_id": "s2-r1-fixture-00003",
+                "uplink": {
+                  "queued_at": "2026-10-05T19:51:12.783807-07:00",
+                  "store_id": "s2"
+                }
+              },
+              "received_at": 1791255073.7524328,
+              "queued_s": 0.97
+            }
+          },
+          "skipped": null
+        }
+      ]
+    },
+    {
+      "id": "clean-three-lines",
+      "title": "A clean sale with three product lines",
+      "store": "s2",
+      "txn_id": "s2-r1-fixture-00004",
+      "outcome": "clean",
+      "reason": null,
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s2-r1-fixture-00004",
+            "register_id": "s2-r1",
+            "ts": "2026-10-05T09:15:21.000Z",
+            "pan": "378282246310005",
+            "track2": "378282246310005=3011101123456789",
+            "cvv": "7890",
+            "expiry": "3011",
+            "cardholder": "WEBER/C",
+            "card_brand": "amex",
+            "entry_mode": "swipe",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "IC-01",
+                "qty": 1,
+                "unit_cents": 450
+              },
+              {
+                "sku": "CD-02",
+                "qty": 1,
+                "unit_cents": 190
+              },
+              {
+                "sku": "SN-01",
+                "qty": 2,
+                "unit_cents": 160
+              }
+            ],
+            "total_cents": 960,
+            "currency": "EUR",
+            "note": "",
+            "sig": "1072c69e7da3fc3d006965ad949bfc0d0c6d9a29efeb796941f673b2c2662233"
+          },
+          "output": {
+            "captured_at": 1791191722.5,
+            "record": {
+              "txn_id": "s2-r1-fixture-00004",
+              "register_id": "s2-r1",
+              "ts": "2026-10-05T09:15:21.000Z",
+              "pan": "378282246310005",
+              "track2": "378282246310005=3011101123456789",
+              "cvv": "7890",
+              "expiry": "3011",
+              "cardholder": "WEBER/C",
+              "card_brand": "amex",
+              "entry_mode": "swipe",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "IC-01",
+                  "qty": 1,
+                  "unit_cents": 450
+                },
+                {
+                  "sku": "CD-02",
+                  "qty": 1,
+                  "unit_cents": 190
+                },
+                {
+                  "sku": "SN-01",
+                  "qty": 2,
+                  "unit_cents": 160
+                }
+              ],
+              "total_cents": 960,
+              "currency": "EUR",
+              "note": "",
+              "sig": "1072c69e7da3fc3d006965ad949bfc0d0c6d9a29efeb796941f673b2c2662233"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "amex",
+            "cardholder": "WEBER/C",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "7890",
+            "entry_mode": "swipe",
+            "expiry": "3011",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "IC-01",
+                "unit_cents": 450
+              },
+              {
+                "qty": 1,
+                "sku": "CD-02",
+                "unit_cents": 190
+              },
+              {
+                "qty": 2,
+                "sku": "SN-01",
+                "unit_cents": 160
+              }
+            ],
+            "note": "",
+            "pan": "378282246310005",
+            "register_id": "s2-r1",
+            "sig": "1072c69e7da3fc3d006965ad949bfc0d0c6d9a29efeb796941f673b2c2662233",
+            "total_cents": 960,
+            "track2": "378282246310005=3011101123456789",
+            "ts": "2026-10-05T09:15:21.000Z",
+            "txn_id": "s2-r1-fixture-00004"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "amex",
+            "cardholder": "WEBER/C",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "7890",
+            "entry_mode": "swipe",
+            "expiry": "3011",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "IC-01",
+                "unit_cents": 450
+              },
+              {
+                "qty": 1,
+                "sku": "CD-02",
+                "unit_cents": 190
+              },
+              {
+                "qty": 2,
+                "sku": "SN-01",
+                "unit_cents": 160
+              }
+            ],
+            "note": "",
+            "pan": "378282246310005",
+            "register_id": "s2-r1",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "1072c69e7da3fc3d006965ad949bfc0d0c6d9a29efeb796941f673b2c2662233",
+            "total_cents": 960,
+            "track2": "378282246310005=3011101123456789",
+            "ts": "2026-10-05T09:15:21.000Z",
+            "txn_id": "s2-r1-fixture-00004"
+          }
+        },
+        {
+          "id": "join",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "amex",
+            "cardholder": "WEBER/C",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "7890",
+            "entry_mode": "swipe",
+            "expiry": "3011",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "IC-01",
+                "unit_cents": 450
+              },
+              {
+                "qty": 1,
+                "sku": "CD-02",
+                "unit_cents": 190
+              },
+              {
+                "qty": 2,
+                "sku": "SN-01",
+                "unit_cents": 160
+              }
+            ],
+            "note": "",
+            "pan": "378282246310005",
+            "register_id": "s2-r1",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "1072c69e7da3fc3d006965ad949bfc0d0c6d9a29efeb796941f673b2c2662233",
+            "total_cents": 960,
+            "track2": "378282246310005=3011101123456789",
+            "ts": "2026-10-05T09:15:21.000Z",
+            "txn_id": "s2-r1-fixture-00004"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "ice cream",
+                "name": "Ice cream tub",
+                "qty": 1,
+                "sku": "IC-01",
+                "unit_cents": 450
+              },
+              {
+                "category": "cold drinks",
+                "name": "Sparkling water",
+                "qty": 1,
+                "sku": "CD-02",
+                "unit_cents": 190
+              },
+              {
+                "category": "snacks",
+                "name": "Crisps",
+                "qty": 2,
+                "sku": "SN-01",
+                "unit_cents": 160
+              }
+            ],
+            "card_brand": "amex",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:21+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754583-07:00",
+            "entry_mode": "swipe",
+            "join_id": "jid1_99304a24e80c22327bd731b2",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 960,
+            "txn_id": "s2-r1-fixture-00004"
+          },
+          "skipped": null
+        },
+        {
+          "id": "context",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "ice cream",
+                "name": "Ice cream tub",
+                "qty": 1,
+                "sku": "IC-01",
+                "unit_cents": 450
+              },
+              {
+                "category": "cold drinks",
+                "name": "Sparkling water",
+                "qty": 1,
+                "sku": "CD-02",
+                "unit_cents": 190
+              },
+              {
+                "category": "snacks",
+                "name": "Crisps",
+                "qty": 2,
+                "sku": "SN-01",
+                "unit_cents": 160
+              }
+            ],
+            "card_brand": "amex",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:21+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754583-07:00",
+            "entry_mode": "swipe",
+            "join_id": "jid1_99304a24e80c22327bd731b2",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 960,
+            "txn_id": "s2-r1-fixture-00004"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "ice cream",
+                "name": "Ice cream tub",
+                "qty": 1,
+                "sku": "IC-01",
+                "unit_cents": 450
+              },
+              {
+                "category": "cold drinks",
+                "name": "Sparkling water",
+                "qty": 1,
+                "sku": "CD-02",
+                "unit_cents": 190
+              },
+              {
+                "category": "snacks",
+                "name": "Crisps",
+                "qty": 2,
+                "sku": "SN-01",
+                "unit_cents": 160
+              }
+            ],
+            "card_brand": "amex",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:21+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "sensor": "sensor missing",
+              "sensor_at": null,
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "temp_c": null,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754583-07:00",
+            "entry_mode": "swipe",
+            "join_id": "jid1_99304a24e80c22327bd731b2",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 960,
+            "txn_id": "s2-r1-fixture-00004"
+          },
+          "skipped": null
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "ice cream",
+                "name": "Ice cream tub",
+                "qty": 1,
+                "sku": "IC-01",
+                "unit_cents": 450
+              },
+              {
+                "category": "cold drinks",
+                "name": "Sparkling water",
+                "qty": 1,
+                "sku": "CD-02",
+                "unit_cents": 190
+              },
+              {
+                "category": "snacks",
+                "name": "Crisps",
+                "qty": 2,
+                "sku": "SN-01",
+                "unit_cents": 160
+              }
+            ],
+            "card_brand": "amex",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:21+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "sensor": "sensor missing",
+              "sensor_at": null,
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "temp_c": null,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754583-07:00",
+            "entry_mode": "swipe",
+            "join_id": "jid1_99304a24e80c22327bd731b2",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 960,
+            "txn_id": "s2-r1-fixture-00004"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "ice cream",
+                "name": "Ice cream tub",
+                "qty": 1,
+                "sku": "IC-01",
+                "unit_cents": 450
+              },
+              {
+                "category": "cold drinks",
+                "name": "Sparkling water",
+                "qty": 1,
+                "sku": "CD-02",
+                "unit_cents": 190
+              },
+              {
+                "category": "snacks",
+                "name": "Crisps",
+                "qty": 2,
+                "sku": "SN-01",
+                "unit_cents": 160
+              }
+            ],
+            "card_brand": "amex",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:21+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "sensor": "sensor missing",
+              "sensor_at": null,
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "temp_c": null,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754583-07:00",
+            "entry_mode": "swipe",
+            "join_id": "jid1_99304a24e80c22327bd731b2",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 960,
+            "txn_id": "s2-r1-fixture-00004",
+            "uplink": {
+              "queued_at": "2026-10-05T19:51:12.795725-07:00",
+              "store_id": "s2"
+            }
+          },
+          "route": "clean",
+          "note": null,
+          "final_scan": "clean"
+        },
+        {
+          "id": "warehouse",
+          "ran": true,
+          "input": {
+            "request": "POST https://warehouse/ingest",
+            "authenticated_as": "client certificate CN=s2",
+            "records_in_batch": 3,
+            "record": {
+              "basket": [
+                {
+                  "category": "ice cream",
+                  "name": "Ice cream tub",
+                  "qty": 1,
+                  "sku": "IC-01",
+                  "unit_cents": 450
+                },
+                {
+                  "category": "cold drinks",
+                  "name": "Sparkling water",
+                  "qty": 1,
+                  "sku": "CD-02",
+                  "unit_cents": 190
+                },
+                {
+                  "category": "snacks",
+                  "name": "Crisps",
+                  "qty": 2,
+                  "sku": "SN-01",
+                  "unit_cents": 160
+                }
+              ],
+              "card_brand": "amex",
+              "context": {
+                "country": "DE",
+                "district": "Riverside",
+                "hour": 11,
+                "lat": 52.49,
+                "local_time": "2026-10-05T11:15:21+02:00",
+                "lon": 13.45,
+                "register_id": "s2-r1",
+                "sensor": "sensor missing",
+                "sensor_at": null,
+                "store_id": "s2",
+                "store_name": "Riverside",
+                "temp_c": null,
+                "weekday": "Monday"
+              },
+              "currency": "EUR",
+              "edge_at": "2026-10-05T19:51:11.754583-07:00",
+              "entry_mode": "swipe",
+              "join_id": "jid1_99304a24e80c22327bd731b2",
+              "note": "",
+              "stripped": [
+                "pan",
+                "track2",
+                "cvv",
+                "expiry",
+                "cardholder",
+                "auth_code",
+                "cashier"
+              ],
+              "total_cents": 960,
+              "txn_id": "s2-r1-fixture-00004",
+              "uplink": {
+                "queued_at": "2026-10-05T19:51:12.795725-07:00",
+                "store_id": "s2"
+              }
+            }
+          },
+          "output": {
+            "status": 200,
+            "response": {
+              "stored": 3
+            },
+            "stored_row": {
+              "record": {
+                "basket": [
+                  {
+                    "category": "ice cream",
+                    "name": "Ice cream tub",
+                    "qty": 1,
+                    "sku": "IC-01",
+                    "unit_cents": 450
+                  },
+                  {
+                    "category": "cold drinks",
+                    "name": "Sparkling water",
+                    "qty": 1,
+                    "sku": "CD-02",
+                    "unit_cents": 190
+                  },
+                  {
+                    "category": "snacks",
+                    "name": "Crisps",
+                    "qty": 2,
+                    "sku": "SN-01",
+                    "unit_cents": 160
+                  }
+                ],
+                "card_brand": "amex",
+                "context": {
+                  "country": "DE",
+                  "district": "Riverside",
+                  "hour": 11,
+                  "lat": 52.49,
+                  "local_time": "2026-10-05T11:15:21+02:00",
+                  "lon": 13.45,
+                  "register_id": "s2-r1",
+                  "sensor": "sensor missing",
+                  "sensor_at": null,
+                  "store_id": "s2",
+                  "store_name": "Riverside",
+                  "temp_c": null,
+                  "weekday": "Monday"
+                },
+                "currency": "EUR",
+                "edge_at": "2026-10-05T19:51:11.754583-07:00",
+                "entry_mode": "swipe",
+                "join_id": "jid1_99304a24e80c22327bd731b2",
+                "note": "",
+                "stripped": [
+                  "pan",
+                  "track2",
+                  "cvv",
+                  "expiry",
+                  "cardholder",
+                  "auth_code",
+                  "cashier"
+                ],
+                "total_cents": 960,
+                "txn_id": "s2-r1-fixture-00004",
+                "uplink": {
+                  "queued_at": "2026-10-05T19:51:12.795725-07:00",
+                  "store_id": "s2"
+                }
+              },
+              "received_at": 1791255073.7524328,
+              "queued_s": 0.96
+            }
+          },
+          "skipped": null
+        }
+      ]
+    },
+    {
+      "id": "clean-bakery",
+      "title": "A clean sale: a sourdough loaf",
+      "store": "s1",
+      "txn_id": "s1-r1-fixture-00005",
+      "outcome": "clean",
+      "reason": null,
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s1-r1-fixture-00005",
+            "register_id": "s1-r1",
+            "ts": "2026-10-05T09:15:30.000Z",
+            "pan": "378282246310005",
+            "track2": "378282246310005=3011101123456789",
+            "cvv": "7890",
+            "expiry": "3011",
+            "cardholder": "WEBER/C",
+            "card_brand": "amex",
+            "entry_mode": "contactless",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "BK-02",
+                "qty": 1,
+                "unit_cents": 480
+              }
+            ],
+            "total_cents": 480,
+            "currency": "EUR",
+            "note": "",
+            "sig": "048fea25ae70f81ebce42ce035a5b1f41d0810f5ca436e2e6226faebcfc84f13"
+          },
+          "output": {
+            "captured_at": 1791191731.5,
+            "record": {
+              "txn_id": "s1-r1-fixture-00005",
+              "register_id": "s1-r1",
+              "ts": "2026-10-05T09:15:30.000Z",
+              "pan": "378282246310005",
+              "track2": "378282246310005=3011101123456789",
+              "cvv": "7890",
+              "expiry": "3011",
+              "cardholder": "WEBER/C",
+              "card_brand": "amex",
+              "entry_mode": "contactless",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "BK-02",
+                  "qty": 1,
+                  "unit_cents": 480
+                }
+              ],
+              "total_cents": 480,
+              "currency": "EUR",
+              "note": "",
+              "sig": "048fea25ae70f81ebce42ce035a5b1f41d0810f5ca436e2e6226faebcfc84f13"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "amex",
+            "cardholder": "WEBER/C",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "7890",
+            "entry_mode": "contactless",
+            "expiry": "3011",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "BK-02",
+                "unit_cents": 480
+              }
+            ],
+            "note": "",
+            "pan": "378282246310005",
+            "register_id": "s1-r1",
+            "sig": "048fea25ae70f81ebce42ce035a5b1f41d0810f5ca436e2e6226faebcfc84f13",
+            "total_cents": 480,
+            "track2": "378282246310005=3011101123456789",
+            "ts": "2026-10-05T09:15:30.000Z",
+            "txn_id": "s1-r1-fixture-00005"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "amex",
+            "cardholder": "WEBER/C",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "7890",
+            "entry_mode": "contactless",
+            "expiry": "3011",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "BK-02",
+                "unit_cents": 480
+              }
+            ],
+            "note": "",
+            "pan": "378282246310005",
+            "register_id": "s1-r1",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "048fea25ae70f81ebce42ce035a5b1f41d0810f5ca436e2e6226faebcfc84f13",
+            "total_cents": 480,
+            "track2": "378282246310005=3011101123456789",
+            "ts": "2026-10-05T09:15:30.000Z",
+            "txn_id": "s1-r1-fixture-00005"
+          }
+        },
+        {
+          "id": "join",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "amex",
+            "cardholder": "WEBER/C",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "7890",
+            "entry_mode": "contactless",
+            "expiry": "3011",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "BK-02",
+                "unit_cents": 480
+              }
+            ],
+            "note": "",
+            "pan": "378282246310005",
+            "register_id": "s1-r1",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "048fea25ae70f81ebce42ce035a5b1f41d0810f5ca436e2e6226faebcfc84f13",
+            "total_cents": 480,
+            "track2": "378282246310005=3011101123456789",
+            "ts": "2026-10-05T09:15:30.000Z",
+            "txn_id": "s1-r1-fixture-00005"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "bakery",
+                "name": "Sourdough loaf",
+                "qty": 1,
+                "sku": "BK-02",
+                "unit_cents": 480
+              }
+            ],
+            "card_brand": "amex",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:30+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r1",
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.420089-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_99304a24e80c22327bd731b2",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 480,
+            "txn_id": "s1-r1-fixture-00005"
+          },
+          "skipped": null
+        },
+        {
+          "id": "context",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "bakery",
+                "name": "Sourdough loaf",
+                "qty": 1,
+                "sku": "BK-02",
+                "unit_cents": 480
+              }
+            ],
+            "card_brand": "amex",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:30+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r1",
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.420089-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_99304a24e80c22327bd731b2",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 480,
+            "txn_id": "s1-r1-fixture-00005"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "bakery",
+                "name": "Sourdough loaf",
+                "qty": 1,
+                "sku": "BK-02",
+                "unit_cents": 480
+              }
+            ],
+            "card_brand": "amex",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:30+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r1",
+              "sensor": "ok",
+              "sensor_at": 1791255071.331538,
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "temp_c": 21.4,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.420089-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_99304a24e80c22327bd731b2",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 480,
+            "txn_id": "s1-r1-fixture-00005"
+          },
+          "skipped": null
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "bakery",
+                "name": "Sourdough loaf",
+                "qty": 1,
+                "sku": "BK-02",
+                "unit_cents": 480
+              }
+            ],
+            "card_brand": "amex",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:30+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r1",
+              "sensor": "ok",
+              "sensor_at": 1791255071.331538,
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "temp_c": 21.4,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.420089-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_99304a24e80c22327bd731b2",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 480,
+            "txn_id": "s1-r1-fixture-00005"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "bakery",
+                "name": "Sourdough loaf",
+                "qty": 1,
+                "sku": "BK-02",
+                "unit_cents": 480
+              }
+            ],
+            "card_brand": "amex",
+            "context": {
+              "country": "DE",
+              "district": "Northgate",
+              "hour": 11,
+              "lat": 52.55,
+              "local_time": "2026-10-05T11:15:30+02:00",
+              "lon": 13.41,
+              "register_id": "s1-r1",
+              "sensor": "ok",
+              "sensor_at": 1791255071.331538,
+              "store_id": "s1",
+              "store_name": "Northgate",
+              "temp_c": 21.4,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.420089-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_99304a24e80c22327bd731b2",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 480,
+            "txn_id": "s1-r1-fixture-00005",
+            "uplink": {
+              "queued_at": "2026-10-05T19:51:12.442475-07:00",
+              "store_id": "s1"
+            }
+          },
+          "route": "clean",
+          "note": null,
+          "final_scan": "clean"
+        },
+        {
+          "id": "warehouse",
+          "ran": true,
+          "input": {
+            "request": "POST https://warehouse/ingest",
+            "authenticated_as": "client certificate CN=s1",
+            "records_in_batch": 3,
+            "record": {
+              "basket": [
+                {
+                  "category": "bakery",
+                  "name": "Sourdough loaf",
+                  "qty": 1,
+                  "sku": "BK-02",
+                  "unit_cents": 480
+                }
+              ],
+              "card_brand": "amex",
+              "context": {
+                "country": "DE",
+                "district": "Northgate",
+                "hour": 11,
+                "lat": 52.55,
+                "local_time": "2026-10-05T11:15:30+02:00",
+                "lon": 13.41,
+                "register_id": "s1-r1",
+                "sensor": "ok",
+                "sensor_at": 1791255071.331538,
+                "store_id": "s1",
+                "store_name": "Northgate",
+                "temp_c": 21.4,
+                "weekday": "Monday"
+              },
+              "currency": "EUR",
+              "edge_at": "2026-10-05T19:51:11.420089-07:00",
+              "entry_mode": "contactless",
+              "join_id": "jid1_99304a24e80c22327bd731b2",
+              "note": "",
+              "stripped": [
+                "pan",
+                "track2",
+                "cvv",
+                "expiry",
+                "cardholder",
+                "auth_code",
+                "cashier"
+              ],
+              "total_cents": 480,
+              "txn_id": "s1-r1-fixture-00005",
+              "uplink": {
+                "queued_at": "2026-10-05T19:51:12.442475-07:00",
+                "store_id": "s1"
+              }
+            }
+          },
+          "output": {
+            "status": 200,
+            "response": {
+              "stored": 3
+            },
+            "stored_row": {
+              "record": {
+                "basket": [
+                  {
+                    "category": "bakery",
+                    "name": "Sourdough loaf",
+                    "qty": 1,
+                    "sku": "BK-02",
+                    "unit_cents": 480
+                  }
+                ],
+                "card_brand": "amex",
+                "context": {
+                  "country": "DE",
+                  "district": "Northgate",
+                  "hour": 11,
+                  "lat": 52.55,
+                  "local_time": "2026-10-05T11:15:30+02:00",
+                  "lon": 13.41,
+                  "register_id": "s1-r1",
+                  "sensor": "ok",
+                  "sensor_at": 1791255071.331538,
+                  "store_id": "s1",
+                  "store_name": "Northgate",
+                  "temp_c": 21.4,
+                  "weekday": "Monday"
+                },
+                "currency": "EUR",
+                "edge_at": "2026-10-05T19:51:11.420089-07:00",
+                "entry_mode": "contactless",
+                "join_id": "jid1_99304a24e80c22327bd731b2",
+                "note": "",
+                "stripped": [
+                  "pan",
+                  "track2",
+                  "cvv",
+                  "expiry",
+                  "cardholder",
+                  "auth_code",
+                  "cashier"
+                ],
+                "total_cents": 480,
+                "txn_id": "s1-r1-fixture-00005",
+                "uplink": {
+                  "queued_at": "2026-10-05T19:51:12.442475-07:00",
+                  "store_id": "s1"
+                }
+              },
+              "received_at": 1791255073.3545148,
+              "queued_s": 0.91
+            }
+          },
+          "skipped": null
+        }
+      ]
+    },
+    {
+      "id": "clean-sandwiches",
+      "title": "A clean sale: two cheese sandwiches",
+      "store": "s2",
+      "txn_id": "s2-r1-fixture-00006",
+      "outcome": "clean",
+      "reason": null,
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s2-r1-fixture-00006",
+            "register_id": "s2-r1",
+            "ts": "2026-10-05T09:15:36.000Z",
+            "pan": "5555555555554444",
+            "track2": "5555555555554444=2906101123456789",
+            "cvv": "456",
+            "expiry": "2906",
+            "cardholder": "VISSER/B",
+            "card_brand": "mastercard",
+            "entry_mode": "contactless",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "SW-02",
+                "qty": 2,
+                "unit_cents": 450
+              }
+            ],
+            "total_cents": 900,
+            "currency": "EUR",
+            "note": "",
+            "sig": "f718a9a6e2b47b927684cbea3d9735a454f7c2adbcc417caf898e16679a41e61"
+          },
+          "output": {
+            "captured_at": 1791191737.5,
+            "record": {
+              "txn_id": "s2-r1-fixture-00006",
+              "register_id": "s2-r1",
+              "ts": "2026-10-05T09:15:36.000Z",
+              "pan": "5555555555554444",
+              "track2": "5555555555554444=2906101123456789",
+              "cvv": "456",
+              "expiry": "2906",
+              "cardholder": "VISSER/B",
+              "card_brand": "mastercard",
+              "entry_mode": "contactless",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "SW-02",
+                  "qty": 2,
+                  "unit_cents": 450
+                }
+              ],
+              "total_cents": 900,
+              "currency": "EUR",
+              "note": "",
+              "sig": "f718a9a6e2b47b927684cbea3d9735a454f7c2adbcc417caf898e16679a41e61"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "contactless",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 2,
+                "sku": "SW-02",
+                "unit_cents": 450
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s2-r1",
+            "sig": "f718a9a6e2b47b927684cbea3d9735a454f7c2adbcc417caf898e16679a41e61",
+            "total_cents": 900,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:15:36.000Z",
+            "txn_id": "s2-r1-fixture-00006"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "contactless",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 2,
+                "sku": "SW-02",
+                "unit_cents": 450
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s2-r1",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "f718a9a6e2b47b927684cbea3d9735a454f7c2adbcc417caf898e16679a41e61",
+            "total_cents": 900,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:15:36.000Z",
+            "txn_id": "s2-r1-fixture-00006"
+          }
+        },
+        {
+          "id": "join",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "contactless",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 2,
+                "sku": "SW-02",
+                "unit_cents": 450
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s2-r1",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "f718a9a6e2b47b927684cbea3d9735a454f7c2adbcc417caf898e16679a41e61",
+            "total_cents": 900,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:15:36.000Z",
+            "txn_id": "s2-r1-fixture-00006"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "sandwiches",
+                "name": "Cheese sandwich",
+                "qty": 2,
+                "sku": "SW-02",
+                "unit_cents": 450
+              }
+            ],
+            "card_brand": "mastercard",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:36+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754667-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_33e369b81b77a6e30ec989f8",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 900,
+            "txn_id": "s2-r1-fixture-00006"
+          },
+          "skipped": null
+        },
+        {
+          "id": "context",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "sandwiches",
+                "name": "Cheese sandwich",
+                "qty": 2,
+                "sku": "SW-02",
+                "unit_cents": 450
+              }
+            ],
+            "card_brand": "mastercard",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:36+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754667-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_33e369b81b77a6e30ec989f8",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 900,
+            "txn_id": "s2-r1-fixture-00006"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "sandwiches",
+                "name": "Cheese sandwich",
+                "qty": 2,
+                "sku": "SW-02",
+                "unit_cents": 450
+              }
+            ],
+            "card_brand": "mastercard",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:36+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "sensor": "sensor missing",
+              "sensor_at": null,
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "temp_c": null,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754667-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_33e369b81b77a6e30ec989f8",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 900,
+            "txn_id": "s2-r1-fixture-00006"
+          },
+          "skipped": null
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "sandwiches",
+                "name": "Cheese sandwich",
+                "qty": 2,
+                "sku": "SW-02",
+                "unit_cents": 450
+              }
+            ],
+            "card_brand": "mastercard",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:36+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "sensor": "sensor missing",
+              "sensor_at": null,
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "temp_c": null,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754667-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_33e369b81b77a6e30ec989f8",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 900,
+            "txn_id": "s2-r1-fixture-00006"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "sandwiches",
+                "name": "Cheese sandwich",
+                "qty": 2,
+                "sku": "SW-02",
+                "unit_cents": 450
+              }
+            ],
+            "card_brand": "mastercard",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:36+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "sensor": "sensor missing",
+              "sensor_at": null,
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "temp_c": null,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754667-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_33e369b81b77a6e30ec989f8",
+            "note": "",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier"
+            ],
+            "total_cents": 900,
+            "txn_id": "s2-r1-fixture-00006",
+            "uplink": {
+              "queued_at": "2026-10-05T19:51:12.799124-07:00",
+              "store_id": "s2"
+            }
+          },
+          "route": "clean",
+          "note": null,
+          "final_scan": "clean"
+        },
+        {
+          "id": "warehouse",
+          "ran": true,
+          "input": {
+            "request": "POST https://warehouse/ingest",
+            "authenticated_as": "client certificate CN=s2",
+            "records_in_batch": 3,
+            "record": {
+              "basket": [
+                {
+                  "category": "sandwiches",
+                  "name": "Cheese sandwich",
+                  "qty": 2,
+                  "sku": "SW-02",
+                  "unit_cents": 450
+                }
+              ],
+              "card_brand": "mastercard",
+              "context": {
+                "country": "DE",
+                "district": "Riverside",
+                "hour": 11,
+                "lat": 52.49,
+                "local_time": "2026-10-05T11:15:36+02:00",
+                "lon": 13.45,
+                "register_id": "s2-r1",
+                "sensor": "sensor missing",
+                "sensor_at": null,
+                "store_id": "s2",
+                "store_name": "Riverside",
+                "temp_c": null,
+                "weekday": "Monday"
+              },
+              "currency": "EUR",
+              "edge_at": "2026-10-05T19:51:11.754667-07:00",
+              "entry_mode": "contactless",
+              "join_id": "jid1_33e369b81b77a6e30ec989f8",
+              "note": "",
+              "stripped": [
+                "pan",
+                "track2",
+                "cvv",
+                "expiry",
+                "cardholder",
+                "auth_code",
+                "cashier"
+              ],
+              "total_cents": 900,
+              "txn_id": "s2-r1-fixture-00006",
+              "uplink": {
+                "queued_at": "2026-10-05T19:51:12.799124-07:00",
+                "store_id": "s2"
+              }
+            }
+          },
+          "output": {
+            "status": 200,
+            "response": {
+              "stored": 3
+            },
+            "stored_row": {
+              "record": {
+                "basket": [
+                  {
+                    "category": "sandwiches",
+                    "name": "Cheese sandwich",
+                    "qty": 2,
+                    "sku": "SW-02",
+                    "unit_cents": 450
+                  }
+                ],
+                "card_brand": "mastercard",
+                "context": {
+                  "country": "DE",
+                  "district": "Riverside",
+                  "hour": 11,
+                  "lat": 52.49,
+                  "local_time": "2026-10-05T11:15:36+02:00",
+                  "lon": 13.45,
+                  "register_id": "s2-r1",
+                  "sensor": "sensor missing",
+                  "sensor_at": null,
+                  "store_id": "s2",
+                  "store_name": "Riverside",
+                  "temp_c": null,
+                  "weekday": "Monday"
+                },
+                "currency": "EUR",
+                "edge_at": "2026-10-05T19:51:11.754667-07:00",
+                "entry_mode": "contactless",
+                "join_id": "jid1_33e369b81b77a6e30ec989f8",
+                "note": "",
+                "stripped": [
+                  "pan",
+                  "track2",
+                  "cvv",
+                  "expiry",
+                  "cardholder",
+                  "auth_code",
+                  "cashier"
+                ],
+                "total_cents": 900,
+                "txn_id": "s2-r1-fixture-00006",
+                "uplink": {
+                  "queued_at": "2026-10-05T19:51:12.799124-07:00",
+                  "store_id": "s2"
+                }
+              },
+              "received_at": 1791255073.7524328,
+              "queued_s": 0.95
+            }
+          },
+          "skipped": null
+        }
+      ]
+    },
+    {
+      "id": "tampered",
+      "title": "A price changed after the till signed it",
+      "store": "s1",
+      "txn_id": "s1-r1-fixture-00007",
+      "outcome": "quarantined",
+      "reason": "signature mismatch: altered after the register signed it",
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s1-r1-fixture-00007",
+            "register_id": "s1-r1",
+            "ts": "2026-10-05T09:15:44.000Z",
+            "pan": "5555555555554444",
+            "track2": "5555555555554444=2906101123456789",
+            "cvv": "456",
+            "expiry": "2906",
+            "cardholder": "VISSER/B",
+            "card_brand": "mastercard",
+            "entry_mode": "contactless",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "HD-02",
+                "qty": 1,
+                "unit_cents": 1
+              },
+              {
+                "sku": "BK-01",
+                "qty": 1,
+                "unit_cents": 210
+              }
+            ],
+            "total_cents": 211,
+            "currency": "EUR",
+            "note": "",
+            "sig": "e29232a0a81a53725f5d91008a72b93b5f213d163769e2b319202c906195f7e8"
+          },
+          "output": {
+            "captured_at": 1791191745.5,
+            "record": {
+              "txn_id": "s1-r1-fixture-00007",
+              "register_id": "s1-r1",
+              "ts": "2026-10-05T09:15:44.000Z",
+              "pan": "5555555555554444",
+              "track2": "5555555555554444=2906101123456789",
+              "cvv": "456",
+              "expiry": "2906",
+              "cardholder": "VISSER/B",
+              "card_brand": "mastercard",
+              "entry_mode": "contactless",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "HD-02",
+                  "qty": 1,
+                  "unit_cents": 1
+                },
+                {
+                  "sku": "BK-01",
+                  "qty": 1,
+                  "unit_cents": 210
+                }
+              ],
+              "total_cents": 211,
+              "currency": "EUR",
+              "note": "",
+              "sig": "e29232a0a81a53725f5d91008a72b93b5f213d163769e2b319202c906195f7e8"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "contactless",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "HD-02",
+                "unit_cents": 1
+              },
+              {
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s1-r1",
+            "sig": "e29232a0a81a53725f5d91008a72b93b5f213d163769e2b319202c906195f7e8",
+            "total_cents": 211,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:15:44.000Z",
+            "txn_id": "s1-r1-fixture-00007"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "contactless",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "HD-02",
+                "unit_cents": 1
+              },
+              {
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s1-r1",
+            "scan": {
+              "reasons": [
+                "signature mismatch: altered after the register signed it"
+              ]
+            },
+            "sig": "e29232a0a81a53725f5d91008a72b93b5f213d163769e2b319202c906195f7e8",
+            "total_cents": 211,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:15:44.000Z",
+            "txn_id": "s1-r1-fixture-00007"
+          }
+        },
+        {
+          "id": "join",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "context",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "contactless",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "HD-02",
+                "unit_cents": 1
+              },
+              {
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s1-r1",
+            "scan": {
+              "reasons": [
+                "signature mismatch: altered after the register signed it"
+              ]
+            },
+            "sig": "e29232a0a81a53725f5d91008a72b93b5f213d163769e2b319202c906195f7e8",
+            "total_cents": 211,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:15:44.000Z",
+            "txn_id": "s1-r1-fixture-00007"
+          },
+          "output": {
+            "note": "",
+            "quarantined_at": "2026-10-05T19:51:11.395209-07:00",
+            "reason": "signature mismatch: altered after the register signed it",
+            "reasons": [
+              "signature mismatch: altered after the register signed it"
+            ],
+            "register_id": "s1-r1",
+            "store_id": "s1",
+            "total_cents": 211,
+            "txn_id": "s1-r1-fixture-00007"
+          },
+          "route": "quarantine",
+          "note": null,
+          "final_scan": null
+        },
+        {
+          "id": "warehouse",
+          "ran": false,
+          "input": null,
+          "output": {
+            "warehouse": "no row",
+            "kept_in_store": {
+              "note": "",
+              "quarantined_at": "2026-10-05T19:51:11.395209-07:00",
+              "reason": "signature mismatch: altered after the register signed it",
+              "reasons": [
+                "signature mismatch: altered after the register signed it"
+              ],
+              "register_id": "s1-r1",
+              "store_id": "s1",
+              "total_cents": 211,
+              "txn_id": "s1-r1-fixture-00007"
+            }
+          },
+          "skipped": "quarantined records never leave the store"
+        }
+      ]
+    },
+    {
+      "id": "card-number-in-note",
+      "title": "A signed swipe with the card number typed into its note",
+      "store": "s2",
+      "txn_id": "s2-r1-fixture-00008",
+      "outcome": "quarantined",
+      "reason": "card number blocked: raw card number in note",
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s2-r1-fixture-00008",
+            "register_id": "s2-r1",
+            "ts": "2026-10-05T09:15:51.000Z",
+            "pan": "4111111111111111",
+            "track2": "4111111111111111=2812101123456789",
+            "cvv": "123",
+            "expiry": "2812",
+            "cardholder": "BAKKER/A",
+            "card_brand": "visa",
+            "entry_mode": "contactless",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "HD-03",
+                "qty": 1,
+                "unit_cents": 380
+              }
+            ],
+            "total_cents": 380,
+            "currency": "EUR",
+            "note": "card 4111 1111 1111 1111 declined once, retried",
+            "loyalty_email": "ana.bakker@example.net",
+            "sig": "79dbc06d829f87fa17d84e110b148115a6d16ebc2a171d95378a13aad344db69"
+          },
+          "output": {
+            "captured_at": 1791191752.5,
+            "record": {
+              "txn_id": "s2-r1-fixture-00008",
+              "register_id": "s2-r1",
+              "ts": "2026-10-05T09:15:51.000Z",
+              "pan": "4111111111111111",
+              "track2": "4111111111111111=2812101123456789",
+              "cvv": "123",
+              "expiry": "2812",
+              "cardholder": "BAKKER/A",
+              "card_brand": "visa",
+              "entry_mode": "contactless",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "HD-03",
+                  "qty": 1,
+                  "unit_cents": 380
+                }
+              ],
+              "total_cents": 380,
+              "currency": "EUR",
+              "note": "card 4111 1111 1111 1111 declined once, retried",
+              "loyalty_email": "ana.bakker@example.net",
+              "sig": "79dbc06d829f87fa17d84e110b148115a6d16ebc2a171d95378a13aad344db69"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "HD-03",
+                "unit_cents": 380
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "card 4111 1111 1111 1111 declined once, retried",
+            "pan": "4111111111111111",
+            "register_id": "s2-r1",
+            "sig": "79dbc06d829f87fa17d84e110b148115a6d16ebc2a171d95378a13aad344db69",
+            "total_cents": 380,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:15:51.000Z",
+            "txn_id": "s2-r1-fixture-00008"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "HD-03",
+                "unit_cents": 380
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "card 4111 1111 1111 1111 declined once, retried",
+            "pan": "4111111111111111",
+            "register_id": "s2-r1",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "79dbc06d829f87fa17d84e110b148115a6d16ebc2a171d95378a13aad344db69",
+            "total_cents": 380,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:15:51.000Z",
+            "txn_id": "s2-r1-fixture-00008"
+          }
+        },
+        {
+          "id": "join",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "HD-03",
+                "unit_cents": 380
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "card 4111 1111 1111 1111 declined once, retried",
+            "pan": "4111111111111111",
+            "register_id": "s2-r1",
+            "scan": {
+              "reasons": []
+            },
+            "sig": "79dbc06d829f87fa17d84e110b148115a6d16ebc2a171d95378a13aad344db69",
+            "total_cents": 380,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:15:51.000Z",
+            "txn_id": "s2-r1-fixture-00008"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "hot drinks",
+                "name": "Hot chocolate",
+                "qty": 1,
+                "sku": "HD-03",
+                "unit_cents": 380
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:51+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754744-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "card 4111 1111 1111 1111 declined once, retried",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 380,
+            "txn_id": "s2-r1-fixture-00008"
+          },
+          "skipped": null
+        },
+        {
+          "id": "context",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "hot drinks",
+                "name": "Hot chocolate",
+                "qty": 1,
+                "sku": "HD-03",
+                "unit_cents": 380
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:51+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754744-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "card 4111 1111 1111 1111 declined once, retried",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 380,
+            "txn_id": "s2-r1-fixture-00008"
+          },
+          "output": {
+            "basket": [
+              {
+                "category": "hot drinks",
+                "name": "Hot chocolate",
+                "qty": 1,
+                "sku": "HD-03",
+                "unit_cents": 380
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:51+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "sensor": "sensor missing",
+              "sensor_at": null,
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "temp_c": null,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754744-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "card 4111 1111 1111 1111 declined once, retried",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 380,
+            "txn_id": "s2-r1-fixture-00008"
+          },
+          "skipped": null
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "basket": [
+              {
+                "category": "hot drinks",
+                "name": "Hot chocolate",
+                "qty": 1,
+                "sku": "HD-03",
+                "unit_cents": 380
+              }
+            ],
+            "card_brand": "visa",
+            "context": {
+              "country": "DE",
+              "district": "Riverside",
+              "hour": 11,
+              "lat": 52.49,
+              "local_time": "2026-10-05T11:15:51+02:00",
+              "lon": 13.45,
+              "register_id": "s2-r1",
+              "sensor": "sensor missing",
+              "sensor_at": null,
+              "store_id": "s2",
+              "store_name": "Riverside",
+              "temp_c": null,
+              "weekday": "Monday"
+            },
+            "currency": "EUR",
+            "edge_at": "2026-10-05T19:51:11.754744-07:00",
+            "entry_mode": "contactless",
+            "join_id": "jid1_2b4482b6875ffdb4c6eff793",
+            "note": "card 4111 1111 1111 1111 declined once, retried",
+            "stripped": [
+              "pan",
+              "track2",
+              "cvv",
+              "expiry",
+              "cardholder",
+              "auth_code",
+              "cashier",
+              "loyalty_email"
+            ],
+            "total_cents": 380,
+            "txn_id": "s2-r1-fixture-00008"
+          },
+          "output": {
+            "note": "card •••• •••• •••• •••• declined once, retried",
+            "quarantined_at": "2026-10-05T19:51:11.765406-07:00",
+            "reason": "card number blocked: raw card number in note",
+            "reasons": [
+              "card number blocked: raw card number in note"
+            ],
+            "register_id": "s2-r1",
+            "store_id": "s2",
+            "total_cents": 380,
+            "txn_id": "s2-r1-fixture-00008"
+          },
+          "route": "quarantine",
+          "note": null,
+          "final_scan": "quarantine"
+        },
+        {
+          "id": "warehouse",
+          "ran": false,
+          "input": null,
+          "output": {
+            "warehouse": "no row",
+            "kept_in_store": {
+              "note": "card •••• •••• •••• •••• declined once, retried",
+              "quarantined_at": "2026-10-05T19:51:11.765406-07:00",
+              "reason": "card number blocked: raw card number in note",
+              "reasons": [
+                "card number blocked: raw card number in note"
+              ],
+              "register_id": "s2-r1",
+              "store_id": "s2",
+              "total_cents": 380,
+              "txn_id": "s2-r1-fixture-00008"
+            }
+          },
+          "skipped": "quarantined records never leave the store"
+        }
+      ]
+    },
+    {
+      "id": "malformed",
+      "title": "A swipe with no card number and a quantity of \"two\"",
+      "store": "s1",
+      "txn_id": "s1-r3-fixture-00009",
+      "outcome": "quarantined",
+      "reason": "malformed: missing pan",
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s1-r3-fixture-00009",
+            "register_id": "s1-r3",
+            "ts": "2026-10-05T09:15:58.000Z",
+            "track2": "378282246310005=3011101123456789",
+            "cvv": "7890",
+            "expiry": "3011",
+            "cardholder": "WEBER/C",
+            "card_brand": "amex",
+            "entry_mode": "contactless",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "SN-01",
+                "qty": "two",
+                "unit_cents": 160
+              }
+            ],
+            "total_cents": 160,
+            "currency": "EUR",
+            "note": "",
+            "sig": "6c9d1d05269f42ee6f267a10181cf9beda4ae18099d64fce82997441d4697b88"
+          },
+          "output": {
+            "captured_at": 1791191759.5,
+            "record": {
+              "txn_id": "s1-r3-fixture-00009",
+              "register_id": "s1-r3",
+              "ts": "2026-10-05T09:15:58.000Z",
+              "track2": "378282246310005=3011101123456789",
+              "cvv": "7890",
+              "expiry": "3011",
+              "cardholder": "WEBER/C",
+              "card_brand": "amex",
+              "entry_mode": "contactless",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "SN-01",
+                  "qty": "two",
+                  "unit_cents": 160
+                }
+              ],
+              "total_cents": 160,
+              "currency": "EUR",
+              "note": "",
+              "sig": "6c9d1d05269f42ee6f267a10181cf9beda4ae18099d64fce82997441d4697b88"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "amex",
+            "cardholder": "WEBER/C",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "7890",
+            "entry_mode": "contactless",
+            "expiry": "3011",
+            "items": [
+              {
+                "qty": "two",
+                "sku": "SN-01",
+                "unit_cents": 160
+              }
+            ],
+            "note": "",
+            "register_id": "s1-r3",
+            "sig": "6c9d1d05269f42ee6f267a10181cf9beda4ae18099d64fce82997441d4697b88",
+            "total_cents": 160,
+            "track2": "378282246310005=3011101123456789",
+            "ts": "2026-10-05T09:15:58.000Z",
+            "txn_id": "s1-r3-fixture-00009"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "amex",
+            "cardholder": "WEBER/C",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "7890",
+            "entry_mode": "contactless",
+            "expiry": "3011",
+            "items": [
+              {
+                "qty": "two",
+                "sku": "SN-01",
+                "unit_cents": 160
+              }
+            ],
+            "note": "",
+            "register_id": "s1-r3",
+            "scan": {
+              "reasons": [
+                "malformed: missing pan",
+                "signature mismatch: altered after the register signed it",
+                "totals: items add to -1, receipt says 160"
+              ]
+            },
+            "sig": "6c9d1d05269f42ee6f267a10181cf9beda4ae18099d64fce82997441d4697b88",
+            "total_cents": 160,
+            "track2": "378282246310005=3011101123456789",
+            "ts": "2026-10-05T09:15:58.000Z",
+            "txn_id": "s1-r3-fixture-00009"
+          }
+        },
+        {
+          "id": "join",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "context",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "amex",
+            "cardholder": "WEBER/C",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "7890",
+            "entry_mode": "contactless",
+            "expiry": "3011",
+            "items": [
+              {
+                "qty": "two",
+                "sku": "SN-01",
+                "unit_cents": 160
+              }
+            ],
+            "note": "",
+            "register_id": "s1-r3",
+            "scan": {
+              "reasons": [
+                "malformed: missing pan",
+                "signature mismatch: altered after the register signed it",
+                "totals: items add to -1, receipt says 160"
+              ]
+            },
+            "sig": "6c9d1d05269f42ee6f267a10181cf9beda4ae18099d64fce82997441d4697b88",
+            "total_cents": 160,
+            "track2": "378282246310005=3011101123456789",
+            "ts": "2026-10-05T09:15:58.000Z",
+            "txn_id": "s1-r3-fixture-00009"
+          },
+          "output": {
+            "note": "",
+            "quarantined_at": "2026-10-05T19:51:11.39522-07:00",
+            "reason": "malformed: missing pan",
+            "reasons": [
+              "malformed: missing pan",
+              "signature mismatch: altered after the register signed it",
+              "totals: items add to -1, receipt says 160"
+            ],
+            "register_id": "s1-r3",
+            "store_id": "s1",
+            "total_cents": 160,
+            "txn_id": "s1-r3-fixture-00009"
+          },
+          "route": "quarantine",
+          "note": null,
+          "final_scan": null
+        },
+        {
+          "id": "warehouse",
+          "ran": false,
+          "input": null,
+          "output": {
+            "warehouse": "no row",
+            "kept_in_store": {
+              "note": "",
+              "quarantined_at": "2026-10-05T19:51:11.39522-07:00",
+              "reason": "malformed: missing pan",
+              "reasons": [
+                "malformed: missing pan",
+                "signature mismatch: altered after the register signed it",
+                "totals: items add to -1, receipt says 160"
+              ],
+              "register_id": "s1-r3",
+              "store_id": "s1",
+              "total_cents": 160,
+              "txn_id": "s1-r3-fixture-00009"
+            }
+          },
+          "skipped": "quarantined records never leave the store"
+        }
+      ]
+    },
+    {
+      "id": "injection",
+      "title": "A correctly signed swipe with a script in the SKU",
+      "store": "s2",
+      "txn_id": "s2-r1-fixture-00010",
+      "outcome": "quarantined",
+      "reason": "injection pattern in a text field",
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s2-r1-fixture-00010",
+            "register_id": "s2-r1",
+            "ts": "2026-10-05T09:16:05.000Z",
+            "pan": "5555555555554444",
+            "track2": "5555555555554444=2906101123456789",
+            "cvv": "456",
+            "expiry": "2906",
+            "cardholder": "VISSER/B",
+            "card_brand": "mastercard",
+            "entry_mode": "contactless",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "<script>fetch('//x.example/k')</script>",
+                "qty": 1,
+                "unit_cents": 160
+              }
+            ],
+            "total_cents": 160,
+            "currency": "EUR",
+            "note": "",
+            "sig": "bc7b21e7701dc52d8f4ed5d57b29ab352e5cff48a609bdc928de780860bb047c"
+          },
+          "output": {
+            "captured_at": 1791191766.5,
+            "record": {
+              "txn_id": "s2-r1-fixture-00010",
+              "register_id": "s2-r1",
+              "ts": "2026-10-05T09:16:05.000Z",
+              "pan": "5555555555554444",
+              "track2": "5555555555554444=2906101123456789",
+              "cvv": "456",
+              "expiry": "2906",
+              "cardholder": "VISSER/B",
+              "card_brand": "mastercard",
+              "entry_mode": "contactless",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "<script>fetch('//x.example/k')</script>",
+                  "qty": 1,
+                  "unit_cents": 160
+                }
+              ],
+              "total_cents": 160,
+              "currency": "EUR",
+              "note": "",
+              "sig": "bc7b21e7701dc52d8f4ed5d57b29ab352e5cff48a609bdc928de780860bb047c"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "contactless",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "<script>fetch('//x.example/k')</script>",
+                "unit_cents": 160
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s2-r1",
+            "sig": "bc7b21e7701dc52d8f4ed5d57b29ab352e5cff48a609bdc928de780860bb047c",
+            "total_cents": 160,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:16:05.000Z",
+            "txn_id": "s2-r1-fixture-00010"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "contactless",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "<script>fetch('//x.example/k')</script>",
+                "unit_cents": 160
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s2-r1",
+            "scan": {
+              "reasons": [
+                "injection pattern in a text field"
+              ]
+            },
+            "sig": "bc7b21e7701dc52d8f4ed5d57b29ab352e5cff48a609bdc928de780860bb047c",
+            "total_cents": 160,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:16:05.000Z",
+            "txn_id": "s2-r1-fixture-00010"
+          }
+        },
+        {
+          "id": "join",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "context",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "contactless",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "<script>fetch('//x.example/k')</script>",
+                "unit_cents": 160
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s2-r1",
+            "scan": {
+              "reasons": [
+                "injection pattern in a text field"
+              ]
+            },
+            "sig": "bc7b21e7701dc52d8f4ed5d57b29ab352e5cff48a609bdc928de780860bb047c",
+            "total_cents": 160,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:16:05.000Z",
+            "txn_id": "s2-r1-fixture-00010"
+          },
+          "output": {
+            "note": "",
+            "quarantined_at": "2026-10-05T19:51:11.75084-07:00",
+            "reason": "injection pattern in a text field",
+            "reasons": [
+              "injection pattern in a text field"
+            ],
+            "register_id": "s2-r1",
+            "store_id": "s2",
+            "total_cents": 160,
+            "txn_id": "s2-r1-fixture-00010"
+          },
+          "route": "quarantine",
+          "note": null,
+          "final_scan": null
+        },
+        {
+          "id": "warehouse",
+          "ran": false,
+          "input": null,
+          "output": {
+            "warehouse": "no row",
+            "kept_in_store": {
+              "note": "",
+              "quarantined_at": "2026-10-05T19:51:11.75084-07:00",
+              "reason": "injection pattern in a text field",
+              "reasons": [
+                "injection pattern in a text field"
+              ],
+              "register_id": "s2-r1",
+              "store_id": "s2",
+              "total_cents": 160,
+              "txn_id": "s2-r1-fixture-00010"
+            }
+          },
+          "skipped": "quarantined records never leave the store"
+        }
+      ]
+    },
+    {
+      "id": "stale-replay",
+      "title": "A swipe captured 400 seconds after it was signed",
+      "store": "s1",
+      "txn_id": "s1-r2-fixture-00011",
+      "outcome": "quarantined",
+      "reason": "stale: 400s old, possible replay",
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s1-r2-fixture-00011",
+            "register_id": "s1-r2",
+            "ts": "2026-10-05T09:16:12.000Z",
+            "pan": "4111111111111111",
+            "track2": "4111111111111111=2812101123456789",
+            "cvv": "123",
+            "expiry": "2812",
+            "cardholder": "BAKKER/A",
+            "card_brand": "visa",
+            "entry_mode": "contactless",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "CD-01",
+                "qty": 1,
+                "unit_cents": 420
+              }
+            ],
+            "total_cents": 420,
+            "currency": "EUR",
+            "note": "",
+            "loyalty_email": "ana.bakker@example.net",
+            "sig": "f6280793d1753f98eabd1d68513f4d2fb38cf8acdfdbca58045f9cc2fd227cd6"
+          },
+          "output": {
+            "captured_at": 1791192172.0,
+            "record": {
+              "txn_id": "s1-r2-fixture-00011",
+              "register_id": "s1-r2",
+              "ts": "2026-10-05T09:16:12.000Z",
+              "pan": "4111111111111111",
+              "track2": "4111111111111111=2812101123456789",
+              "cvv": "123",
+              "expiry": "2812",
+              "cardholder": "BAKKER/A",
+              "card_brand": "visa",
+              "entry_mode": "contactless",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "CD-01",
+                  "qty": 1,
+                  "unit_cents": 420
+                }
+              ],
+              "total_cents": 420,
+              "currency": "EUR",
+              "note": "",
+              "loyalty_email": "ana.bakker@example.net",
+              "sig": "f6280793d1753f98eabd1d68513f4d2fb38cf8acdfdbca58045f9cc2fd227cd6"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "CD-01",
+                "unit_cents": 420
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "",
+            "pan": "4111111111111111",
+            "register_id": "s1-r2",
+            "sig": "f6280793d1753f98eabd1d68513f4d2fb38cf8acdfdbca58045f9cc2fd227cd6",
+            "total_cents": 420,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:16:12.000Z",
+            "txn_id": "s1-r2-fixture-00011"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "CD-01",
+                "unit_cents": 420
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "",
+            "pan": "4111111111111111",
+            "register_id": "s1-r2",
+            "scan": {
+              "reasons": [
+                "stale: 400s old, possible replay"
+              ]
+            },
+            "sig": "f6280793d1753f98eabd1d68513f4d2fb38cf8acdfdbca58045f9cc2fd227cd6",
+            "total_cents": 420,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:16:12.000Z",
+            "txn_id": "s1-r2-fixture-00011"
+          }
+        },
+        {
+          "id": "join",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "context",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "CD-01",
+                "unit_cents": 420
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "",
+            "pan": "4111111111111111",
+            "register_id": "s1-r2",
+            "scan": {
+              "reasons": [
+                "stale: 400s old, possible replay"
+              ]
+            },
+            "sig": "f6280793d1753f98eabd1d68513f4d2fb38cf8acdfdbca58045f9cc2fd227cd6",
+            "total_cents": 420,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:16:12.000Z",
+            "txn_id": "s1-r2-fixture-00011"
+          },
+          "output": {
+            "note": "",
+            "quarantined_at": "2026-10-05T19:51:11.395229-07:00",
+            "reason": "stale: 400s old, possible replay",
+            "reasons": [
+              "stale: 400s old, possible replay"
+            ],
+            "register_id": "s1-r2",
+            "store_id": "s1",
+            "total_cents": 420,
+            "txn_id": "s1-r2-fixture-00011"
+          },
+          "route": "quarantine",
+          "note": null,
+          "final_scan": null
+        },
+        {
+          "id": "warehouse",
+          "ran": false,
+          "input": null,
+          "output": {
+            "warehouse": "no row",
+            "kept_in_store": {
+              "note": "",
+              "quarantined_at": "2026-10-05T19:51:11.395229-07:00",
+              "reason": "stale: 400s old, possible replay",
+              "reasons": [
+                "stale: 400s old, possible replay"
+              ],
+              "register_id": "s1-r2",
+              "store_id": "s1",
+              "total_cents": 420,
+              "txn_id": "s1-r2-fixture-00011"
+            }
+          },
+          "skipped": "quarantined records never leave the store"
+        }
+      ]
+    },
+    {
+      "id": "unknown-register",
+      "title": "A swipe from a register that is not enrolled here",
+      "store": "s1",
+      "txn_id": "s1-r9-fixture-00012",
+      "outcome": "quarantined",
+      "reason": "unknown register: not enrolled here",
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s1-r9-fixture-00012",
+            "register_id": "s1-r9",
+            "ts": "2026-10-05T09:16:19.000Z",
+            "pan": "5555555555554444",
+            "track2": "5555555555554444=2906101123456789",
+            "cvv": "456",
+            "expiry": "2906",
+            "cardholder": "VISSER/B",
+            "card_brand": "mastercard",
+            "entry_mode": "contactless",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "HD-01",
+                "qty": 1,
+                "unit_cents": 340
+              }
+            ],
+            "total_cents": 340,
+            "currency": "EUR",
+            "note": "",
+            "sig": "fd2d464c1941945bd7cd091e3709514d6f9a11fcef353448f56f9b58bfd58140"
+          },
+          "output": {
+            "captured_at": 1791191780.5,
+            "record": {
+              "txn_id": "s1-r9-fixture-00012",
+              "register_id": "s1-r9",
+              "ts": "2026-10-05T09:16:19.000Z",
+              "pan": "5555555555554444",
+              "track2": "5555555555554444=2906101123456789",
+              "cvv": "456",
+              "expiry": "2906",
+              "cardholder": "VISSER/B",
+              "card_brand": "mastercard",
+              "entry_mode": "contactless",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "HD-01",
+                  "qty": 1,
+                  "unit_cents": 340
+                }
+              ],
+              "total_cents": 340,
+              "currency": "EUR",
+              "note": "",
+              "sig": "fd2d464c1941945bd7cd091e3709514d6f9a11fcef353448f56f9b58bfd58140"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "contactless",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "HD-01",
+                "unit_cents": 340
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s1-r9",
+            "sig": "fd2d464c1941945bd7cd091e3709514d6f9a11fcef353448f56f9b58bfd58140",
+            "total_cents": 340,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:16:19.000Z",
+            "txn_id": "s1-r9-fixture-00012"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "contactless",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "HD-01",
+                "unit_cents": 340
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s1-r9",
+            "scan": {
+              "reasons": [
+                "unknown register: not enrolled here"
+              ]
+            },
+            "sig": "fd2d464c1941945bd7cd091e3709514d6f9a11fcef353448f56f9b58bfd58140",
+            "total_cents": 340,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:16:19.000Z",
+            "txn_id": "s1-r9-fixture-00012"
+          }
+        },
+        {
+          "id": "join",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "context",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "mastercard",
+            "cardholder": "VISSER/B",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "456",
+            "entry_mode": "contactless",
+            "expiry": "2906",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "HD-01",
+                "unit_cents": 340
+              }
+            ],
+            "note": "",
+            "pan": "5555555555554444",
+            "register_id": "s1-r9",
+            "scan": {
+              "reasons": [
+                "unknown register: not enrolled here"
+              ]
+            },
+            "sig": "fd2d464c1941945bd7cd091e3709514d6f9a11fcef353448f56f9b58bfd58140",
+            "total_cents": 340,
+            "track2": "5555555555554444=2906101123456789",
+            "ts": "2026-10-05T09:16:19.000Z",
+            "txn_id": "s1-r9-fixture-00012"
+          },
+          "output": {
+            "note": "",
+            "quarantined_at": "2026-10-05T19:51:11.395223-07:00",
+            "reason": "unknown register: not enrolled here",
+            "reasons": [
+              "unknown register: not enrolled here"
+            ],
+            "register_id": "s1-r9",
+            "store_id": "s1",
+            "total_cents": 340,
+            "txn_id": "s1-r9-fixture-00012"
+          },
+          "route": "quarantine",
+          "note": null,
+          "final_scan": null
+        },
+        {
+          "id": "warehouse",
+          "ran": false,
+          "input": null,
+          "output": {
+            "warehouse": "no row",
+            "kept_in_store": {
+              "note": "",
+              "quarantined_at": "2026-10-05T19:51:11.395223-07:00",
+              "reason": "unknown register: not enrolled here",
+              "reasons": [
+                "unknown register: not enrolled here"
+              ],
+              "register_id": "s1-r9",
+              "store_id": "s1",
+              "total_cents": 340,
+              "txn_id": "s1-r9-fixture-00012"
+            }
+          },
+          "skipped": "quarantined records never leave the store"
+        }
+      ]
+    },
+    {
+      "id": "totals-mismatch",
+      "title": "Lines add to 550 cents; the receipt says 700",
+      "store": "s2",
+      "txn_id": "s2-r1-fixture-00013",
+      "outcome": "quarantined",
+      "reason": "totals: items add to 550, receipt says 700",
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s2-r1-fixture-00013",
+            "register_id": "s2-r1",
+            "ts": "2026-10-05T09:16:26.000Z",
+            "pan": "378282246310005",
+            "track2": "378282246310005=3011101123456789",
+            "cvv": "7890",
+            "expiry": "3011",
+            "cardholder": "WEBER/C",
+            "card_brand": "amex",
+            "entry_mode": "contactless",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "HD-01",
+                "qty": 1,
+                "unit_cents": 340
+              },
+              {
+                "sku": "BK-01",
+                "qty": 1,
+                "unit_cents": 210
+              }
+            ],
+            "total_cents": 700,
+            "currency": "EUR",
+            "note": "",
+            "sig": "ff8d42f6d2b98df95c2bb36ea5900138b2d256b7257155c1d35061567ef46ca7"
+          },
+          "output": {
+            "captured_at": 1791191787.5,
+            "record": {
+              "txn_id": "s2-r1-fixture-00013",
+              "register_id": "s2-r1",
+              "ts": "2026-10-05T09:16:26.000Z",
+              "pan": "378282246310005",
+              "track2": "378282246310005=3011101123456789",
+              "cvv": "7890",
+              "expiry": "3011",
+              "cardholder": "WEBER/C",
+              "card_brand": "amex",
+              "entry_mode": "contactless",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "HD-01",
+                  "qty": 1,
+                  "unit_cents": 340
+                },
+                {
+                  "sku": "BK-01",
+                  "qty": 1,
+                  "unit_cents": 210
+                }
+              ],
+              "total_cents": 700,
+              "currency": "EUR",
+              "note": "",
+              "sig": "ff8d42f6d2b98df95c2bb36ea5900138b2d256b7257155c1d35061567ef46ca7"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "amex",
+            "cardholder": "WEBER/C",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "7890",
+            "entry_mode": "contactless",
+            "expiry": "3011",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "HD-01",
+                "unit_cents": 340
+              },
+              {
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "note": "",
+            "pan": "378282246310005",
+            "register_id": "s2-r1",
+            "sig": "ff8d42f6d2b98df95c2bb36ea5900138b2d256b7257155c1d35061567ef46ca7",
+            "total_cents": 700,
+            "track2": "378282246310005=3011101123456789",
+            "ts": "2026-10-05T09:16:26.000Z",
+            "txn_id": "s2-r1-fixture-00013"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "amex",
+            "cardholder": "WEBER/C",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "7890",
+            "entry_mode": "contactless",
+            "expiry": "3011",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "HD-01",
+                "unit_cents": 340
+              },
+              {
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "note": "",
+            "pan": "378282246310005",
+            "register_id": "s2-r1",
+            "scan": {
+              "reasons": [
+                "totals: items add to 550, receipt says 700"
+              ]
+            },
+            "sig": "ff8d42f6d2b98df95c2bb36ea5900138b2d256b7257155c1d35061567ef46ca7",
+            "total_cents": 700,
+            "track2": "378282246310005=3011101123456789",
+            "ts": "2026-10-05T09:16:26.000Z",
+            "txn_id": "s2-r1-fixture-00013"
+          }
+        },
+        {
+          "id": "join",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "context",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "amex",
+            "cardholder": "WEBER/C",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "7890",
+            "entry_mode": "contactless",
+            "expiry": "3011",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "HD-01",
+                "unit_cents": 340
+              },
+              {
+                "qty": 1,
+                "sku": "BK-01",
+                "unit_cents": 210
+              }
+            ],
+            "note": "",
+            "pan": "378282246310005",
+            "register_id": "s2-r1",
+            "scan": {
+              "reasons": [
+                "totals: items add to 550, receipt says 700"
+              ]
+            },
+            "sig": "ff8d42f6d2b98df95c2bb36ea5900138b2d256b7257155c1d35061567ef46ca7",
+            "total_cents": 700,
+            "track2": "378282246310005=3011101123456789",
+            "ts": "2026-10-05T09:16:26.000Z",
+            "txn_id": "s2-r1-fixture-00013"
+          },
+          "output": {
+            "note": "",
+            "quarantined_at": "2026-10-05T19:51:11.75085-07:00",
+            "reason": "totals: items add to 550, receipt says 700",
+            "reasons": [
+              "totals: items add to 550, receipt says 700"
+            ],
+            "register_id": "s2-r1",
+            "store_id": "s2",
+            "total_cents": 700,
+            "txn_id": "s2-r1-fixture-00013"
+          },
+          "route": "quarantine",
+          "note": null,
+          "final_scan": null
+        },
+        {
+          "id": "warehouse",
+          "ran": false,
+          "input": null,
+          "output": {
+            "warehouse": "no row",
+            "kept_in_store": {
+              "note": "",
+              "quarantined_at": "2026-10-05T19:51:11.75085-07:00",
+              "reason": "totals: items add to 550, receipt says 700",
+              "reasons": [
+                "totals: items add to 550, receipt says 700"
+              ],
+              "register_id": "s2-r1",
+              "store_id": "s2",
+              "total_cents": 700,
+              "txn_id": "s2-r1-fixture-00013"
+            }
+          },
+          "skipped": "quarantined records never leave the store"
+        }
+      ]
+    },
+    {
+      "id": "over-limit",
+      "title": "A signed total over the 5,000.00 limit",
+      "store": "s1",
+      "txn_id": "s1-r1-fixture-00014",
+      "outcome": "quarantined",
+      "reason": "range: total over limit",
+      "stages": [
+        {
+          "id": "raw",
+          "ran": true,
+          "input": {
+            "txn_id": "s1-r1-fixture-00014",
+            "register_id": "s1-r1",
+            "ts": "2026-10-05T09:16:33.000Z",
+            "pan": "4111111111111111",
+            "track2": "4111111111111111=2812101123456789",
+            "cvv": "123",
+            "expiry": "2812",
+            "cardholder": "BAKKER/A",
+            "card_brand": "visa",
+            "entry_mode": "contactless",
+            "auth_code": "A7K2QZ",
+            "cashier": "OP07",
+            "items": [
+              {
+                "sku": "BK-02",
+                "qty": 1,
+                "unit_cents": 600000
+              }
+            ],
+            "total_cents": 600000,
+            "currency": "EUR",
+            "note": "",
+            "loyalty_email": "ana.bakker@example.net",
+            "sig": "02f91ca93e4a000fb82f34abd5a7a0bbd536d326c62da6fe1edd5f90fafa66aa"
+          },
+          "output": {
+            "captured_at": 1791191794.5,
+            "record": {
+              "txn_id": "s1-r1-fixture-00014",
+              "register_id": "s1-r1",
+              "ts": "2026-10-05T09:16:33.000Z",
+              "pan": "4111111111111111",
+              "track2": "4111111111111111=2812101123456789",
+              "cvv": "123",
+              "expiry": "2812",
+              "cardholder": "BAKKER/A",
+              "card_brand": "visa",
+              "entry_mode": "contactless",
+              "auth_code": "A7K2QZ",
+              "cashier": "OP07",
+              "items": [
+                {
+                  "sku": "BK-02",
+                  "qty": 1,
+                  "unit_cents": 600000
+                }
+              ],
+              "total_cents": 600000,
+              "currency": "EUR",
+              "note": "",
+              "loyalty_email": "ana.bakker@example.net",
+              "sig": "02f91ca93e4a000fb82f34abd5a7a0bbd536d326c62da6fe1edd5f90fafa66aa"
+            }
+          }
+        },
+        {
+          "id": "scan",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "BK-02",
+                "unit_cents": 600000
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "",
+            "pan": "4111111111111111",
+            "register_id": "s1-r1",
+            "sig": "02f91ca93e4a000fb82f34abd5a7a0bbd536d326c62da6fe1edd5f90fafa66aa",
+            "total_cents": 600000,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:16:33.000Z",
+            "txn_id": "s1-r1-fixture-00014"
+          },
+          "output": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "BK-02",
+                "unit_cents": 600000
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "",
+            "pan": "4111111111111111",
+            "register_id": "s1-r1",
+            "scan": {
+              "reasons": [
+                "range: total over limit"
+              ]
+            },
+            "sig": "02f91ca93e4a000fb82f34abd5a7a0bbd536d326c62da6fe1edd5f90fafa66aa",
+            "total_cents": 600000,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:16:33.000Z",
+            "txn_id": "s1-r1-fixture-00014"
+          }
+        },
+        {
+          "id": "join",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "context",
+          "ran": false,
+          "input": null,
+          "output": null,
+          "skipped": "the scan failed, so the swipe never reaches this stage"
+        },
+        {
+          "id": "route",
+          "ran": true,
+          "input": {
+            "auth_code": "A7K2QZ",
+            "card_brand": "visa",
+            "cardholder": "BAKKER/A",
+            "cashier": "OP07",
+            "currency": "EUR",
+            "cvv": "123",
+            "entry_mode": "contactless",
+            "expiry": "2812",
+            "items": [
+              {
+                "qty": 1,
+                "sku": "BK-02",
+                "unit_cents": 600000
+              }
+            ],
+            "loyalty_email": "ana.bakker@example.net",
+            "note": "",
+            "pan": "4111111111111111",
+            "register_id": "s1-r1",
+            "scan": {
+              "reasons": [
+                "range: total over limit"
+              ]
+            },
+            "sig": "02f91ca93e4a000fb82f34abd5a7a0bbd536d326c62da6fe1edd5f90fafa66aa",
+            "total_cents": 600000,
+            "track2": "4111111111111111=2812101123456789",
+            "ts": "2026-10-05T09:16:33.000Z",
+            "txn_id": "s1-r1-fixture-00014"
+          },
+          "output": {
+            "note": "",
+            "quarantined_at": "2026-10-05T19:51:11.395225-07:00",
+            "reason": "range: total over limit",
+            "reasons": [
+              "range: total over limit"
+            ],
+            "register_id": "s1-r1",
+            "store_id": "s1",
+            "total_cents": 600000,
+            "txn_id": "s1-r1-fixture-00014"
+          },
+          "route": "quarantine",
+          "note": null,
+          "final_scan": null
+        },
+        {
+          "id": "warehouse",
+          "ran": false,
+          "input": null,
+          "output": {
+            "warehouse": "no row",
+            "kept_in_store": {
+              "note": "",
+              "quarantined_at": "2026-10-05T19:51:11.395225-07:00",
+              "reason": "range: total over limit",
+              "reasons": [
+                "range: total over limit"
+              ],
+              "register_id": "s1-r1",
+              "store_id": "s1",
+              "total_cents": 600000,
+              "txn_id": "s1-r1-fixture-00014"
+            }
+          },
+          "skipped": "quarantined records never leave the store"
+        }
+      ]
+    }
+  ]
+}

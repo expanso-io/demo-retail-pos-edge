@@ -1,0 +1,32 @@
+{
+  "generated": "2026-10-05T19:51:25-07:00",
+  "date": "2026-10-05",
+  "revision": {
+    "commit": "79fc30323bf5ed13150a6e3f9c76611a8f9d0d48",
+    "short": "79fc303",
+    "dirty": true
+  },
+  "inputs_sha256": "4855d5345c1704a69985a01c85daf947519549776bb37238b1d4495220a6d73b",
+  "tools": {
+    "expanso-edge": "v2.1.21",
+    "expanso-cli": "Expanso CLI version v2.1.21",
+    "python": "3.12.13",
+    "openssl": "OpenSSL 3.6.4 25 Aug 2026 (Library: OpenSSL 3.6.4 25 Aug 2026)"
+  },
+  "passed": true,
+  "checks": 56,
+  "seconds": 64,
+  "report": "2026-10-05-fixture-run.md",
+  "files": {
+    "pipelines/pos-guard.yaml": "56f65ee63b6d0dfed7765c2ebdf206bd81c4873f114d36895f0810452a4f31f0",
+    "pipelines/pos-uplink.yaml": "f288ae39535c30bec722a985a8de164ce7cc0618746c68519c1c49258e1cbfd3",
+    "config/stores.json": "bb9e7123cc4445501e359481da217e5f9f961d5603e5c6f054b5c39588130171",
+    "scripts/stores.py": "27935905f179a2ff8ba4ca2383902987d0d4822deaf0ee4e7fc939d2c1863542",
+    "scripts/warehouse.py": "5dd586455a920e9b9210c18539bc2cced194c7f8b085fc411b1bfef31fb502c1",
+    "scripts/pki.py": "e6ac4621392ce8e725f2c0ce27837b85d5f56cc8b8ed6611dffe917ae563ecb7",
+    "scripts/fixtures.py": "f310de3b37ffb001e421e5641a32e1e1e04e5869e28a5b11ea0d64f6dd369f35",
+    "scripts/fixture_run.py": "fe64cd561f3c6f4d5ecc2905ea08f7a9978d9c97ea29e1f7e28fd9fc5cf25334",
+    "fixtures/swipes.json": "24ee975b8df63474cd783f657b07d30a594b522ffc1061783ffe2b3886cc99f8",
+    "fixtures/expected.json": "bf1b8f4e1ce46659f2eba7758859f9cf373d6efe1cfce11d57ee2979c2bc9e12"
+  }
+}

