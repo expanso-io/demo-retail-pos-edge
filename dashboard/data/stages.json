@@ -1,10 +1,10 @@
 {
-  "generated": "2026-10-05T20:27:35-07:00",
+  "generated": "2026-10-05T20:28:57-07:00",
   "date": "2026-10-05",
   "revision": {
-    "commit": "f194fede5fc05771216fbe60683756f3f6723af3",
-    "short": "f194fed",
-    "dirty": true
+    "commit": "adff223cc4e9dc14af3031f0326762ef001d29db",
+    "short": "adff223",
+    "dirty": false
   },
   "inputs_sha256": "d517c36488ce61de2e7d39ae7d2c03813dd6164a098a0a6416addf9a6842c032",
   "tools": {
@@ -15,7 +15,7 @@
   },
   "passed": true,
   "checks": 56,
-  "seconds": 62,
+  "seconds": 63,
   "stage_defs": [
     {
       "id": "raw",
@@ -281,7 +281,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.474627-07:00",
+            "edge_at": "2026-10-05T20:28:43.283244-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "",
@@ -334,7 +334,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.474627-07:00",
+            "edge_at": "2026-10-05T20:28:43.283244-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "",
@@ -378,14 +378,14 @@
               "lon": 13.41,
               "register_id": "s1-r1",
               "sensor": "ok",
-              "sensor_at": 1791257241.454089,
+              "sensor_at": 1791257323.253056,
               "store_id": "s1",
               "store_name": "Northgate",
               "temp_c": 21.4,
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.474627-07:00",
+            "edge_at": "2026-10-05T20:28:43.283244-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "",
@@ -434,14 +434,14 @@
               "lon": 13.41,
               "register_id": "s1-r1",
               "sensor": "ok",
-              "sensor_at": 1791257241.454089,
+              "sensor_at": 1791257323.253056,
               "store_id": "s1",
               "store_name": "Northgate",
               "temp_c": 21.4,
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.474627-07:00",
+            "edge_at": "2026-10-05T20:28:43.283244-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "",
@@ -485,14 +485,14 @@
               "lon": 13.41,
               "register_id": "s1-r1",
               "sensor": "ok",
-              "sensor_at": 1791257241.454089,
+              "sensor_at": 1791257323.253056,
               "store_id": "s1",
               "store_name": "Northgate",
               "temp_c": 21.4,
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.474627-07:00",
+            "edge_at": "2026-10-05T20:28:43.283244-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "",
@@ -509,7 +509,7 @@
             "total_cents": 890,
             "txn_id": "s1-r1-fixture-00001",
             "uplink": {
-              "queued_at": "2026-10-05T20:27:22.483494-07:00",
+              "queued_at": "2026-10-05T20:28:44.294585-07:00",
               "store_id": "s1"
             }
           },
@@ -551,14 +551,14 @@
                 "lon": 13.41,
                 "register_id": "s1-r1",
                 "sensor": "ok",
-                "sensor_at": 1791257241.454089,
+                "sensor_at": 1791257323.253056,
                 "store_id": "s1",
                 "store_name": "Northgate",
                 "temp_c": 21.4,
                 "weekday": "Monday"
               },
               "currency": "EUR",
-              "edge_at": "2026-10-05T20:27:21.474627-07:00",
+              "edge_at": "2026-10-05T20:28:43.283244-07:00",
               "entry_mode": "contactless",
               "join_id": "jid1_2b4482b6875ffdb4c6eff793",
               "note": "",
@@ -575,7 +575,7 @@
               "total_cents": 890,
               "txn_id": "s1-r1-fixture-00001",
               "uplink": {
-                "queued_at": "2026-10-05T20:27:22.483494-07:00",
+                "queued_at": "2026-10-05T20:28:44.294585-07:00",
                 "store_id": "s1"
               }
             }
@@ -613,14 +613,14 @@
                   "lon": 13.41,
                   "register_id": "s1-r1",
                   "sensor": "ok",
-                  "sensor_at": 1791257241.454089,
+                  "sensor_at": 1791257323.253056,
                   "store_id": "s1",
                   "store_name": "Northgate",
                   "temp_c": 21.4,
                   "weekday": "Monday"
                 },
                 "currency": "EUR",
-                "edge_at": "2026-10-05T20:27:21.474627-07:00",
+                "edge_at": "2026-10-05T20:28:43.283244-07:00",
                 "entry_mode": "contactless",
                 "join_id": "jid1_2b4482b6875ffdb4c6eff793",
                 "note": "",
@@ -637,12 +637,12 @@
                 "total_cents": 890,
                 "txn_id": "s1-r1-fixture-00001",
                 "uplink": {
-                  "queued_at": "2026-10-05T20:27:22.483494-07:00",
+                  "queued_at": "2026-10-05T20:28:44.294585-07:00",
                   "store_id": "s1"
                 }
               },
-              "received_at": 1791257243.4604402,
-              "queued_s": 0.98
+              "received_at": 1791257325.259556,
+              "queued_s": 0.96
             }
           },
           "skipped": null
@@ -858,7 +858,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.47471-07:00",
+            "edge_at": "2026-10-05T20:28:43.283368-07:00",
             "entry_mode": "chip",
             "join_id": "jid1_33e369b81b77a6e30ec989f8",
             "note": "",
@@ -910,7 +910,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.47471-07:00",
+            "edge_at": "2026-10-05T20:28:43.283368-07:00",
             "entry_mode": "chip",
             "join_id": "jid1_33e369b81b77a6e30ec989f8",
             "note": "",
@@ -953,14 +953,14 @@
               "lon": 13.41,
               "register_id": "s1-r2",
               "sensor": "ok",
-              "sensor_at": 1791257241.454089,
+              "sensor_at": 1791257323.253056,
               "store_id": "s1",
               "store_name": "Northgate",
               "temp_c": 21.4,
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.47471-07:00",
+            "edge_at": "2026-10-05T20:28:43.283368-07:00",
             "entry_mode": "chip",
             "join_id": "jid1_33e369b81b77a6e30ec989f8",
             "note": "",
@@ -1008,14 +1008,14 @@
               "lon": 13.41,
               "register_id": "s1-r2",
               "sensor": "ok",
-              "sensor_at": 1791257241.454089,
+              "sensor_at": 1791257323.253056,
               "store_id": "s1",
               "store_name": "Northgate",
               "temp_c": 21.4,
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.47471-07:00",
+            "edge_at": "2026-10-05T20:28:43.283368-07:00",
             "entry_mode": "chip",
             "join_id": "jid1_33e369b81b77a6e30ec989f8",
             "note": "",
@@ -1058,14 +1058,14 @@
               "lon": 13.41,
               "register_id": "s1-r2",
               "sensor": "ok",
-              "sensor_at": 1791257241.454089,
+              "sensor_at": 1791257323.253056,
               "store_id": "s1",
               "store_name": "Northgate",
               "temp_c": 21.4,
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.47471-07:00",
+            "edge_at": "2026-10-05T20:28:43.283368-07:00",
             "entry_mode": "chip",
             "join_id": "jid1_33e369b81b77a6e30ec989f8",
             "note": "",
@@ -1081,7 +1081,7 @@
             "total_cents": 700,
             "txn_id": "s1-r2-fixture-00002",
             "uplink": {
-              "queued_at": "2026-10-05T20:27:22.484072-07:00",
+              "queued_at": "2026-10-05T20:28:44.294963-07:00",
               "store_id": "s1"
             }
           },
@@ -1123,14 +1123,14 @@
                 "lon": 13.41,
                 "register_id": "s1-r2",
                 "sensor": "ok",
-                "sensor_at": 1791257241.454089,
+                "sensor_at": 1791257323.253056,
                 "store_id": "s1",
                 "store_name": "Northgate",
                 "temp_c": 21.4,
                 "weekday": "Monday"
               },
               "currency": "EUR",
-              "edge_at": "2026-10-05T20:27:21.47471-07:00",
+              "edge_at": "2026-10-05T20:28:43.283368-07:00",
               "entry_mode": "chip",
               "join_id": "jid1_33e369b81b77a6e30ec989f8",
               "note": "",
@@ -1146,7 +1146,7 @@
               "total_cents": 700,
               "txn_id": "s1-r2-fixture-00002",
               "uplink": {
-                "queued_at": "2026-10-05T20:27:22.484072-07:00",
+                "queued_at": "2026-10-05T20:28:44.294963-07:00",
                 "store_id": "s1"
               }
             }
@@ -1184,14 +1184,14 @@
                   "lon": 13.41,
                   "register_id": "s1-r2",
                   "sensor": "ok",
-                  "sensor_at": 1791257241.454089,
+                  "sensor_at": 1791257323.253056,
                   "store_id": "s1",
                   "store_name": "Northgate",
                   "temp_c": 21.4,
                   "weekday": "Monday"
                 },
                 "currency": "EUR",
-                "edge_at": "2026-10-05T20:27:21.47471-07:00",
+                "edge_at": "2026-10-05T20:28:43.283368-07:00",
                 "entry_mode": "chip",
                 "join_id": "jid1_33e369b81b77a6e30ec989f8",
                 "note": "",
@@ -1207,12 +1207,12 @@
                 "total_cents": 700,
                 "txn_id": "s1-r2-fixture-00002",
                 "uplink": {
-                  "queued_at": "2026-10-05T20:27:22.484072-07:00",
+                  "queued_at": "2026-10-05T20:28:44.294963-07:00",
                   "store_id": "s1"
                 }
               },
-              "received_at": 1791257243.4604402,
-              "queued_s": 0.98
+              "received_at": 1791257325.259556,
+              "queued_s": 0.96
             }
           },
           "skipped": null
@@ -1433,7 +1433,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.69651-07:00",
+            "edge_at": "2026-10-05T20:28:43.762595-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "",
@@ -1486,7 +1486,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.69651-07:00",
+            "edge_at": "2026-10-05T20:28:43.762595-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "",
@@ -1537,7 +1537,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.69651-07:00",
+            "edge_at": "2026-10-05T20:28:43.762595-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "",
@@ -1593,7 +1593,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.69651-07:00",
+            "edge_at": "2026-10-05T20:28:43.762595-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "",
@@ -1644,7 +1644,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.69651-07:00",
+            "edge_at": "2026-10-05T20:28:43.762595-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "",
@@ -1661,7 +1661,7 @@
             "total_cents": 910,
             "txn_id": "s2-r1-fixture-00003",
             "uplink": {
-              "queued_at": "2026-10-05T20:27:22.705948-07:00",
+              "queued_at": "2026-10-05T20:28:44.77482-07:00",
               "store_id": "s2"
             }
           },
@@ -1710,7 +1710,7 @@
                 "weekday": "Monday"
               },
               "currency": "EUR",
-              "edge_at": "2026-10-05T20:27:21.69651-07:00",
+              "edge_at": "2026-10-05T20:28:43.762595-07:00",
               "entry_mode": "contactless",
               "join_id": "jid1_2b4482b6875ffdb4c6eff793",
               "note": "",
@@ -1727,7 +1727,7 @@
               "total_cents": 910,
               "txn_id": "s2-r1-fixture-00003",
               "uplink": {
-                "queued_at": "2026-10-05T20:27:22.705948-07:00",
+                "queued_at": "2026-10-05T20:28:44.77482-07:00",
                 "store_id": "s2"
               }
             }
@@ -1772,7 +1772,7 @@
                   "weekday": "Monday"
                 },
                 "currency": "EUR",
-                "edge_at": "2026-10-05T20:27:21.69651-07:00",
+                "edge_at": "2026-10-05T20:28:43.762595-07:00",
                 "entry_mode": "contactless",
                 "join_id": "jid1_2b4482b6875ffdb4c6eff793",
                 "note": "",
@@ -1789,11 +1789,11 @@
                 "total_cents": 910,
                 "txn_id": "s2-r1-fixture-00003",
                 "uplink": {
-                  "queued_at": "2026-10-05T20:27:22.705948-07:00",
+                  "queued_at": "2026-10-05T20:28:44.77482-07:00",
                   "store_id": "s2"
                 }
               },
-              "received_at": 1791257243.686192,
+              "received_at": 1791257325.7518258,
               "queued_s": 0.98
             }
           },
@@ -2042,7 +2042,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696613-07:00",
+            "edge_at": "2026-10-05T20:28:43.762693-07:00",
             "entry_mode": "swipe",
             "join_id": "jid1_99304a24e80c22327bd731b2",
             "note": "",
@@ -2101,7 +2101,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696613-07:00",
+            "edge_at": "2026-10-05T20:28:43.762693-07:00",
             "entry_mode": "swipe",
             "join_id": "jid1_99304a24e80c22327bd731b2",
             "note": "",
@@ -2158,7 +2158,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696613-07:00",
+            "edge_at": "2026-10-05T20:28:43.762693-07:00",
             "entry_mode": "swipe",
             "join_id": "jid1_99304a24e80c22327bd731b2",
             "note": "",
@@ -2220,7 +2220,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696613-07:00",
+            "edge_at": "2026-10-05T20:28:43.762693-07:00",
             "entry_mode": "swipe",
             "join_id": "jid1_99304a24e80c22327bd731b2",
             "note": "",
@@ -2277,7 +2277,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696613-07:00",
+            "edge_at": "2026-10-05T20:28:43.762693-07:00",
             "entry_mode": "swipe",
             "join_id": "jid1_99304a24e80c22327bd731b2",
             "note": "",
@@ -2293,7 +2293,7 @@
             "total_cents": 960,
             "txn_id": "s2-r1-fixture-00004",
             "uplink": {
-              "queued_at": "2026-10-05T20:27:22.706508-07:00",
+              "queued_at": "2026-10-05T20:28:44.775388-07:00",
               "store_id": "s2"
             }
           },
@@ -2349,7 +2349,7 @@
                 "weekday": "Monday"
               },
               "currency": "EUR",
-              "edge_at": "2026-10-05T20:27:21.696613-07:00",
+              "edge_at": "2026-10-05T20:28:43.762693-07:00",
               "entry_mode": "swipe",
               "join_id": "jid1_99304a24e80c22327bd731b2",
               "note": "",
@@ -2365,7 +2365,7 @@
               "total_cents": 960,
               "txn_id": "s2-r1-fixture-00004",
               "uplink": {
-                "queued_at": "2026-10-05T20:27:22.706508-07:00",
+                "queued_at": "2026-10-05T20:28:44.775388-07:00",
                 "store_id": "s2"
               }
             }
@@ -2417,7 +2417,7 @@
                   "weekday": "Monday"
                 },
                 "currency": "EUR",
-                "edge_at": "2026-10-05T20:27:21.696613-07:00",
+                "edge_at": "2026-10-05T20:28:43.762693-07:00",
                 "entry_mode": "swipe",
                 "join_id": "jid1_99304a24e80c22327bd731b2",
                 "note": "",
@@ -2433,11 +2433,11 @@
                 "total_cents": 960,
                 "txn_id": "s2-r1-fixture-00004",
                 "uplink": {
-                  "queued_at": "2026-10-05T20:27:22.706508-07:00",
+                  "queued_at": "2026-10-05T20:28:44.775388-07:00",
                   "store_id": "s2"
                 }
               },
-              "received_at": 1791257243.686192,
+              "received_at": 1791257325.7518258,
               "queued_s": 0.98
             }
           },
@@ -2622,7 +2622,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.474776-07:00",
+            "edge_at": "2026-10-05T20:28:43.283493-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_99304a24e80c22327bd731b2",
             "note": "",
@@ -2667,7 +2667,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.474776-07:00",
+            "edge_at": "2026-10-05T20:28:43.283493-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_99304a24e80c22327bd731b2",
             "note": "",
@@ -2703,14 +2703,14 @@
               "lon": 13.41,
               "register_id": "s1-r1",
               "sensor": "ok",
-              "sensor_at": 1791257241.454089,
+              "sensor_at": 1791257323.253056,
               "store_id": "s1",
               "store_name": "Northgate",
               "temp_c": 21.4,
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.474776-07:00",
+            "edge_at": "2026-10-05T20:28:43.283493-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_99304a24e80c22327bd731b2",
             "note": "",
@@ -2751,14 +2751,14 @@
               "lon": 13.41,
               "register_id": "s1-r1",
               "sensor": "ok",
-              "sensor_at": 1791257241.454089,
+              "sensor_at": 1791257323.253056,
               "store_id": "s1",
               "store_name": "Northgate",
               "temp_c": 21.4,
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.474776-07:00",
+            "edge_at": "2026-10-05T20:28:43.283493-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_99304a24e80c22327bd731b2",
             "note": "",
@@ -2794,14 +2794,14 @@
               "lon": 13.41,
               "register_id": "s1-r1",
               "sensor": "ok",
-              "sensor_at": 1791257241.454089,
+              "sensor_at": 1791257323.253056,
               "store_id": "s1",
               "store_name": "Northgate",
               "temp_c": 21.4,
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.474776-07:00",
+            "edge_at": "2026-10-05T20:28:43.283493-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_99304a24e80c22327bd731b2",
             "note": "",
@@ -2817,7 +2817,7 @@
             "total_cents": 480,
             "txn_id": "s1-r1-fixture-00005",
             "uplink": {
-              "queued_at": "2026-10-05T20:27:22.484512-07:00",
+              "queued_at": "2026-10-05T20:28:44.295381-07:00",
               "store_id": "s1"
             }
           },
@@ -2852,14 +2852,14 @@
                 "lon": 13.41,
                 "register_id": "s1-r1",
                 "sensor": "ok",
-                "sensor_at": 1791257241.454089,
+                "sensor_at": 1791257323.253056,
                 "store_id": "s1",
                 "store_name": "Northgate",
                 "temp_c": 21.4,
                 "weekday": "Monday"
               },
               "currency": "EUR",
-              "edge_at": "2026-10-05T20:27:21.474776-07:00",
+              "edge_at": "2026-10-05T20:28:43.283493-07:00",
               "entry_mode": "contactless",
               "join_id": "jid1_99304a24e80c22327bd731b2",
               "note": "",
@@ -2875,7 +2875,7 @@
               "total_cents": 480,
               "txn_id": "s1-r1-fixture-00005",
               "uplink": {
-                "queued_at": "2026-10-05T20:27:22.484512-07:00",
+                "queued_at": "2026-10-05T20:28:44.295381-07:00",
                 "store_id": "s1"
               }
             }
@@ -2906,14 +2906,14 @@
                   "lon": 13.41,
                   "register_id": "s1-r1",
                   "sensor": "ok",
-                  "sensor_at": 1791257241.454089,
+                  "sensor_at": 1791257323.253056,
                   "store_id": "s1",
                   "store_name": "Northgate",
                   "temp_c": 21.4,
                   "weekday": "Monday"
                 },
                 "currency": "EUR",
-                "edge_at": "2026-10-05T20:27:21.474776-07:00",
+                "edge_at": "2026-10-05T20:28:43.283493-07:00",
                 "entry_mode": "contactless",
                 "join_id": "jid1_99304a24e80c22327bd731b2",
                 "note": "",
@@ -2929,12 +2929,12 @@
                 "total_cents": 480,
                 "txn_id": "s1-r1-fixture-00005",
                 "uplink": {
-                  "queued_at": "2026-10-05T20:27:22.484512-07:00",
+                  "queued_at": "2026-10-05T20:28:44.295381-07:00",
                   "store_id": "s1"
                 }
               },
-              "received_at": 1791257243.4604402,
-              "queued_s": 0.98
+              "received_at": 1791257325.259556,
+              "queued_s": 0.96
             }
           },
           "skipped": null
@@ -3118,7 +3118,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696681-07:00",
+            "edge_at": "2026-10-05T20:28:43.76279-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_33e369b81b77a6e30ec989f8",
             "note": "",
@@ -3163,7 +3163,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696681-07:00",
+            "edge_at": "2026-10-05T20:28:43.76279-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_33e369b81b77a6e30ec989f8",
             "note": "",
@@ -3206,7 +3206,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696681-07:00",
+            "edge_at": "2026-10-05T20:28:43.76279-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_33e369b81b77a6e30ec989f8",
             "note": "",
@@ -3254,7 +3254,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696681-07:00",
+            "edge_at": "2026-10-05T20:28:43.76279-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_33e369b81b77a6e30ec989f8",
             "note": "",
@@ -3297,7 +3297,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696681-07:00",
+            "edge_at": "2026-10-05T20:28:43.76279-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_33e369b81b77a6e30ec989f8",
             "note": "",
@@ -3313,7 +3313,7 @@
             "total_cents": 900,
             "txn_id": "s2-r1-fixture-00006",
             "uplink": {
-              "queued_at": "2026-10-05T20:27:22.707036-07:00",
+              "queued_at": "2026-10-05T20:28:44.775972-07:00",
               "store_id": "s2"
             }
           },
@@ -3355,7 +3355,7 @@
                 "weekday": "Monday"
               },
               "currency": "EUR",
-              "edge_at": "2026-10-05T20:27:21.696681-07:00",
+              "edge_at": "2026-10-05T20:28:43.76279-07:00",
               "entry_mode": "contactless",
               "join_id": "jid1_33e369b81b77a6e30ec989f8",
               "note": "",
@@ -3371,7 +3371,7 @@
               "total_cents": 900,
               "txn_id": "s2-r1-fixture-00006",
               "uplink": {
-                "queued_at": "2026-10-05T20:27:22.707036-07:00",
+                "queued_at": "2026-10-05T20:28:44.775972-07:00",
                 "store_id": "s2"
               }
             }
@@ -3409,7 +3409,7 @@
                   "weekday": "Monday"
                 },
                 "currency": "EUR",
-                "edge_at": "2026-10-05T20:27:21.696681-07:00",
+                "edge_at": "2026-10-05T20:28:43.76279-07:00",
                 "entry_mode": "contactless",
                 "join_id": "jid1_33e369b81b77a6e30ec989f8",
                 "note": "",
@@ -3425,11 +3425,11 @@
                 "total_cents": 900,
                 "txn_id": "s2-r1-fixture-00006",
                 "uplink": {
-                  "queued_at": "2026-10-05T20:27:22.707036-07:00",
+                  "queued_at": "2026-10-05T20:28:44.775972-07:00",
                   "store_id": "s2"
                 }
               },
-              "received_at": 1791257243.686192,
+              "received_at": 1791257325.7518258,
               "queued_s": 0.98
             }
           },
@@ -3635,7 +3635,7 @@
           },
           "output": {
             "note": "",
-            "quarantined_at": "2026-10-05T20:27:21.471142-07:00",
+            "quarantined_at": "2026-10-05T20:28:43.278241-07:00",
             "reason": "signature mismatch: altered after the register signed it",
             "reasons": [
               "signature mismatch: altered after the register signed it"
@@ -3657,7 +3657,7 @@
             "warehouse": "no row",
             "kept_in_store": {
               "note": "",
-              "quarantined_at": "2026-10-05T20:27:21.471142-07:00",
+              "quarantined_at": "2026-10-05T20:28:43.278241-07:00",
               "reason": "signature mismatch: altered after the register signed it",
               "reasons": [
                 "signature mismatch: altered after the register signed it"
@@ -3854,7 +3854,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696849-07:00",
+            "edge_at": "2026-10-05T20:28:43.762896-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "card 4111 1111 1111 1111 declined once, retried",
@@ -3900,7 +3900,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696849-07:00",
+            "edge_at": "2026-10-05T20:28:43.762896-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "card 4111 1111 1111 1111 declined once, retried",
@@ -3944,7 +3944,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696849-07:00",
+            "edge_at": "2026-10-05T20:28:43.762896-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "card 4111 1111 1111 1111 declined once, retried",
@@ -3993,7 +3993,7 @@
               "weekday": "Monday"
             },
             "currency": "EUR",
-            "edge_at": "2026-10-05T20:27:21.696849-07:00",
+            "edge_at": "2026-10-05T20:28:43.762896-07:00",
             "entry_mode": "contactless",
             "join_id": "jid1_2b4482b6875ffdb4c6eff793",
             "note": "card 4111 1111 1111 1111 declined once, retried",
@@ -4012,7 +4012,7 @@
           },
           "output": {
             "note": "card •••• •••• •••• •••• declined once, retried",
-            "quarantined_at": "2026-10-05T20:27:21.701395-07:00",
+            "quarantined_at": "2026-10-05T20:28:43.769508-07:00",
             "reason": "card number blocked: raw card number in note",
             "reasons": [
               "card number blocked: raw card number in note"
@@ -4034,7 +4034,7 @@
             "warehouse": "no row",
             "kept_in_store": {
               "note": "card •••• •••• •••• •••• declined once, retried",
-              "quarantined_at": "2026-10-05T20:27:21.701395-07:00",
+              "quarantined_at": "2026-10-05T20:28:43.769508-07:00",
               "reason": "card number blocked: raw card number in note",
               "reasons": [
                 "card number blocked: raw card number in note"
@@ -4221,7 +4221,7 @@
           },
           "output": {
             "note": "",
-            "quarantined_at": "2026-10-05T20:27:21.471149-07:00",
+            "quarantined_at": "2026-10-05T20:28:43.278251-07:00",
             "reason": "malformed: missing pan",
             "reasons": [
               "malformed: missing pan",
@@ -4245,7 +4245,7 @@
             "warehouse": "no row",
             "kept_in_store": {
               "note": "",
-              "quarantined_at": "2026-10-05T20:27:21.471149-07:00",
+              "quarantined_at": "2026-10-05T20:28:43.278251-07:00",
               "reason": "malformed: missing pan",
               "reasons": [
                 "malformed: missing pan",
@@ -4435,7 +4435,7 @@
           },
           "output": {
             "note": "",
-            "quarantined_at": "2026-10-05T20:27:21.69417-07:00",
+            "quarantined_at": "2026-10-05T20:28:43.759576-07:00",
             "reason": "injection pattern in a text field",
             "reasons": [
               "injection pattern in a text field"
@@ -4457,7 +4457,7 @@
             "warehouse": "no row",
             "kept_in_store": {
               "note": "",
-              "quarantined_at": "2026-10-05T20:27:21.69417-07:00",
+              "quarantined_at": "2026-10-05T20:28:43.759576-07:00",
               "reason": "injection pattern in a text field",
               "reasons": [
                 "injection pattern in a text field"
@@ -4650,7 +4650,7 @@
           },
           "output": {
             "note": "",
-            "quarantined_at": "2026-10-05T20:27:21.471155-07:00",
+            "quarantined_at": "2026-10-05T20:28:43.278259-07:00",
             "reason": "stale: 400s old, possible replay",
             "reasons": [
               "stale: 400s old, possible replay"
@@ -4672,7 +4672,7 @@
             "warehouse": "no row",
             "kept_in_store": {
               "note": "",
-              "quarantined_at": "2026-10-05T20:27:21.471155-07:00",
+              "quarantined_at": "2026-10-05T20:28:43.278259-07:00",
               "reason": "stale: 400s old, possible replay",
               "reasons": [
                 "stale: 400s old, possible replay"
@@ -4860,7 +4860,7 @@
           },
           "output": {
             "note": "",
-            "quarantined_at": "2026-10-05T20:27:21.471151-07:00",
+            "quarantined_at": "2026-10-05T20:28:43.278254-07:00",
             "reason": "unknown register: not enrolled here",
             "reasons": [
               "unknown register: not enrolled here"
@@ -4882,7 +4882,7 @@
             "warehouse": "no row",
             "kept_in_store": {
               "note": "",
-              "quarantined_at": "2026-10-05T20:27:21.471151-07:00",
+              "quarantined_at": "2026-10-05T20:28:43.278254-07:00",
               "reason": "unknown register: not enrolled here",
               "reasons": [
                 "unknown register: not enrolled here"
@@ -5095,7 +5095,7 @@
           },
           "output": {
             "note": "",
-            "quarantined_at": "2026-10-05T20:27:21.694176-07:00",
+            "quarantined_at": "2026-10-05T20:28:43.759585-07:00",
             "reason": "totals: items add to 550, receipt says 700",
             "reasons": [
               "totals: items add to 550, receipt says 700"
@@ -5117,7 +5117,7 @@
             "warehouse": "no row",
             "kept_in_store": {
               "note": "",
-              "quarantined_at": "2026-10-05T20:27:21.694176-07:00",
+              "quarantined_at": "2026-10-05T20:28:43.759585-07:00",
               "reason": "totals: items add to 550, receipt says 700",
               "reasons": [
                 "totals: items add to 550, receipt says 700"
@@ -5310,7 +5310,7 @@
           },
           "output": {
             "note": "",
-            "quarantined_at": "2026-10-05T20:27:21.471153-07:00",
+            "quarantined_at": "2026-10-05T20:28:43.278256-07:00",
             "reason": "range: total over limit",
             "reasons": [
               "range: total over limit"
@@ -5332,7 +5332,7 @@
             "warehouse": "no row",
             "kept_in_store": {
               "note": "",
-              "quarantined_at": "2026-10-05T20:27:21.471153-07:00",
+              "quarantined_at": "2026-10-05T20:28:43.278256-07:00",
               "reason": "range: total over limit",
               "reasons": [
                 "range: total over limit"

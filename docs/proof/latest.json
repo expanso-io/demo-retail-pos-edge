@@ -1,10 +1,10 @@
 {
-  "generated": "2026-10-05T20:27:35-07:00",
+  "generated": "2026-10-05T20:28:57-07:00",
   "date": "2026-10-05",
   "revision": {
-    "commit": "f194fede5fc05771216fbe60683756f3f6723af3",
-    "short": "f194fed",
-    "dirty": true
+    "commit": "adff223cc4e9dc14af3031f0326762ef001d29db",
+    "short": "adff223",
+    "dirty": false
   },
   "inputs_sha256": "d517c36488ce61de2e7d39ae7d2c03813dd6164a098a0a6416addf9a6842c032",
   "tools": {
@@ -15,7 +15,7 @@
   },
   "passed": true,
   "checks": 56,
-  "seconds": 62,
+  "seconds": 63,
   "report": "2026-10-05-fixture-run.md",
   "files": {
     "pipelines/pos-guard.yaml": "f0e4bafd3a99f9174d92bef07ff8ad8c9cdea3769fa636b4e7eff3cf7684f1f2",

@@ -1,8 +1,8 @@
 # Fixture run: pos-guard and pos-uplink
 
-**Result: PASS**, 56 checks in 62 s.
-Run on 2026-10-05T20:27:35-07:00, at revision `f194fed`
-with uncommitted changes to the proof inputs.
+**Result: PASS**, 56 checks in 63 s.
+Run on 2026-10-05T20:28:57-07:00, at revision `adff223`
+with a clean tree.
 Inputs digest `d517c36488ce61de`: the pipelines, store profiles,
 store, warehouse and certificate code and the fixtures. `just test` fails when
 the tree no longer matches this digest, so this report cannot describe a
@@ -52,7 +52,7 @@ Tools: expanso-edge v2.1.21, expanso-cli Expanso CLI version v2.1.21, python 3.1
 |---|---|---|---|---|
 | 1 | uplink presents a certificate from the wrong authority | 0 | 6 | 14 connections refused by the warehouse |
 | 2 | right certificates, WAN link cut, nodes restarted | 0 | 6 | queue file survived the restart |
-| 3 | link restored | 6 | 0 | 2 batches, 4809 bytes, 0 duplicates |
+| 3 | link restored | 6 | 0 | 2 batches, 4807 bytes, 0 duplicates |
 
 Delivery without a valid client certificate from the group's authority fails and the
 records stay on disk; after the link returns they cross once. The rest of the negative
@@ -159,14 +159,14 @@ Register roster at the end of the run: `s1-r1` ok, `s1-r2` closed, `s1-r3` silen
     "lon": 13.41,
     "register_id": "s1-r1",
     "sensor": "ok",
-    "sensor_at": 1791257193.9683368,
+    "sensor_at": 1791257275.736379,
     "store_id": "s1",
     "store_name": "Northgate",
     "temp_c": 21.4,
     "weekday": "Monday"
   },
   "currency": "EUR",
-  "edge_at": "2026-10-05T20:26:33.985063-07:00",
+  "edge_at": "2026-10-05T20:27:55.748279-07:00",
   "entry_mode": "contactless",
   "join_id": "jid1_2b4482b6875ffdb4c6eff793",
   "note": "",
@@ -183,7 +183,7 @@ Register roster at the end of the run: `s1-r1` ok, `s1-r2` closed, `s1-r3` silen
   "total_cents": 890,
   "txn_id": "s1-r1-fixture-00001",
   "uplink": {
-    "queued_at": "2026-10-05T20:27:04.672706-07:00",
+    "queued_at": "2026-10-05T20:28:26.380052-07:00",
     "store_id": "s1"
   }
 }
@@ -194,7 +194,7 @@ Register roster at the end of the run: `s1-r1` ok, `s1-r2` closed, `s1-r3` silen
 ```json
 {
   "note": "",
-  "quarantined_at": "2026-10-05T20:26:33.980754-07:00",
+  "quarantined_at": "2026-10-05T20:27:55.74632-07:00",
   "reason": "signature mismatch: altered after the register signed it",
   "reasons": [
     "signature mismatch: altered after the register signed it"
