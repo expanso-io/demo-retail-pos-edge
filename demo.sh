@@ -299,7 +299,9 @@ deploy_cloud() {
   local job out
   lint_pipelines
   for job in "${JOBS[@]}"; do
-    if out="$(cloud_cli job deploy "pipelines/$job.yaml" 2>&1)"; then
+    if out="$(expanso-cli --endpoint "$(env_get EXPANSO_CLI_ENDPOINT)" \
+      --api-key "$(env_get EXPANSO_CLI_API_KEY)" \
+      job deploy "pipelines/$job.yaml" 2>&1)"; then
       say "  $job deployed to Expanso Cloud (selector role=pos-store)"
     elif grep -q NO_CHANGES_DETECTED <<<"$out"; then
       say "  $job unchanged in Expanso Cloud"
