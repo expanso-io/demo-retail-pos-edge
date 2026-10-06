@@ -89,6 +89,7 @@ function readColors() {
   const pick = (name) => css.getPropertyValue(name).trim();
   colors = {
     muted: pick("--text-dim"), raw: pick("--raw"), ok: pick("--ok"), err: pick("--err"), warn: pick("--warn"),
+    accent: pick("--accent"),
   };
 }
 
@@ -991,6 +992,70 @@ function measureTillLane(id, sid) {
   return path;
 }
 
+const seg = (...pts) => Object.assign(pts, { elbow: true });
+
+/* The control plane: one dashed bus in the corridor between the Cloud badge
+ * and the store fronts, one drop down the channel beside each column of
+ * fronts, and a short stub from the drop into each node's right side. The
+ * stub crosses only the front's right wall, exactly where the node's data
+ * feeder leaves it, so no lane crosses a till, a label or a node. When the
+ * stores stack, the drop runs down the outer right edge instead. */
+function controlPlane() {
+  return cached("CP", () => {
+    const badge = rel($("cloud"));
+    const R = receiver();
+    const fronts = [...refs.stores.entries()].map(([sid, ref]) => ({ sid, front: rel(ref.front), node: rel(ref.edge) }));
+
+    if (!fronts.length) return null;
+    const top = Math.min(...fronts.map((f) => f.front.y));
+    const busY = Math.round((badge.y + badge.h + top) / 2);
+    const boxRight = R.box.x + R.box.w;
+    const drops = new Map();
+    const stubs = new Map();
+
+    for (const f of fronts) {
+      const outer = f.front.x + f.front.w >= boxRight - 8;
+      const x = Math.round(f.front.x + f.front.w + (R.stacked ? 10 : outer ? 15 : 20));
+      const y = Math.round(f.node.y + Math.min(18, f.node.h * 0.18));
+      const drop = drops.get(x) || { x, to: busY };
+
+      drop.to = Math.max(drop.to, y);
+      drops.set(x, drop);
+      stubs.set(f.sid, { x, y, node: { x: f.node.x + f.node.w, y } });
+    }
+
+    const tie = Math.round(badge.x + badge.w / 2);
+    const xs = [tie, ...drops.keys()];
+    const bus = seg({ x: Math.min(...xs), y: busY }, { x: Math.max(...xs), y: busY });
+
+    return { badge, busY, tie, bus, drops: [...drops.values()], stubs };
+  });
+}
+
+/* From the Cloud badge to one node, along the bus, down its drop and in. */
+function controlLane(sid, up) {
+  return cached(`C${sid}${up}`, () => {
+    const C = controlPlane();
+    const stub = C && C.stubs.get(sid);
+
+    if (!stub) return null;
+
+    const path = [
+      { x: C.tie, y: C.badge.y + C.badge.h },
+      { x: C.tie, y: C.busY },
+      { x: stub.x, y: C.busY },
+      { x: stub.x, y: stub.y },
+      stub.node,
+    ];
+
+    return up ? seg(...path.slice().reverse()) : seg(...path);
+  });
+}
+
+function pathLength(pts) {
+  return pts.slice(1).reduce((total, point, i) => total + Math.hypot(point.x - pts[i].x, point.y - pts[i].y), 0);
+}
+
 function bez(p, t) {
   if (p.elbow) {
     const lengths = p.slice(1).map((point, i) => Math.hypot(point.x - p[i].x, point.y - p[i].y));
@@ -1029,7 +1094,7 @@ function spawn(count, lane, color, opts) {
   for (let i = 0; i < n; i++) {
     particles.push({
       pts: lane, color, t: 0,
-      delay: performance.now() + Math.random() * window,
+      delay: performance.now() + (o.after || 0) / SPEED + Math.random() * window,
       dur: (o.dur || 1100) / SPEED,
       r: o.r || 4,
       stopAt: o.stopAt || 1,
@@ -1076,6 +1141,14 @@ function flows(cur, old, now) {
     const polled = (s.sensor.sent || 0) - (o.sensor.sent || 0);
     spawn(polled, L.telemetryToEdge, colors.raw, { dur: 800, r: 3 });
 
+    if (cur.cloud && old.cloud && cur.cloud.at !== old.cloud.at && s.edge.connected) {
+      const down = controlLane(s.store_id, false);
+      const dur = Math.min(2600, Math.max(1100, pathLength(down) / 0.45));
+
+      spawn(1, down, colors.accent, { dur, r: 3 });
+      spawn(1, controlLane(s.store_id, true), colors.accent, { dur, r: 3, after: dur * 0.3 });
+    }
+
   }
 
   const R = receiver();
@@ -1118,6 +1191,7 @@ function drawGuides() {
   if (!current) return;
   let trunkFrom = -Infinity;
   let live = 0;
+  let connected = 0;
 
   for (const s of current.stores) {
     const L = lanes(s.store_id);
@@ -1140,7 +1214,11 @@ function drawGuides() {
     if (L.join.y > trunkFrom) trunkFrom = L.join.y;
 
     if (on && !s.link.cut) live++;
+
+    if (s.edge.connected) connected++;
   }
+
+  drawControlPlane(connected);
 
   const R = receiver();
 
@@ -1149,6 +1227,32 @@ function drawGuides() {
     trunk.elbow = true;
     guide(trunk, live ? colors.ok : colors.muted, live ? 0.5 : 0.2);
     guide(R.landing, live ? colors.ok : colors.muted, 0.3, [2, 5]);
+  }
+}
+
+/* The dashed control bus: bright where a node is connected to the control
+ * plane, faint where it is not. */
+function drawControlPlane(connected) {
+  const C = controlPlane();
+
+  if (!C) return;
+  const dash = [2, 3];
+  const up = (sid) => current.stores.find((s) => s.store_id === sid).edge.connected;
+  const tie = seg({ x: C.tie, y: C.badge.y + C.badge.h }, { x: C.tie, y: C.busY });
+
+  guide(tie, connected ? colors.accent : colors.muted, connected ? 0.8 : 0.3, dash);
+  guide(C.bus, connected ? colors.accent : colors.muted, connected ? 0.8 : 0.3, dash);
+
+  for (const d of C.drops) {
+    const live = [...C.stubs].some(([sid, stub]) => stub.x === d.x && up(sid));
+
+    guide(seg({ x: d.x, y: C.busY }, { x: d.x, y: d.to }), live ? colors.accent : colors.muted, live ? 0.8 : 0.3, dash);
+  }
+
+  for (const [sid, stub] of C.stubs) {
+    const on = up(sid);
+
+    guide(seg({ x: stub.x, y: stub.y }, stub.node), on ? colors.accent : colors.muted, on ? 0.8 : 0.3, dash);
   }
 }
 

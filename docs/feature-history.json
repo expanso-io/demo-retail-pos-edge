@@ -277,10 +277,14 @@
     {
       "id": "cloud-control-lanes",
       "title": "Dashed lane and particles from Expanso Cloud to each store node on every control-plane poll",
-      "status": "needs_decision",
+      "status": "restored",
       "since": "dd3a8d4",
       "removed_by": "9d5b4ca",
-      "note": "The 2 by 2 store layout has no free channel from the Cloud badge to the two left-hand nodes; restoring it means drawing across the store fronts. Node connection is still shown by the node's light, its Running label and the n of 4 NODES pill. Not restored without a decision."
+      "note": "Restored as one dashed control bus in the corridor under the Cloud badge, one drop in each channel beside the store fronts (the outer right edge when the stores stack) and a short stub into each node's right side; particles run down and back on every control-plane poll. The 2 by 2 layout is unchanged and no lane crosses a store front. Screenshots: docs/screenshots/board-control-*.png.",
+      "check": {
+        "file": "dashboard/app.js",
+        "contains": "controlPlane"
+      }
     }
   ]
 }
