@@ -38,8 +38,8 @@ DASHBOARD = ROOT / "dashboard"
 PROOF = ROOT / "docs" / "proof"
 RUNTIME = ROOT / ".runtime"
 CONFIG = ROOT / "config" / "stores.json"
-STORES_URL = "http://127.0.0.1:8642"
-WAREHOUSE_URL = "http://127.0.0.1:8643"
+STORES_URL = f"http://127.0.0.1:{os.environ.get("STORES_PORT", "8642")}"
+WAREHOUSE_URL = f"http://127.0.0.1:{os.environ.get("WAREHOUSE_ADMIN_PORT", "8643")}"
 OUTBOX_BASE = 8650
 JOBS = ("pos-guard", "pos-uplink")
 CONTROL_VERBS = {"register", "fault", "sensor", "link", "reset"}
@@ -234,7 +234,7 @@ def build_state(cloud: CloudWatch, scenario: Scenario) -> dict:
         count, recent = quarantine(sid)
         feed += recent
         local = {"pos-guard": time.time() - store.get("sensor", {}).get("last_poll", 0) < 10,
-                 "pos-uplink": listening(OUTBOX_BASE + n)}
+                 "pos-uplink": listening(int(os.environ.get(f"OUTBOX_PORT_{n}", OUTBOX_BASE + n)))}
         node = cl.get("nodes", {}).get(sid, {}) if current == "cloud" else {}
         store["edge"] = {
             "connected": node.get("connected", current == "local" and any(local.values())),

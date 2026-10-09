@@ -1,27 +1,27 @@
 {
-  "generated": "2026-10-05T20:28:57-07:00",
-  "date": "2026-10-05",
+  "generated": "2026-10-09T12:37:51-07:00",
+  "date": "2026-10-09",
   "revision": {
-    "commit": "adff223cc4e9dc14af3031f0326762ef001d29db",
-    "short": "adff223",
-    "dirty": false
+    "commit": "e3ea1c22c66d0420c147c6403e9abc2d5b0e6459",
+    "short": "e3ea1c2",
+    "dirty": true
   },
-  "inputs_sha256": "d517c36488ce61de2e7d39ae7d2c03813dd6164a098a0a6416addf9a6842c032",
+  "inputs_sha256": "f8dc6e4fbbef8164ec0c3236d19fb4bcec37df7a9fd9b75fc442c9ef63fc51a3",
   "tools": {
-    "expanso-edge": "v2.1.21",
-    "expanso-cli": "Expanso CLI version v2.1.21",
+    "expanso-edge": "v2.1.22",
+    "expanso-cli": "Expanso CLI version v2.1.22",
     "python": "3.12.13",
     "openssl": "OpenSSL 3.6.4 25 Aug 2026 (Library: OpenSSL 3.6.4 25 Aug 2026)"
   },
   "passed": true,
   "checks": 56,
-  "seconds": 63,
-  "report": "2026-10-05-fixture-run.md",
+  "seconds": 64,
+  "report": "2026-10-09-fixture-run.md",
   "files": {
     "pipelines/pos-guard.yaml": "f0e4bafd3a99f9174d92bef07ff8ad8c9cdea3769fa636b4e7eff3cf7684f1f2",
     "pipelines/pos-uplink.yaml": "d999f03feeb5ea68c2c83c1e4150907ad530c65c0c33875c56fae75f9090c36f",
     "config/stores.json": "bb9e7123cc4445501e359481da217e5f9f961d5603e5c6f054b5c39588130171",
-    "scripts/stores.py": "27935905f179a2ff8ba4ca2383902987d0d4822deaf0ee4e7fc939d2c1863542",
+    "scripts/stores.py": "b29bfa7db548b52b7d1de8994239798ce1572011cb55bda2ed2d908a3111e092",
     "scripts/warehouse.py": "199fb3fe9e31af0ff66f5959bb1a58afa3b2abd23b49b38a767f247d8930e646",
     "scripts/pki.py": "e6ac4621392ce8e725f2c0ce27837b85d5f56cc8b8ed6611dffe917ae563ecb7",
     "scripts/fixtures.py": "fc326ffd3a3b084bc6dd10294cde786b89bea774dd60b6bfb51d3e1f98ab24d8",

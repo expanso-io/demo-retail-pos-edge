@@ -20,3 +20,7 @@ artifacts/
 # replay leftovers
 uplink-queue.db*
 
+
+# Stable local port assignments survive runtime cleanup.
+.demo-port-state.json
+.demo-port-state.json.lock

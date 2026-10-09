@@ -1,6 +1,6 @@
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
-port := "8640"
+port := `uv run --no-project scripts/demo-ports.py resolve --demo-dir . --format shell --allow-bound | sed -n "s/^PORT=//p"`
 
 _default:
     @just --list
@@ -52,6 +52,7 @@ fault till="s1-r1" kind="tamper":
     @bash demo.sh fault {{till}} {{kind}}
 
 test:
+    uv run --no-project tests/test_stable_ports.py
     uv run --quiet -s scripts/dashboard.py --check
     bash -n demo.sh
     uv run --quiet -s tests/test_stores.py
@@ -114,3 +115,7 @@ recording-preflight:
 clean-check:
     @if rg -il '[b]acalhau|[i]llustrative|[s]imulated|[m]ock data' --glob '!justfile' --glob '!AGENTS.md' --glob '!RECORDING_SCRIPT.md' --glob '!.runtime' --glob '!.cloud-state' . ; then echo "FAIL: prohibited word in tree"; exit 1; fi
     @echo "clean"
+
+# Stable assignments; stopping the demo keeps these URLs.
+ports:
+    @uv run --no-project scripts/demo-ports.py resolve --demo-dir . --allow-bound
