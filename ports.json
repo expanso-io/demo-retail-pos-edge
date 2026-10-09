@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "demo": "demo-retail-pos-edge",
+  "ports": {
+    "PORT": 27400,
+    "WAREHOUSE_PORT": 27401,
+    "STORES_PORT": 27402,
+    "WAREHOUSE_ADMIN_PORT": 27403,
+    "OUTBOX_PORT_1": 27404,
+    "OUTBOX_PORT_2": 27405,
+    "OUTBOX_PORT_3": 27406,
+    "OUTBOX_PORT_4": 27407,
+    "WAN_PORT_1": 27408,
+    "WAN_PORT_2": 27409,
+    "WAN_PORT_3": 27410,
+    "WAN_PORT_4": 27411,
+    "DISPLAY_PORT_1": 27412,
+    "DISPLAY_PORT_2": 27413,
+    "DISPLAY_PORT_3": 27414,
+    "DISPLAY_PORT_4": 27415,
+    "API_PORT_1": 27416,
+    "API_PORT_2": 27417,
+    "API_PORT_3": 27418,
+    "API_PORT_4": 27419
+  }
+}

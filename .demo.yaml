@@ -1,7 +1,7 @@
 name: Point of sale at the edge
 slug: demo-retail-pos-edge
 type: dashboard
-port: 8640
+port: 27400
 entrypoint: scripts/dashboard.py
 description: "Card data never leaves the store as a card number: each swipe becomes a one-way join ID with its context, checked before it touches the core network"
 created: 2026-10-01
