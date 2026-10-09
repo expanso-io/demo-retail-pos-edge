@@ -38,6 +38,7 @@ class StablePorts(unittest.TestCase):
             self.assertEqual(again.returncode, 0, again.stderr)
             self.assertEqual(ports, json.loads(again.stdout))
             with socket.socket() as listener:
+                listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 listener.bind(("127.0.0.1", ports["PORT"]))
                 listener.listen()
                 refused = resolve()

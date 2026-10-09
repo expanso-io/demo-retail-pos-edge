@@ -39,12 +39,21 @@ def manifest(path):
 
 def _bound(port, kind):
     # Probe both stacks: wildcard binding detects loopback and other interfaces.
-    for family, address in ((socket.AF_INET, "0.0.0.0"), (socket.AF_INET6, "::")):
+    for family, address in (
+        (socket.AF_INET, "0.0.0.0"),
+        (socket.AF_INET, "127.0.0.1"),
+        (socket.AF_INET6, "::"),
+        (socket.AF_INET6, "::1"),
+    ):
         try:
             with socket.socket(family, kind) as probe:
+                if kind == socket.SOCK_STREAM:
+                    probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 if family == socket.AF_INET6:
                     probe.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 1)
                 probe.bind((address, port))
+                if kind == socket.SOCK_STREAM:
+                    probe.listen(1)
         except OSError as error:
             if error.errno in (98, 48, 13):
                 return True
@@ -78,9 +87,13 @@ def atomic_write(path, data):
         temporary.unlink(missing_ok=True)
 
 
-def resolve(demo_dir, *, allow_bound=False, reassign=False, limits=(20000, 31999)):
+def resolve(
+    demo_dir, *, allow_bound=False, reassign=False, limits=(20000, 31999), services=None
+):
     demo_dir = demo_dir.resolve()
     selected = manifest(demo_dir / "ports.json")
+    if services is not None and not set(services) <= selected["ports"].keys():
+        raise ValueError("unknown service selected for preflight")
     kit = demo_dir.parent / "_demo-kit"
     workspace = kit.is_dir()
     state_path = (kit if workspace else demo_dir) / ".demo-port-state.json"
@@ -167,7 +180,11 @@ def resolve(demo_dir, *, allow_bound=False, reassign=False, limits=(20000, 31999
         }
         atomic_write(state_path, state)
         if not allow_bound:
-            busy = [f"{name}={port}" for name, port in ports.items() if bound(port)]
+            busy = [
+                f"{name}={port}"
+                for name, port in ports.items()
+                if (services is None or name in services) and bound(port)
+            ]
             if busy:
                 raise ValueError(
                     "assigned port occupied: "
@@ -187,6 +204,9 @@ def main():
         entry.add_argument("--demo-dir", type=Path, required=True)
         entry.add_argument("--format", choices=("shell", "json"), default="json")
         entry.add_argument("--allow-bound", action="store_true")
+        entry.add_argument(
+            "--service", action="append", help="check occupancy only for this service"
+        )
     check = sub.add_parser("check")
     check.add_argument("--demos-root", type=Path)
     sub.add_parser("list")
@@ -197,6 +217,7 @@ def main():
                 args.demo_dir,
                 allow_bound=args.allow_bound,
                 reassign=args.command == "reassign",
+                services=args.service,
             )
             print(
                 "\n".join(f"{n}={p}" for n, p in ports.items())
