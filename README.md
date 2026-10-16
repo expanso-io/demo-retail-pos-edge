@@ -36,7 +36,7 @@ Edge node in each store, and a warehouse behind the DMZ, and shows:
 ## Follow one swipe
 
 [`dashboard/explorer.html`](dashboard/explorer.html) (open it from the board's
-**Step explorer** link, or at `http://localhost:8640/explorer.html`) walks a
+**Step explorer** link, or at `http://localhost:27400/explorer.html`) walks a
 swipe through raw swipe, scan, join ID and strip, store context, final scan
 with quarantine or uplink, and the warehouse receipt. Every input and output
 on it is a real message recorded from the shipped jobs running on Expanso Edge
@@ -91,7 +91,7 @@ Prerequisites: `just`, `uv`, `jq`, `curl`, `openssl`, `expanso-edge` and
 ```bash
 cp env.example .env && chmod 600 .env   # add the three EXPANSO_ values
 just up          # Cloud jobs stopped; nodes connected
-open http://localhost:8640
+open http://localhost:27400
 # start pos-guard and pos-uplink in the Expanso Cloud console
 just down        # stop everything and stop the jobs in Cloud
 ```
@@ -193,3 +193,11 @@ polling a silent device does not make its readings fresh.
 
 `just up` is an explicit clean start and clears source history. Restarting
 only the stores process preserves the database and its pending events.
+
+## Local ports
+
+`ports.json` declares each local listener and its preferred port. `just up`
+allocates available ports once and prints the presenter URL. `just ports`
+shows the saved assignments. `just down` keeps them, so restarting uses the
+same browser URL even after runtime files are removed. An occupied saved
+port stops startup with an error; it never silently changes your URL.

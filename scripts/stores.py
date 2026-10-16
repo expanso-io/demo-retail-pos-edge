@@ -51,7 +51,10 @@ CONFIG = ROOT / "config" / "stores.json"
 
 WAN_BASE = 8660
 DISPLAY_BASE = 8670
-WAREHOUSE_PORT = 8641
+WAREHOUSE_PORT = int(os.environ.get("WAREHOUSE_PORT", "8641"))
+
+def service_port(group: str, number: int, fallback: int) -> int:
+    return int(os.environ.get(f"{group}_PORT_{number}", fallback))
 
 HEARTBEAT_S = 3.0
 SENSOR_S = 3.0
@@ -521,7 +524,7 @@ class World:
         self.sensor_on = {s["store_id"]: True for s in self.stores}
         self.sensor_sent = collections.Counter()
         self.displays = {s["store_id"]: Display(s["store_id"]) for s in self.stores}
-        self.links = {s["store_id"]: WanLink(WAN_BASE + s["n"], WAREHOUSE_PORT)
+        self.links = {s["store_id"]: WanLink(service_port("WAN", s["n"], WAN_BASE + s["n"]), WAREHOUSE_PORT)
                       for s in self.stores}
         self.database = StoreDatabase(runtime / "store-events.db")
         self.telemetry: dict[str, dict[str, dict]] = {s["store_id"]: {} for s in self.stores}
@@ -581,7 +584,7 @@ class World:
             self.serve_display(store)
 
     def serve_display(self, store: dict) -> None:
-        serve_display(self.displays[store["store_id"]], DISPLAY_BASE + store["n"])
+        serve_display(self.displays[store["store_id"]], service_port("DISPLAY", store["n"], DISPLAY_BASE + store["n"]))
 
     def state(self) -> dict:
         stores = []

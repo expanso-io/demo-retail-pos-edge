@@ -5,14 +5,17 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 cd "$ROOT"
 
-PORT="${PORT:-8640}"
-WAREHOUSE_PORT=8641  # TLS ingest, reached through each store's WAN link
-STORES_PORT=8642
-WAREHOUSE_ADMIN_PORT=8643  # loopback read API for the board
-OUTBOX_BASE=8650     # store N's pos-guard -> pos-uplink, on the node
-WAN_BASE=8660        # store N's WAN link to the warehouse
-DISPLAY_BASE=8670    # store N's window display
-API_BASE=8680        # store N's local edge API (local mode)
+# Persisted assignments live outside .runtime; stopping never releases them.
+# shellcheck disable=SC1091
+source "$ROOT/scripts/port-env.sh"
+case "${1:-}" in
+  up|up-local|offline|cloud|preview|reset) demo_ports_load "$ROOT" ;;
+  *) demo_ports_load "$ROOT" --allow-bound ;;
+esac
+PORT="${PORT:?allocator did not assign PORT}"
+port_value() { local name="${1}_PORT_${2}"; printf '%s' "${!name}"; }
+
+
 RUNTIME="$ROOT/.runtime"
 CLOUD_STATE="$ROOT/.cloud-state"
 PKI_DIR="$ROOT/.secrets/pki"
@@ -133,7 +136,7 @@ write_node_config() {
   {
     echo "name: pos-$store-edge"
     echo "api:"
-    echo "  listen_addr: 127.0.0.1:$((API_BASE + n))"
+    echo "  listen_addr: 127.0.0.1:$(port_value API "$n")"
     echo "log:"
     echo "  level: info"
     echo "  format: console"
@@ -191,10 +194,10 @@ edge_up() {
   STORE_ID="$store" \
   POS_CONFIG_DIR="$dir/config" \
   STORE_SOURCE_URL="http://127.0.0.1:$STORES_PORT" \
-  OUTBOX_ADDR="127.0.0.1:$((OUTBOX_BASE + n))" \
-  OUTBOX_URL="http://127.0.0.1:$((OUTBOX_BASE + n))/outbox" \
-  DISPLAY_URL="http://127.0.0.1:$((DISPLAY_BASE + n))" \
-  WAREHOUSE_HOST="127.0.0.1:$((WAN_BASE + n))" \
+  OUTBOX_ADDR="127.0.0.1:$(port_value OUTBOX "$n")" \
+  OUTBOX_URL="http://127.0.0.1:$(port_value OUTBOX "$n")/outbox" \
+  DISPLAY_URL="http://127.0.0.1:$(port_value DISPLAY "$n")" \
+  WAREHOUSE_HOST="127.0.0.1:$(port_value WAN "$n")" \
   WAREHOUSE_CA_FILE="$PKI_DIR/ca.pem" \
   STORE_CLIENT_CERT_FILE="$PKI_DIR/clients/$store.pem" \
   STORE_CLIENT_KEY_FILE="$PKI_DIR/clients/$store.key" \
@@ -214,7 +217,7 @@ local_cli() {
   local store="$1" n
   shift
   n="$(store_n "$store")"
-  expanso-cli --endpoint "http://127.0.0.1:$((API_BASE + n))" "$@"
+  expanso-cli --endpoint "http://127.0.0.1:$(port_value API "$n")" "$@"
 }
 
 deploy_local() {
@@ -368,7 +371,7 @@ wait_ingest_closed() {
     open=0
     for store in "${STORES[@]}"; do
       n="$(store_n "$store")"
-      port_busy "$((OUTBOX_BASE + n))" && open=1
+      port_busy "$(port_value OUTBOX "$n")" && open=1
     done
     if running="$(cloud_cli execution list --state running --limit 1000 \
       "${filters[@]}" -f json)"; then
