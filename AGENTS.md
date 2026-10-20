@@ -1,7 +1,10 @@
 # demo-retail-pos-edge — agent rules
 
-The rules in `../AGENTS.md` govern this directory; this file only adds to
-them.
+Read [DEMO_INVARIANTS.md](DEMO_INVARIANTS.md) before acting. The vendored
+file carries the rules that must hold in every checkout and worktree.
+When this repository sits under `projects/demos`, `../AGENTS.md` applies
+additionally. In that workspace, consult `../demo-guidance/README.md`
+for recording, video review and publishing.
 
 - The claim: **Card data never leaves the store as a card number: each
   swipe becomes a one-way join ID with its context, checked before it
